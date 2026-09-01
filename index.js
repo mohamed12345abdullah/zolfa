@@ -4,7 +4,7 @@ dotenv.config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-
+ 
 // Database and utilities
 const connectMongoose = require("./utils/connectMongoose");
 const Logger = require("./utils/logger");
@@ -42,8 +42,8 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/maleForms", require("./routes/male"));
-
-
+ 
+ 
 // 404 Handler
 app.get("*", (req, res) => {
   Logger.info("Root endpoint accessed");

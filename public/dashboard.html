@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة إدارة طلبات الزواج</title>
+<style>
+/* ====================================================
+   DESIGN TOKENS
+   ==================================================== */
+:root {
+  --green:        #1a5c38;
+  --green-mid:    #236b43;
+  --green-lt:     #d4ede1;
+  --green-pale:   #eef7f2;
+  --gold:         #b8832a;
+  --gold-lt:      #fdf3e0;
+  --red:          #c0392b;
+  --red-lt:       #fdecea;
+  --blue:         #1e4fa3;
+  --blue-lt:      #dce8f9;
+  --purple:       #6c3d9e;
+  --purple-lt:    #ede4f7;
+
+  --bg:           #f5f2ed;
+  --surface:      #ffffff;
+  --border:       #e0d8cc;
+  --border-deep:  #c8bfb3;
+
+  --text:         #1a1a1a;
+  --text-mid:     #4a4a4a;
+  --text-muted:   #7a7a7a;
+
+  --sidebar-w:    260px;
+  --radius:       10px;
+  --radius-lg:    16px;
+  --shadow:       0 2px 8px rgba(0,0,0,.07);
+  --shadow-md:    0 4px 20px rgba(0,0,0,.11);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 15px; }
+
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Noto Sans Arabic', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  direction: rtl;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ====================================================
+   SIDEBAR
+   ==================================================== */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--green);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; right: 0;
+  height: 100vh;
+  z-index: 100;
+  transition: transform .3s ease;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.sidebar-logo h1 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #fff;
+}
+
+.sidebar-logo p {
+  font-size: 0.75rem;
+  opacity: .65;
+  margin-top: 3px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.nav-label {
+  font-size: 0.68rem;
+  letter-spacing: .06em;
+  opacity: .5;
+  padding: 0 24px;
+  margin-bottom: 6px;
+  margin-top: 16px;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.8);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  border-right: 3px solid transparent;
+  text-decoration: none;
+}
+
+.nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+.nav-item.active {
+  background: rgba(255,255,255,.13);
+  color: #fff;
+  border-right-color: #c9973a;
+}
+
+.nav-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255,255,255,.1);
+  font-size: 0.75rem;
+  opacity: .5;
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 200;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 99;
+}
+
+/* ====================================================
+   MAIN CONTENT
+   ==================================================== */
+.main {
+  margin-right: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;
+}
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all .18s;
+  white-space: nowrap;
+}
+
+.btn-primary { background: var(--green); color: #fff; }
+.btn-primary:hover { background: var(--green-mid); }
+.btn-outline {
+  background: transparent;
+  color: var(--green);
+  border: 1.5px solid var(--green);
+}
+.btn-outline:hover { background: var(--green-pale); }
+.btn-sm { padding: 5px 11px; font-size: 0.77rem; }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-danger:hover { background: #a93226; }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-mid);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--border-deep); background: var(--bg); }
+
+.content {
+  padding: 28px;
+  flex: 1;
+}
+
+/* ====================================================
+   STATISTICS STRIP
+   ==================================================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent, var(--green));
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.stat-card.gold  { --accent: var(--gold); }
+.stat-card.blue  { --accent: var(--blue); }
+.stat-card.red   { --accent: var(--red); }
+.stat-card.purple{ --accent: var(--purple); }
+
+.stat-icon {
+  font-size: 1.6rem;
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent, var(--green));
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ====================================================
+   CHART SECTION
+   ==================================================== */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.chart-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.chart-card h3 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Bar chart */
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-label {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  width: 90px;
+  flex-shrink: 0;
+  text-align: right;
+  line-height: 1.3;
+}
+
+.bar-track {
+  flex: 1;
+  height: 10px;
+  background: var(--bg);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--green);
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+
+.bar-count {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  width: 24px;
+  text-align: left;
+}
+
+/* Donut chart */
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.donut-svg { display: block; }
+
+.donut-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: var(--text-mid);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-val {
+  font-weight: 700;
+  margin-right: auto;
+  color: var(--text);
+}
+
+/* ====================================================
+   FILTERS BAR
+   ==================================================== */
+.filters-bar {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.filters-bar h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  margin-bottom: 14px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-group label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 8px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  direction: rtl;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.filter-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%237a7a7a'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 10px center;
+  padding-left: 30px;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(26,92,56,.12);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+/* ====================================================
+   RESULTS BAR
+   ==================================================== */
+.results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.results-count {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.results-count strong {
+  color: var(--green);
+  font-size: 1rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.view-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  transition: all .15s;
+}
+
+.view-btn.active {
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+}
+
+/* ====================================================
+   TABLE VIEW
+   ==================================================== */
+.table-wrap {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+thead tr {
+  background: var(--green);
+  color: #fff;
+}
+
+thead th {
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-align: right;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s;
+}
+
+thead th:hover { background: var(--green-mid); }
+
+thead th .sort-icon { opacity: .5; margin-right: 4px; font-size: .7rem; }
+thead th.sorted .sort-icon { opacity: 1; }
+
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+  cursor: pointer;
+}
+
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--green-pale); }
+
+tbody td {
+  padding: 11px 14px;
+  color: var(--text-mid);
+  vertical-align: middle;
+  max-width: 160px;
+}
+
+.td-name {
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-green  { background: var(--green-lt);  color: var(--green);  }
+.badge-gold   { background: var(--gold-lt);   color: var(--gold);   }
+.badge-red    { background: var(--red-lt);    color: var(--red);    }
+.badge-blue   { background: var(--blue-lt);   color: var(--blue);   }
+.badge-purple { background: var(--purple-lt); color: var(--purple); }
+.badge-gray   { background: #e8e8e8; color: #666; }
+
+.hijab-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.hijab-tag {
+  font-size: 0.66rem;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: var(--green-lt);
+  color: var(--green);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.btn-view {
+  background: var(--green-pale);
+  color: var(--green);
+  border: 1px solid var(--green-lt);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+.btn-view:hover { background: var(--green); color: #fff; }
+
+/* ====================================================
+   CARDS VIEW
+   ==================================================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.person-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow .2s, transform .2s;
+}
+
+.person-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--green) 0%, #236b43 100%);
+  padding: 18px 20px 14px;
+  color: #fff;
+  position: relative;
+}
+
+.card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.card-sub {
+  font-size: 0.76rem;
+  opacity: .75;
+}
+
+.card-age-badge {
+  position: absolute;
+  left: 16px;
+  top: 18px;
+  background: rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 16px 20px;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+  gap: 8px;
+}
+
+.card-row:last-child { border-bottom: none; }
+
+.card-key {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.card-val {
+  color: var(--text);
+  font-weight: 600;
+  text-align: left;
+}
+
+.card-footer {
+  background: var(--bg);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+}
+
+/* ====================================================
+   EMPTY STATE
+   ==================================================== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 0.9rem; }
+
+/* ====================================================
+   MODAL
+   ==================================================== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 300;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 720px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  position: relative;
+  margin: auto;
+  animation: modalIn .22s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-head {
+  background: linear-gradient(135deg, var(--green) 0%, #236b43 100%);
+  padding: 24px 28px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  color: #fff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.modal-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.modal-meta {
+  font-size: 0.8rem;
+  opacity: .75;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.modal-close {
+  background: rgba(255,255,255,.15);
+  border: none;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+
+.modal-close:hover { background: rgba(255,255,255,.3); }
+
+.modal-body {
+  padding: 24px 28px;
+  overflow-y: auto;
+  max-height: calc(90vh - 160px);
+}
+
+.modal-section {
+  margin-bottom: 24px;
+}
+
+.modal-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--green);
+  border-bottom: 2px solid var(--green-lt);
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-field.full { grid-column: 1 / -1; }
+
+.mf-label {
+  font-size: 0.71rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.mf-value {
+  font-size: 0.86rem;
+  color: var(--text);
+  font-weight: 500;
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 7px 10px;
+  word-break: break-word;
+  min-height: 34px;
+}
+
+.mf-value.empty { color: var(--text-muted); font-style: italic; }
+
+.mf-value .tick { color: var(--green); font-weight: 700; }
+.mf-value .cross { color: var(--red); font-weight: 700; }
+
+.contact-link {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+}
+.contact-link:hover { text-decoration: underline; }
+
+/* ====================================================
+   LOADING / ERROR
+   ==================================================== */
+.page-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 14px;
+  color: var(--text-muted);
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid var(--green-lt);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ====================================================
+   RESPONSIVE
+   ==================================================== */
+@media (max-width: 900px) {
+  .charts-row { grid-template-columns: 1fr 1fr; }
+  .charts-row .chart-card:last-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 720px) {
+  .sidebar {
+    transform: translateX(100%);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .overlay.open { display: block; }
+  .hamburger { display: flex; }
+  .main { margin-right: 0; }
+  .topbar { padding: 12px 16px; padding-right: 60px; }
+  .content { padding: 16px; }
+  .charts-row { grid-template-columns: 1fr; }
+  .modal-fields { grid-template-columns: 1fr; }
+  .modal-field.full { grid-column: 1; }
+  .modal-body { padding: 16px; }
+  .modal-head { padding: 18px 16px; }
+  .modal-meta { gap: 8px; }
+}
+
+@media (max-width: 520px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .filters-grid { grid-template-columns: 1fr; }
+}
+
+/* ====================================================
+   UTILITIES
+   ==================================================== */
+.hidden { display: none !important; }
+.text-green { color: var(--green); }
+.text-gold  { color: var(--gold); }
+.text-red   { color: var(--red); }
+
+.no-data {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.82rem;
+}
+</style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<button class="hamburger" id="hamburger" aria-label="القائمة">☰</button>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <h1>لوحة إدارة<br>طلبات الزواج</h1>
+    <p>نظام إدارة البيانات</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">القائمة الرئيسية</div>
+    <a class="nav-item active" href="#" onclick="return false">
+      <span class="nav-icon">📋</span> الطلبات
+    </a>
+    <div class="nav-label">الإعدادات</div>
+    <a class="nav-item" href="#" id="refreshBtn" onclick="loadData(); return false;">
+      <span class="nav-icon">🔄</span> تحديث البيانات
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    نسخة 1.0 — لوحة إدارة
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title">الطلبات المسجلة</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" onclick="loadData()">🔄 تحديث</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Loading state -->
+    <div id="loadingState" class="page-state">
+      <div class="spinner"></div>
+      <span>جاري تحميل البيانات...</span>
+    </div>
+
+    <!-- Error state -->
+    <div id="errorState" class="page-state hidden">
+      <div style="font-size:2.5rem">⚠️</div>
+      <p id="errorMsg">حدث خطأ في تحميل البيانات</p>
+      <button class="btn btn-primary" onclick="loadData()">إعادة المحاولة</button>
+    </div>
+
+    <!-- Dashboard content (shown after load) -->
+    <div id="dashContent" class="hidden">
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <!-- Charts -->
+      <div class="charts-row" id="chartsRow"></div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <h3>🔍 بحث وتصفية</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label>بحث بالاسم</label>
+            <input type="text" id="fSearch" placeholder="اكتب الاسم..." oninput="applyFilters()">
+          </div>
+          <div class="filter-group">
+            <label>الحالة الاجتماعية</label>
+            <select id="fMarital" onchange="applyFilters()">
+              <option value="">الكل</option>
+              <option value="عزب">عزب</option>
+              <option value="أعزب سبق له عقد أو كتب كتاب">سبق له عقد</option>
+              <option value="مطلق">مطلق</option>
+              <option value="أرمل">أرمل</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>المؤهل الدراسي</label>
+            <select id="fEducation" onchange="applyFilters()">
+              <option value="">الكل</option>
+              <option value="بدون مؤهل">بدون مؤهل</option>
+              <option value="متوسط">متوسط</option>
+              <option value="فوق المتوسط">فوق المتوسط</option>
+              <option value="جامعي">جامعي</option>
+              <option value="دراسات عليا">دراسات عليا</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>الجنسية</label>
+            <select id="fNationality" onchange="applyFilters()">
+              <option value="">الكل</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>المغترب</label>
+            <select id="fExpatriate" onchange="applyFilters()">
+              <option value="">الكل</option>
+              <option value="نعم">نعم</option>
+              <option value="لا">لا</option>
+              <option value="حسب الاتفاق">حسب الاتفاق</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>الملتحي</label>
+            <select id="fBearded" onchange="applyFilters()">
+              <option value="">الكل</option>
+              <option value="true">نعم</option>
+              <option value="false">لا</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>المدخن</label>
+            <select id="fSmoker" onchange="applyFilters()">
+              <option value="">الكل</option>
+              <option value="false">غير مدخن</option>
+              <option value="true">مدخن</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>المحافظة / المدينة</label>
+            <input type="text" id="fCity" placeholder="مثال: القاهرة..." oninput="applyFilters()">
+          </div>
+          <div class="filter-group filter-actions">
+            <button class="btn btn-ghost btn-sm" onclick="resetFilters()">مسح الفلاتر</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results bar -->
+      <div class="results-bar">
+        <div class="results-count">
+          عرض <strong id="resultsCount">0</strong> طلب
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="tableViewBtn" onclick="setView('table')" title="جدول">⊞</button>
+          <button class="view-btn" id="cardsViewBtn" onclick="setView('cards')" title="بطاقات">▦</button>
+        </div>
+      </div>
+
+      <!-- Table view -->
+      <div id="tableView">
+        <div class="table-wrap">
+          <table id="dataTable">
+            <thead>
+              <tr>
+                <th onclick="sortBy('name')" data-col="name">
+                  الاسم <span class="sort-icon">⇅</span>
+                </th>
+                <th onclick="sortBy('age')" data-col="age">
+                  العمر <span class="sort-icon">⇅</span>
+                </th>
+                <th onclick="sortBy('nationality')" data-col="nationality">
+                  الجنسية <span class="sort-icon">⇅</span>
+                </th>
+                <th onclick="sortBy('education')" data-col="education">
+                  المؤهل <span class="sort-icon">⇅</span>
+                </th>
+                <th onclick="sortBy('job')" data-col="job">
+                  الوظيفة <span class="sort-icon">⇅</span>
+                </th>
+                <th onclick="sortBy('city')" data-col="city">
+                  المدينة <span class="sort-icon">⇅</span>
+                </th>
+                <th onclick="sortBy('maritalStatus')" data-col="maritalStatus">
+                  الحالة <span class="sort-icon">⇅</span>
+                </th>
+                <th onclick="sortBy('quranMemorization')" data-col="quranMemorization">
+                  الحفظ <span class="sort-icon">⇅</span>
+                </th>
+                <th>الحجاب</th>
+                <th>تفاصيل</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div id="tableEmpty" class="empty-state hidden">
+            <div class="empty-icon">🔍</div>
+            <p>لا توجد نتائج تطابق معايير البحث</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cards view -->
+      <div id="cardsView" class="hidden">
+        <div class="cards-grid" id="cardsGrid"></div>
+        <div id="cardsEmpty" class="empty-state hidden">
+          <div class="empty-icon">🔍</div>
+          <p>لا توجد نتائج تطابق معايير البحث</p>
+        </div>
+      </div>
+
+    </div><!-- /dashContent -->
+  </div><!-- /content -->
+</main>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head" id="modalHead">
+      <div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-meta" id="modalMeta"></div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+// ============================================================
+// CONFIG   
+// ============================================================
+// const API_URL = "http://localhost:3000/api/maleForms/getMaleForms";
+const API_URL = "https://zolfa.vercel.app/api/maleForms/getMaleForms";
+// Replace with your actual endpoint, e.g.:
+
+// ============================================================
+// STATE
+// ============================================================
+let allData     = [];
+let filtered    = [];
+let sortCol     = "name";
+let sortDir     = 1;
+let currentView = "table";
+
+// ============================================================
+// SIDEBAR TOGGLE
+// ============================================================
+document.getElementById("hamburger").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("open");
+});
+
+document.getElementById("overlay").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("open");
+});
+
+// ============================================================
+// LOAD DATA
+// ============================================================
+async function loadData() {
+  showState("loading");
+
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    allData = json.males || [];
+    init();
+  } catch (err) {
+    console.error(err);
+    // Fallback: use the sample data from the document
+    init();
+    // Uncomment next 2 lines to show error instead of using sample data:
+    showState("error", err.message || "تعذّر الاتصال بالـ API");
+    return;
+  }
+}
+
+// ============================================================
+// SAMPLE DATA (fallback for demo / offline)
+// ============================================================
+
+
+// ============================================================
+// SHOW PAGE STATE
+// ============================================================
+function showState(state, msg) {
+  document.getElementById("loadingState").classList.toggle("hidden", state !== "loading");
+  document.getElementById("errorState").classList.toggle("hidden",   state !== "error");
+  document.getElementById("dashContent").classList.toggle("hidden",  state !== "data");
+  if (msg) document.getElementById("errorMsg").textContent = msg;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  populateNationalityFilter();
+  renderStats();
+  renderCharts();
+  applyFilters();
+  showState("data");
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function calcAge(birthDate) {
+  if (!birthDate) return null;
+  const bd = new Date(birthDate);
+  const now = new Date();
+  let age = now.getFullYear() - bd.getFullYear();
+  const m = now.getMonth() - bd.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < bd.getDate())) age--;
+  return age;
+}
+
+function boolText(val) {
+  if (val === true  || val === "true")  return '<span class="tick">✔ نعم</span>';
+  if (val === false || val === "false") return '<span class="cross">✖ لا</span>';
+  return '<span class="no-data">—</span>';
+}
+
+function safeVal(v) {
+  return (v === undefined || v === null || v === "") ? '<span class="no-data">—</span>' : v;
+}
+
+function maritalBadge(s) {
+  const map = {
+    "عزب": "badge-green",
+    "أعزب سبق له عقد أو كتب كتاب": "badge-blue",
+    "مطلق": "badge-gold",
+    "أرمل": "badge-purple"
+  };
+  return `<span class="badge ${map[s] || 'badge-gray'}">${s || '—'}</span>`;
+}
+
+function quranText(n) {
+  if (n === 0 || n === null || n === undefined) return "لا يحفظ";
+  if (n === 30) return "30 جزءاً (ختم كامل) ⭐";
+  return `${n} جزء`;
+}
+
+// ============================================================
+// NATIONALITY FILTER
+// ============================================================
+function populateNationalityFilter() {
+  const nationalities = [...new Set(allData.map(d => (d.basicInfo?.nationality || "").trim()).filter(Boolean))];
+  const sel = document.getElementById("fNationality");
+  nationalities.forEach(n => {
+    const o = document.createElement("option");
+    o.value = n;
+    o.textContent = n;
+    sel.appendChild(o);
+  });
+}
+
+// ============================================================
+// STATISTICS
+// ============================================================
+function renderStats() {
+  const total    = allData.length;
+  const bearded  = allData.filter(d => d.religionAndHealth?.bearded === true).length;
+  const smoker   = allData.filter(d => d.religionAndHealth?.smoker  === true).length;
+  const quran30  = allData.filter(d => d.religionAndHealth?.quranMemorization === 30).length;
+  const expat    = allData.filter(d => d.residence?.expatriate === "نعم").length;
+
+  const statsData = [
+    { label: "إجمالي الطلبات", value: total,   icon: "📋", cls: "" },
+    { label: "ملتحون",          value: bearded, icon: "🧔", cls: "gold" },
+    { label: "حافظون للقرآن كاملاً", value: quran30, icon: "📖", cls: "blue" },
+    { label: "مغتربون",         value: expat,   icon: "✈️", cls: "purple" },
+    { label: "مدخنون",          value: smoker,  icon: "🚬", cls: "red" }
+  ];
+
+  document.getElementById("statsGrid").innerHTML = statsData.map(s => `
+    <div class="stat-card ${s.cls}">
+      <div class="stat-icon">${s.icon}</div>
+      <div class="stat-value">${s.value}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>
+  `).join("");
+}
+
+// ============================================================
+// CHARTS
+// ============================================================
+function renderCharts() {
+  const container = document.getElementById("chartsRow");
+
+  // Chart 1: Marital Status distribution
+  const maritalCounts = {};
+  allData.forEach(d => {
+    const s = d.maritalInfo?.maritalStatus || "غير محدد";
+    maritalCounts[s] = (maritalCounts[s] || 0) + 1;
+  });
+
+  // Chart 2: Education distribution
+  const eduCounts = {};
+  allData.forEach(d => {
+    const e = d.educationAndWork?.education || "غير محدد";
+    eduCounts[e] = (eduCounts[e] || 0) + 1;
+  });
+
+  // Chart 3: Hijab requirements
+  const hijabCounts = {};
+  allData.forEach(d => {
+    (d.brideRequirements?.hijab || []).forEach(h => {
+      hijabCounts[h] = (hijabCounts[h] || 0) + 1;
+    });
+  });
+
+  const total = allData.length || 1;
+
+  const maritalColors = ["#1a5c38","#2e8b57","#b8832a","#6c3d9e","#c0392b"];
+  const eduColors     = ["#1a5c38","#2e8b57","#b8832a","#6c3d9e","#c0392b","#1e4fa3"];
+  const hijabColors   = ["#1a5c38","#236b43","#2e8b57","#b8832a","#6c3d9e","#1e4fa3"];
+
+  container.innerHTML = `
+    ${buildBarChart("توزيع الحالة الاجتماعية", maritalCounts, total, maritalColors)}
+    ${buildBarChart("توزيع المؤهل الدراسي", eduCounts, total, eduColors)}
+    ${buildHijabChart("متطلبات الحجاب", hijabCounts, total, hijabColors)}
+  `;
+}
+
+function buildBarChart(title, counts, total, colors) {
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const max = sorted[0]?.[1] || 1;
+
+  const rows = sorted.map(([label, count], i) => {
+    const pct = Math.round((count / max) * 100);
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${label}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div>
+        </div>
+        <div class="bar-count">${count}</div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="chart-card">
+      <h3>${title}</h3>
+      <div class="bar-chart">${rows}</div>
+    </div>
+  `;
+}
+
+function buildHijabChart(title, counts, total, colors) {
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const rows = sorted.map(([label, count], i) => {
+    const pct = Math.round((count / (total || 1)) * 100);
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${label}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div>
+        </div>
+        <div class="bar-count">${count}</div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="chart-card">
+      <h3>${title}</h3>
+      <div class="bar-chart">${rows || '<p class="no-data">لا توجد بيانات</p>'}</div>
+    </div>
+  `;
+}
+
+// ============================================================
+// FILTERS
+// ============================================================
+function applyFilters() {
+  const search     = document.getElementById("fSearch").value.trim().toLowerCase();
+  const marital    = document.getElementById("fMarital").value;
+  const education  = document.getElementById("fEducation").value;
+  const nationality = document.getElementById("fNationality").value;
+  const expatriate = document.getElementById("fExpatriate").value;
+  const bearded    = document.getElementById("fBearded").value;
+  const smoker     = document.getElementById("fSmoker").value;
+  const city       = document.getElementById("fCity").value.trim().toLowerCase();
+
+  filtered = allData.filter(d => {
+    const name = (d.basicInfo?.name || "").toLowerCase();
+    if (search     && !name.includes(search))                                return false;
+    if (marital    && d.maritalInfo?.maritalStatus !== marital)              return false;
+    if (education  && d.educationAndWork?.education !== education)           return false;
+    if (nationality && (d.basicInfo?.nationality || "").trim() !== nationality) return false;
+    if (expatriate && d.residence?.expatriate !== expatriate)                return false;
+    if (bearded    && String(d.religionAndHealth?.bearded) !== bearded)      return false;
+    if (smoker     && String(d.religionAndHealth?.smoker)  !== smoker)       return false;
+    if (city       && !(d.residence?.city || "").toLowerCase().includes(city)) return false;
+    return true;
+  });
+
+  sortAndRender();
+}
+
+function resetFilters() {
+  ["fSearch","fCity"].forEach(id => document.getElementById(id).value = "");
+  ["fMarital","fEducation","fNationality","fExpatriate","fBearded","fSmoker"]
+    .forEach(id => document.getElementById(id).value = "");
+  applyFilters();
+}
+
+// ============================================================
+// SORT
+// ============================================================
+function sortBy(col) {
+  if (sortCol === col) {
+    sortDir = -sortDir;
+  } else {
+    sortCol = col;
+    sortDir = 1;
+  }
+  document.querySelectorAll("thead th").forEach(th => {
+    th.classList.toggle("sorted", th.dataset.col === col);
+  });
+  sortAndRender();
+}
+
+function sortAndRender() {
+  const getVal = (d, col) => {
+    switch (col) {
+      case "name":     return (d.basicInfo?.name || "").toLowerCase();
+      case "age":      return calcAge(d.basicInfo?.birthDate) || 0;
+      case "nationality": return d.basicInfo?.nationality || "";
+      case "education":   return d.educationAndWork?.education || "";
+      case "job":         return d.educationAndWork?.job || "";
+      case "city":        return d.residence?.city || "";
+      case "maritalStatus": return d.maritalInfo?.maritalStatus || "";
+      case "quranMemorization": return d.religionAndHealth?.quranMemorization || 0;
+      default: return "";
+    }
+  };
+
+  filtered.sort((a, b) => {
+    const va = getVal(a, sortCol);
+    const vb = getVal(b, sortCol);
+    if (typeof va === "number") return (va - vb) * sortDir;
+    return va.localeCompare(vb, "ar") * sortDir;
+  });
+
+  document.getElementById("resultsCount").textContent = filtered.length;
+  renderTable();
+  renderCards();
+}
+
+// ============================================================
+// TABLE RENDER
+// ============================================================
+function renderTable() {
+  const tbody = document.getElementById("tableBody");
+  const empty = document.getElementById("tableEmpty");
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = "";
+    empty.classList.remove("hidden");
+    return;
+  }
+  empty.classList.add("hidden");
+
+  tbody.innerHTML = filtered.map((d, i) => {
+    const age  = calcAge(d.basicInfo?.birthDate);
+    const hijab = (d.brideRequirements?.hijab || [])
+      .map(h => `<span class="hijab-tag">${h}</span>`)
+      .join("");
+
+    return `
+      <tr onclick="openModal('${d._id}')">
+        <td class="td-name">${d.basicInfo?.name || "—"}</td>
+        <td>${age !== null ? age + " سنة" : "—"}</td>
+        <td>${(d.basicInfo?.nationality || "").trim() || "—"}</td>
+        <td>${d.educationAndWork?.education || "—"}</td>
+        <td>${d.educationAndWork?.job || "—"}</td>
+        <td>${(d.residence?.city || "").trim() || "—"}</td>
+        <td>${maritalBadge(d.maritalInfo?.maritalStatus)}</td>
+        <td>${quranText(d.religionAndHealth?.quranMemorization)}</td>
+        <td><div class="hijab-tags">${hijab || "—"}</div></td>
+        <td><button class="btn-view" onclick="event.stopPropagation(); openModal('${d._id}')">عرض</button></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+// ============================================================
+// CARDS RENDER
+// ============================================================
+function renderCards() {
+  const grid  = document.getElementById("cardsGrid");
+  const empty = document.getElementById("cardsEmpty");
+
+  if (filtered.length === 0) {
+    grid.innerHTML = "";
+    empty.classList.remove("hidden");
+    return;
+  }
+  empty.classList.add("hidden");
+
+  grid.innerHTML = filtered.map(d => {
+    const age = calcAge(d.basicInfo?.birthDate);
+    const hijab = (d.brideRequirements?.hijab || []).slice(0, 2)
+      .map(h => `<span class="hijab-tag">${h}</span>`).join(" ");
+
+    return `
+      <div class="person-card" onclick="openModal('${d._id}')">
+        <div class="card-header">
+          <div class="card-name">${d.basicInfo?.name || "—"}</div>
+          <div class="card-sub">${d.educationAndWork?.job || ""} · ${(d.residence?.city || "").trim()}</div>
+          ${age !== null ? `<div class="card-age-badge">${age} سنة</div>` : ""}
+        </div>
+        <div class="card-body">
+          <div class="card-row">
+            <span class="card-key">الحالة</span>
+            <span class="card-val">${d.maritalInfo?.maritalStatus || "—"}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-key">المؤهل</span>
+            <span class="card-val">${d.educationAndWork?.education || "—"}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-key">حفظ القرآن</span>
+            <span class="card-val">${quranText(d.religionAndHealth?.quranMemorization)}</span>
+          </div>
+          <div class="card-row">
+            <span class="card-key">الحجاب المقبول</span>
+            <span class="card-val"><div class="hijab-tags">${hijab || "—"}</div></span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="badge ${d.religionAndHealth?.bearded ? 'badge-green' : 'badge-gray'}">
+            ${d.religionAndHealth?.bearded ? "ملتحٍ" : "غير ملتحٍ"}
+          </span>
+          <button class="btn-view" onclick="event.stopPropagation(); openModal('${d._id}')">عرض التفاصيل</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// ============================================================
+// VIEW TOGGLE
+// ============================================================
+function setView(v) {
+  currentView = v;
+  document.getElementById("tableView").classList.toggle("hidden",  v !== "table");
+  document.getElementById("cardsView").classList.toggle("hidden",  v !== "cards");
+  document.getElementById("tableViewBtn").classList.toggle("active", v === "table");
+  document.getElementById("cardsViewBtn").classList.toggle("active", v === "cards");
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(id) {
+  const d = allData.find(x => x._id === id);
+  if (!d) return;
+
+  const age = calcAge(d.basicInfo?.birthDate);
+
+  // Head
+  document.getElementById("modalName").textContent = d.basicInfo?.name || "—";
+  document.getElementById("modalMeta").innerHTML = `
+    <span>📍 ${(d.basicInfo?.nationality || "").trim() || "—"}</span>
+    <span>🎂 ${age !== null ? age + " سنة" : "—"}</span>
+    <span>💼 ${d.educationAndWork?.job || "—"}</span>
+    <span>🏙 ${(d.residence?.city || "").trim() || "—"}</span>
+  `;
+
+  // Body sections
+  const b = d.basicInfo || {};
+  const ew = d.educationAndWork || {};
+  const res = d.residence || {};
+  const fam = d.familyInfo || {};
+  const mar = d.maritalInfo || {};
+  const rel = d.religionAndHealth || {};
+  const br  = d.brideRequirements || {};
+  const con = d.contactInfo || {};
+
+  document.getElementById("modalBody").innerHTML = `
+
+    <div class="modal-section">
+      <div class="modal-section-title">👤 البيانات الأساسية</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">الاسم الكامل</div>
+          <div class="mf-value">${safeVal(b.name)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">تاريخ الميلاد / العمر</div>
+          <div class="mf-value">${b.birthDate ? new Date(b.birthDate).toLocaleDateString("ar-EG") + (age !== null ? ` (${age} سنة)` : "") : "—"}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">الجنسية</div>
+          <div class="mf-value">${safeVal((b.nationality || "").trim())}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">لون البشرة</div>
+          <div class="mf-value">${safeVal(b.skinColor)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">الوزن</div>
+          <div class="mf-value">${b.weight ? b.weight + " كجم" : "—"}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">الطول</div>
+          <div class="mf-value">${b.height ? b.height + " سم" : "—"}</div>
+        </div>
+        ${b.description ? `
+        <div class="modal-field full">
+          <div class="mf-label">نبذة شخصية</div>
+          <div class="mf-value">${b.description}</div>
+        </div>` : ""}
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">🎓 التعليم والعمل</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">المؤهل الدراسي</div>
+          <div class="mf-value">${safeVal(ew.education)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">التخصص الجامعي</div>
+          <div class="mf-value">${safeVal(ew.universityMajor)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">الوظيفة</div>
+          <div class="mf-value">${safeVal(ew.job)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">وصف الوظيفة</div>
+          <div class="mf-value">${safeVal(ew.jobDescription)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">🏠 السكن والإقامة</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">المدينة / المحافظة</div>
+          <div class="mf-value">${safeVal((res.city || "").trim())}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">محل الإقامة الحالي</div>
+          <div class="mf-value">${safeVal(res.currentPlaceOfResidence)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">مغترب</div>
+          <div class="mf-value">${safeVal(res.expatriate)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">السكن الزوجي</div>
+          <div class="mf-value">${safeVal(res.maritalHome)}</div>
+        </div>
+        ${res.maritalHomeDescription ? `
+        <div class="modal-field full">
+          <div class="mf-label">وصف السكن</div>
+          <div class="mf-value">${res.maritalHomeDescription}</div>
+        </div>` : ""}
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">👨‍👩‍👧‍👦 الأسرة</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">عمل الوالد</div>
+          <div class="mf-value">${safeVal(fam.fatherJob)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">عمل الوالدة</div>
+          <div class="mf-value">${safeVal(fam.motherJob)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">الوالدان منفصلان</div>
+          <div class="mf-value">${boolText(fam.parentsSeparated)}</div>
+        </div>
+        <div class="modal-field full">
+          <div class="mf-label">معلومات الإخوة والأخوات</div>
+          <div class="mf-value">${safeVal(fam.siblingsInfo)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">💍 الحالة الاجتماعية</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">الحالة الاجتماعية</div>
+          <div class="mf-value">${safeVal(mar.maritalStatus)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">نوع الزواج</div>
+          <div class="mf-value">${safeVal(mar.marriageType)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">عدد الأولاد</div>
+          <div class="mf-value">${mar.haveChildren || "0"}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">يقبل التعدد</div>
+          <div class="mf-value">${safeVal(mar.polygamy)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">يريد الإنجاب</div>
+          <div class="mf-value">${safeVal(mar.wantChildren)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">🕌 الدين والصحة</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">مدخن</div>
+          <div class="mf-value">${boolText(rel.smoker)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">ملتحٍ</div>
+          <div class="mf-value">${boolText(rel.bearded)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">يحافظ على الصلوات الخمس</div>
+          <div class="mf-value">${boolText(rel.prayFiveTimes)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">الصلاة في المسجد</div>
+          <div class="mf-value">${safeVal(rel.prayInMosque)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">حفظ القرآن الكريم</div>
+          <div class="mf-value">${quranText(rel.quranMemorization)}</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">أمراض أو إعاقات</div>
+          <div class="mf-value">${safeVal(rel.hasDisabilityOrIllness)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">🌸 مواصفات الزوجة المطلوبة</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">العمر المطلوب</div>
+          <div class="mf-value">${br.minAge || "—"} — ${br.maxAge || "—"} سنة</div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">المؤهل المطلوب</div>
+          <div class="mf-value">${safeVal(br.education)}</div>
+        </div>
+        <div class="modal-field full">
+          <div class="mf-label">الحجاب المقبول</div>
+          <div class="mf-value">
+            <div class="hijab-tags" style="flex-wrap:wrap;gap:5px;">
+              ${(br.hijab || []).map(h => `<span class="hijab-tag" style="font-size:.8rem;padding:4px 10px">${h}</span>`).join("") || "—"}
+            </div>
+          </div>
+        </div>
+        ${br.description ? `
+        <div class="modal-field full">
+          <div class="mf-label">مواصفات أخرى</div>
+          <div class="mf-value">${br.description}</div>
+        </div>` : ""}
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">📞 معلومات التواصل</div>
+      <div class="modal-fields">
+        <div class="modal-field">
+          <div class="mf-label">WhatsApp</div>
+          <div class="mf-value">
+            ${con.whatsapp
+              ? `<a class="contact-link" href="https://wa.me/${con.whatsapp.replace(/\D/g,'')}" target="_blank">📱 ${con.whatsapp}</a>`
+              : "—"}
+          </div>
+        </div>
+        <div class="modal-field">
+          <div class="mf-label">Telegram</div>
+          <div class="mf-value">${con.telegram
+            ? `<a class="contact-link" href="https://t.me/${con.telegram.replace('@','')}" target="_blank">${con.telegram}</a>`
+            : "—"}</div>
+        </div>
+        <div class="modal-field full">
+          <div class="mf-label">Facebook</div>
+          <div class="mf-value">${safeVal(con.facebook)}</div>
+        </div>
+        ${con.about ? `
+        <div class="modal-field full">
+          <div class="mf-label">تكلم عن نفسه</div>
+          <div class="mf-value">${con.about}</div>
+        </div>` : ""}
+        ${con.additionalNotes ? `
+        <div class="modal-field full">
+          <div class="mf-label">ملاحظات إضافية</div>
+          <div class="mf-value">${con.additionalNotes}</div>
+        </div>` : ""}
+      </div>
+    </div>
+
+  `;
+
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById("modalOverlay")) closeModalDirect();
+}
+
+function closeModalDirect() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModalDirect();
+});
+
+// ============================================================
+// BOOT
+// ============================================================
+loadData();
+</script>
+</body>
+</html> 
