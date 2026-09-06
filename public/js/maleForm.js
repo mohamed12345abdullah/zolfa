@@ -282,7 +282,8 @@ function getFormData() {
             maxAge:      getNumberValue("maxAge"),
             description: getValue("brideDescription"),
             education:   getValue("brideEducation"),
-            hijab:       getHijabValues()
+            hijab:       getHijabValues(),
+            work:        getValue("brideWork")
         },
 
         contactInfo: {

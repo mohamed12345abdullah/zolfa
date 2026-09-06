@@ -87,12 +87,7 @@
                         </select>
                     </div>
 
-                    <div class="field-group full-width">
-                        <label for="photo">رابط الصورة الشخصية</label>
-                        <input type="url" id="photo" name="photo"
-                            placeholder="https://...">
-                        <span class="field-hint">اختياري — رابط صورة خاصة ترسلها للإدارة</span>
-                    </div>
+             
 
                     <div class="field-group full-width">
                         <label for="description">نبذة ووصف مختصر</label>
@@ -445,13 +440,25 @@
                         <select id="brideEducation" name="brideEducation" required>
                             <option value="">— اختر —</option>
                             <option value="بدون مؤهل">بدون مؤهل</option>
-                            <option value="متوسط">متوسط</option>
-                            <option value="فوق المتوسط">فوق المتوسط</option>
-                            <option value="جامعي">جامعي</option>
+                            <option value="ثانوية عامة">ثانوية عامة</option>
+                            <option value="دبلوم فني">دبلوم فني</option>
+                            <option value="مؤهل فوق متوسط">مؤهل فوق متوسط</option>
+                            <option value="مؤهل جامعي">مؤهل جامعي</option>
                             <option value="دراسات عليا">دراسات عليا</option>
                             <option value="غير مهم">غير مهم</option>
                         </select>
                     </div>
+
+                    <div>
+                        <label for="brideWork">العمل المطلوب <span class="required">*</span></label>
+                        <select id="brideWork" name="brideWork" required>
+                            <option value="">— اختر —</option>
+                            <option value="لا تعمل">لا تعمل</option>
+                            <option value="عاملة">عاملة</option>
+                            <option value="غير مهم">غير مهم</option>
+                        </select>
+                    </div>
+
 
                     <div class="field-group full-width">
                         <label>الحجاب المقبول <span class="required">*</span></label>

@@ -42,6 +42,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/maleForms", require("./routes/male"));
+app.use("/api/femaleForms", require("./routes/female"));
  
  
 // 404 Handler

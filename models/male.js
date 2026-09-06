@@ -215,6 +215,7 @@ const maleSchema = new mongoose.Schema({
             max: [80, 'maximum age cannot exceed 80']
         },
 
+
         description: {
             type: String,
             trim: true
@@ -225,10 +226,21 @@ const maleSchema = new mongoose.Schema({
             required: [true, 'bride education is required'],
             enum: [
                 'بدون مؤهل',
-                'متوسط',
-                'فوق المتوسط',
-                'جامعي',
+                'ثانوية عامة',
+                'دبلوم فني',
+                'مؤهل فوق متوسط',
+                'مؤهل جامعي',
                 'دراسات عليا',
+                'غير مهم'
+            ]
+        },
+
+        work: {
+            type: String,
+            required: [true, 'bride work is required'],
+            enum: [
+                'لا تعمل',
+                'عاملة',
                 'غير مهم'
             ]
         },
@@ -285,7 +297,17 @@ const maleSchema = new mongoose.Schema({
     deleted: {
         type: Boolean,
         default: false
-    }
+    },
+    status: {
+        type: String,
+        default: "pending",
+        enum: ["pending", "approved", "rejected"]
+    },
+    paid: {
+        type: Boolean,
+        default: false
+    },
+
 
 });
 const Male = mongoose.model("Male", maleSchema);
