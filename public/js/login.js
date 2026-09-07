@@ -79,14 +79,14 @@ function redirectBasedOnRole(user) {
         case 'manager':
             window.location.href = './manager-dashboard.html';
             break;
-        case 'male':
+        case 'Male':
             window.location.href = './instructor-dashboard.html';
             break;
-        case 'female':
+        case 'Female':
             window.location.href = './instructor-dashboard.html';
             break;
         case 'admin':
-            window.location.href = './admin-dashboard.html';
+            window.location.href = './reviews.html';
             break;
         default:
             window.location.href = './profile.html';

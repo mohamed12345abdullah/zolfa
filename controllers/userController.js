@@ -71,15 +71,15 @@ const showAllUsers = asyncHandler(async (req, res) => {
     let users;
     let numOfUsers = 0;
     if(status=='all'){
-        users = await User.find({},{'password':0,'authToken':0}).populate('profileRef')
+        users = await User.find({role:'user'},{'password':0,'authToken':0}).populate('profileRef')
         .limit(limit)
         .skip((page-1)*limit)
-        numOfUsers = await User.countDocuments({});
+        numOfUsers = await User.countDocuments({role:'user'});
     }else{
-        users = await User.find({status},{'password':0,'authToken':0}).populate('profileRef')
+        users = await User.find({status,role:'user'},{'password':0,'authToken':0}).populate('profileRef')
         .limit(limit)
         .skip((page-1)*limit)
-        numOfUsers = await User.countDocuments({status});
+        numOfUsers = await User.countDocuments({status,role:'user'});
     }
     // .populate('profi')
     res.status(200).json({

@@ -86,7 +86,24 @@
     </div>
 
     <script>
-
+        console.log('Index page loaded');
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            console.log('User found:', user.profileModel);
+            if(user.profileModel) {
+                console.log('User has profile ref');
+                if( user.paid ) {
+                    console.log('User has paid');
+                    window.location.href = './profile.html';
+                } else {
+                    console.log('User has not paid');
+                    window.location.href = './payment.html';
+                }
+            }
+        } else {
+            window.location.href = './login.html';
+        }
     </script>
 </body>
+</html>
 </html>
