@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>الملف الشخصي</title>
+
+    <link rel="stylesheet" href="css/profiile.css">
+</head>
+
+<body>
+
+    <header class="profile-header">
+        <div>
+            <h1>الملف الشخصي</h1>
+            <p>بيانات حسابك وملفك الشخصي</p>
+        </div>
+
+        <button onclick="logout()" class="logout-btn">
+            تسجيل الخروج
+        </button>
+    </header>
+
+
+    <main class="container">
+
+        <!-- ================= BASIC INFO ================= -->
+
+        <section class="profile-section">
+
+            <h2>البيانات الأساسية</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>الاسم</span>
+                    <strong id="name">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>تاريخ الميلاد</span>
+                    <strong id="birthDate">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>الجنسية</span>
+                    <strong id="nationality">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>الوزن</span>
+                    <strong id="weight">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>الطول</span>
+                    <strong id="height">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>لون البشرة</span>
+                    <strong id="skinColor">-</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-description">
+                <span>نبذة</span>
+                <p id="description">-</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= EDUCATION ================= -->
+
+        <section class="profile-section">
+
+            <h2>التعليم والعمل</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>المؤهل الدراسي</span>
+                    <strong id="education">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>التخصص</span>
+                    <strong id="universityMajor">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>العمل</span>
+                    <strong id="job">-</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-description">
+                <span>وصف العمل</span>
+                <p id="jobDescription">-</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= RESIDENCE ================= -->
+
+        <section class="profile-section">
+
+            <h2>السكن والإقامة</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>المحافظة / المدينة</span>
+                    <strong id="city">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>مكان الإقامة الحالي</span>
+                    <strong id="currentPlaceOfResidence">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>هل تقبل الاغتراب؟</span>
+                    <strong id="expatriate">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>نوع مسكن الزوجية</span>
+                    <strong id="maritalHome">-</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-description">
+                <span>تفاصيل مسكن الزوجية</span>
+                <p id="maritalHomeDescription">-</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= FAMILY ================= -->
+
+        <section class="profile-section">
+
+            <h2>معلومات الأسرة</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>عمل الأب</span>
+                    <strong id="fatherJob">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>عمل الأم</span>
+                    <strong id="motherJob">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>هل الوالدان منفصلان؟</span>
+                    <strong id="parentsSeparated">-</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-description">
+                <span>الإخوة</span>
+                <p id="siblingsInfo">-</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= MARITAL ================= -->
+
+        <section class="profile-section">
+
+            <h2>الحالة الاجتماعية والزواج</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>الحالة الاجتماعية</span>
+                    <strong id="maritalStatus">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>الأبناء</span>
+                    <strong id="haveChildren">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>نوع الزواج</span>
+                    <strong id="marriageType">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>رغبة الإنجاب</span>
+                    <strong id="wantChildren">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>التعدد</span>
+                    <strong id="polygamy">-</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= RELIGION ================= -->
+
+        <section class="profile-section">
+
+            <h2>الدين والصحة</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>التدخين</span>
+                    <strong id="smoker">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>اللحية</span>
+                    <strong id="bearded">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>المحافظة على الصلوات الخمس</span>
+                    <strong id="prayFiveTimes">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>الصلاة في المسجد</span>
+                    <strong id="prayInMosque">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>حفظ القرآن</span>
+                    <strong id="quranMemorization">-</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-description">
+                <span>حالة صحية أو إعاقة</span>
+                <p id="hasDisabilityOrIllness">-</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= BRIDE REQUIREMENTS ================= -->
+
+        <section class="profile-section">
+
+            <h2>مواصفات الزوجة المطلوبة</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>السن من</span>
+                    <strong id="minAge">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>السن إلى</span>
+                    <strong id="maxAge">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>المؤهل الدراسي</span>
+                    <strong id="brideEducation">-</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-item">
+                <span>الحجاب</span>
+                <strong id="hijab">-</strong>
+            </div>
+
+            <div class="profile-description">
+                <span>مواصفات إضافية</span>
+                <p id="brideDescription">-</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= CONTACT ================= -->
+
+        <section class="profile-section">
+
+            <h2>معلومات التواصل</h2>
+
+            <div class="profile-grid">
+
+                <div class="profile-item">
+                    <span>WhatsApp</span>
+                    <strong id="whatsapp">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>Telegram</span>
+                    <strong id="telegram">-</strong>
+                </div>
+
+                <div class="profile-item">
+                    <span>Facebook</span>
+                    <strong id="facebook">-</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-description">
+
+                <span>عن المستخدم</span>
+                <p id="about">-</p>
+
+            </div>
+
+            <div class="profile-description">
+
+                <span>ملاحظات إضافية</span>
+                <p id="additionalNotes">-</p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        // ============================================
+        // CHECK LOGIN
+        // ============================================
+
+        const user = localStorage.getItem("user");
+
+        if (!user) {
+
+            window.location.href = "/login.html";
+
+        }
+
+
+        // ============================================
+        // PARSE USER
+        // ============================================
+
+        const userData = JSON.parse(user);
+
+        console.log("User Data:", userData);
+
+
+        // ============================================
+        // CHECK PROFILE
+        // ============================================
+
+        if (!userData.profileModel || !userData.profileRef) {
+
+            window.location.href = "index.html";
+
+        }
+
+
+        // ============================================
+        // PROFILE
+        // ============================================
+
+        const profile = userData.profileRef;
+
+
+        // ============================================
+        // HELPER
+        // ============================================
+
+        function setText(id, value) {
+
+            const element = document.getElementById(id);
+
+            if (!element) return;
+
+            if (
+                value === undefined ||
+                value === null ||
+                value === ""
+            ) {
+
+                element.textContent = "-";
+
+                return;
+
+            }
+
+            element.textContent = value;
+
+        }
+
+
+        function booleanToArabic(value) {
+
+            if (value === true) return "نعم";
+
+            if (value === false) return "لا";
+
+            return "-";
+
+        }
+
+
+        // ============================================
+        // BASIC INFO
+        // ============================================
+
+        setText(
+            "name",
+            profile.basicInfo?.name
+        );
+
+        setText(
+            "birthDate",
+            profile.basicInfo?.birthDate
+                ? new Date(profile.basicInfo.birthDate)
+                    .toLocaleDateString("ar-EG")
+                : "-"
+        );
+
+        setText(
+            "nationality",
+            profile.basicInfo?.nationality
+        );
+
+        setText(
+            "weight",
+            profile.basicInfo?.weight
+                ? `${profile.basicInfo.weight} كجم`
+                : "-"
+        );
+
+        setText(
+            "height",
+            profile.basicInfo?.height
+                ? `${profile.basicInfo.height} سم`
+                : "-"
+        );
+
+        setText(
+            "skinColor",
+            profile.basicInfo?.skinColor
+        );
+
+        setText(
+            "description",
+            profile.basicInfo?.description
+        );
+
+
+        // ============================================
+        // EDUCATION & WORK
+        // ============================================
+
+        setText(
+            "education",
+            profile.educationAndWork?.education
+        );
+
+        setText(
+            "universityMajor",
+            profile.educationAndWork?.universityMajor
+        );
+
+        setText(
+            "job",
+            profile.educationAndWork?.job
+        );
+
+        setText(
+            "jobDescription",
+            profile.educationAndWork?.jobDescription
+        );
+
+
+        // ============================================
+        // RESIDENCE
+        // ============================================
+
+        setText(
+            "city",
+            profile.residence?.city
+        );
+
+        setText(
+            "currentPlaceOfResidence",
+            profile.residence?.currentPlaceOfResidence
+        );
+
+        setText(
+            "expatriate",
+            profile.residence?.expatriate
+        );
+
+        setText(
+            "maritalHome",
+            profile.residence?.maritalHome
+        );
+
+        setText(
+            "maritalHomeDescription",
+            profile.residence?.maritalHomeDescription
+        );
+
+
+        // ============================================
+        // FAMILY
+        // ============================================
+
+        setText(
+            "fatherJob",
+            profile.familyInfo?.fatherJob
+        );
+
+        setText(
+            "motherJob",
+            profile.familyInfo?.motherJob
+        );
+
+        setText(
+            "siblingsInfo",
+            profile.familyInfo?.siblingsInfo
+        );
+
+        setText(
+            "parentsSeparated",
+            booleanToArabic(
+                profile.familyInfo?.parentsSeparated
+            )
+        );
+
+
+        // ============================================
+        // MARITAL INFO
+        // ============================================
+
+        setText(
+            "maritalStatus",
+            profile.maritalInfo?.maritalStatus
+        );
+
+        setText(
+            "haveChildren",
+            profile.maritalInfo?.haveChildren
+        );
+
+        setText(
+            "marriageType",
+            profile.maritalInfo?.marriageType
+        );
+
+        setText(
+            "polygamy",
+            profile.maritalInfo?.polygamy
+        );
+
+        setText(
+            "wantChildren",
+            profile.maritalInfo?.wantChildren
+        );
+
+
+        // ============================================
+        // RELIGION & HEALTH
+        // ============================================
+
+        setText(
+            "smoker",
+            booleanToArabic(
+                profile.religionAndHealth?.smoker
+            )
+        );
+
+        setText(
+            "bearded",
+            booleanToArabic(
+                profile.religionAndHealth?.bearded
+            )
+        );
+
+        setText(
+            "prayFiveTimes",
+            booleanToArabic(
+                profile.religionAndHealth?.prayFiveTimes
+            )
+        );
+
+        setText(
+            "prayInMosque",
+            profile.religionAndHealth?.prayInMosque
+        );
+
+        setText(
+            "quranMemorization",
+            profile.religionAndHealth?.quranMemorization !== undefined
+                ? `${profile.religionAndHealth.quranMemorization} جزء`
+                : "-"
+        );
+
+        setText(
+            "hasDisabilityOrIllness",
+            profile.religionAndHealth?.hasDisabilityOrIllness
+        );
+
+
+        // ============================================
+        // BRIDE REQUIREMENTS
+        // ============================================
+
+        setText(
+            "minAge",
+            profile.brideRequirements?.minAge
+                ? `${profile.brideRequirements.minAge} سنة`
+                : "-"
+        );
+
+        setText(
+            "maxAge",
+            profile.brideRequirements?.maxAge
+                ? `${profile.brideRequirements.maxAge} سنة`
+                : "-"
+        );
+
+        setText(
+            "brideEducation",
+            profile.brideRequirements?.education
+        );
+
+        // hijab is an array
+        setText(
+            "hijab",
+            Array.isArray(profile.brideRequirements?.hijab)
+                ? profile.brideRequirements.hijab.join("، ")
+                : profile.brideRequirements?.hijab
+        );
+
+        setText(
+            "brideDescription",
+            profile.brideRequirements?.description
+        );
+
+
+        // ============================================
+        // CONTACT
+        // ============================================
+
+        setText(
+            "whatsapp",
+            profile.contactInfo?.whatsapp
+        );
+
+        setText(
+            "telegram",
+            profile.contactInfo?.telegram
+        );
+
+        setText(
+            "facebook",
+            profile.contactInfo?.facebook
+        );
+
+        setText(
+            "about",
+            profile.contactInfo?.about
+        );
+
+        setText(
+            "additionalNotes",
+            profile.contactInfo?.additionalNotes
+        );
+
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+
+        function logout() {
+
+            localStorage.removeItem("user");
+
+            window.location.href = "/login.html";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+

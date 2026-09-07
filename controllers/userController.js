@@ -66,17 +66,26 @@ const getViews = asyncHandler(async (req, res) => {
 
 
 const showAllUsers = asyncHandler(async (req, res) => {
-    const { role } = req.params;
+    const { status, page } = req.params;
+    const limit=2;
     let users;
-    if(role=='all'){
-        users = await User.find({})
+    let numOfUsers = 0;
+    if(status=='all'){
+        users = await User.find({},{'password':0,'authToken':0}).populate('profileRef')
+        .limit(limit)
+        .skip((page-1)*limit)
+        numOfUsers = await User.countDocuments({});
     }else{
-        users = await User.find({role}).populate('profileRef')
+        users = await User.find({status},{'password':0,'authToken':0}).populate('profileRef')
+        .limit(limit)
+        .skip((page-1)*limit)
+        numOfUsers = await User.countDocuments({status});
     }
     // .populate('profi')
     res.status(200).json({
         success: true,
-        users
+        users,
+        numberOfUsers: numOfUsers
     });
 });
 
@@ -111,7 +120,34 @@ const deleteUser = asyncHandler(async (req, res) => {
     });
 })
 
+const getUserById = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findById(id).populate('profileRef');
+    res.status(200).json({
+        success: true,
+        user
+    });
+})
 
+const updatePaid = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { paid } = req.body;
+    const user = await User.findByIdAndUpdate(id, {paid});
+    res.status(200).json({
+        success: true,
+        user
+    });
+})
+
+const updateStatus = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const user = await User.findByIdAndUpdate(id, {status});
+    res.status(200).json({
+        success: true,
+        user
+    });
+})
 
 
 module.exports = {
@@ -119,5 +155,8 @@ module.exports = {
     getViews,
     showAllUsers,
     // uploadFileToGoogleDrive
-    deleteUser
+    deleteUser,
+    getUserById,
+    updatePaid,
+    updateStatus
 }

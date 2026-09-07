@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
+        const phone = document.getElementById('phone').value.trim();
         const name = nameInput.value.trim();
 
         // التحقق من صحة البيانات
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password, name })
+                body: JSON.stringify({ email, password, name, phone })
             });
 
             const data = await response.json();

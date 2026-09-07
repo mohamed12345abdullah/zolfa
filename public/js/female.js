@@ -512,7 +512,10 @@ form.addEventListener("submit", async function (e) {
     try {
         const res = await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
             body: JSON.stringify(data)
         });
         const result = await res.json();
@@ -527,7 +530,14 @@ form.addEventListener("submit", async function (e) {
         handleMaritalStatus(); handleEducation(); handleIsWorking();
         showStep(1);
         window.scrollTo({ top: 0, behavior: "smooth" });
-
+        setTimeout(() => {
+        const user = localStorage.getItem('user');
+        if (user) {
+            if(user.paid != 'true') {
+                window.location.href = './payment.html';
+            }
+        }
+        }, 1000);
     } catch (err) {
         console.error(err);
         messageEl.textContent = err.message || "حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.";

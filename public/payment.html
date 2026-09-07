@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام التسجيل والدفع</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7f6;
+            color: #222;
+            min-height: 100vh;
+        }
+
+        .payment-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 15px;
+        }
+
+        .payment-card {
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .payment-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .payment-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .payment-header p {
+            color: #777;
+            font-size: 15px;
+        }
+
+        .price-box {
+            background: #f0faf5;
+            border: 1px solid #d5eee1;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .price-box span {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .price-box strong {
+            font-size: 38px;
+            color: #198754;
+        }
+
+        .price-box small {
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        .message {
+            margin-bottom: 25px;
+        }
+
+        .message h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .message p {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+
+        .user-info > span {
+            display: block;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .user-id {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .user-id strong {
+            flex: 1;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            padding: 12px;
+            font-size: 14px;
+            direction: ltr;
+            text-align: left;
+            overflow-wrap: anywhere;
+        }
+
+        .user-id button {
+            border: none;
+            background: #198754;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .user-id button:hover {
+            background: #146c43;
+        }
+
+        .user-info small {
+            display: block;
+            color: #777;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .instructions {
+            margin-bottom: 25px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .instructions ol {
+            padding-right: 25px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .contact-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .contact-btn {
+            text-decoration: none;
+            padding: 14px;
+            border-radius: 9px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .contact-btn span {
+            margin-left: 5px;
+        }
+
+        .contact-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .whatsapp { background: #25D366; }
+        .telegram { background: #229ED9; }
+
+        .back-btn {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .back-btn:hover {
+            background: #f5f5f5;
+        }
+
+        /* Toast UI Component */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 50%;
+            transform: translateX(50%) translateY(100px);
+            background-color: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(50%) translateY(0);
+        }
+
+        .toast.success { background-color: #198754; }
+        .toast.error { background-color: #dc3545; }
+
+        @media (max-width: 600px) {
+            .payment-card { padding: 22px; }
+            .payment-header h1 { font-size: 24px; }
+            .price-box strong { font-size: 32px; }
+            .contact-buttons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="payment-container">
+        <div class="payment-card">
+
+            <div class="payment-header">
+                <div class="payment-icon">💳</div>
+                <h1>إتمام التسجيل</h1>
+                <p>خطوة واحدة فقط لتفعيل حسابك والبدء في الاستخدام</p>
+            </div>
+
+            <div class="price-box">
+                <span>رسوم التسجيل</span>
+                <strong>50 <small>جنيه مصري</small></strong>
+            </div>
+
+            <div class="message">
+                <h2>تأكيد وسداد الاشتراك</h2>
+                <p>يرجى التواصل مع خدمة العملاء لإنهاء عملية السداد وتفعيل الملف الشخصي الخاص بك.</p>
+            </div>
+
+            <div class="user-info">
+                <span>رقم التعريف الخاص بك (ID)</span>
+                <div class="user-id">
+                    <strong id="userId">-</strong>
+                    <button id="copyBtn" onclick="copyUserId()">نسخ الرقم</button>
+                </div>
+                <small>قم بنسخ هذا الرقم وإرساله لنا عند التواصل لإثبات هويتك وتأكيد تفعيل الحساب بسرعة.</small>
+            </div>
+
+            <div class="instructions">
+                <h3>خطوات التفعيل:</h3>
+                <ol>
+                    <li>سداد رسوم التسجيل (<strong>50 جنيه</strong>).</li>
+                    <li>انسخ <strong>رقم التعريف (ID)</strong> الخاص بك الظاهر بالأعلى.</li>
+                    <li>تواصل معنا عبر <strong>WhatsApp</strong> أو <strong>Telegram</strong> وانسخ الرقم في الرسالة لتأكيد التحويل.</li>
+                    <li>سيقوم فريق الدعم بمراجعة وتفعيل الحساب فوراً.</li>
+                </ol>
+            </div>
+
+            <div class="contact-buttons">
+                <a href="https://wa.me/2010XXXXXXXXX" target="_blank" class="contact-btn whatsapp">
+                    <span>💬</span> التواصل عبر WhatsApp
+                </a>
+                <a href="https://t.me/YourTelegramUsername" target="_blank" class="contact-btn telegram">
+                    <span>✈️</span> التواصل عبر Telegram
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast UI for Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const user = localStorage.getItem("user");
+
+        if (!user) {
+            window.location.href = "/login.html";
+        }
+
+        const userData = JSON.parse(user);
+        document.getElementById("userId").textContent = userData._id || "-";
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        function copyUserId() {
+            const userId = userData._id;
+            if (!userId) {
+                showToast("عذراً، تعذر العثور على رقم التعريف", "error");
+                return;
+            }
+
+            navigator.clipboard.writeText(userId)
+                .then(() => {
+                    showToast("تم نسخ رقم التعريف بنجاح 🎉", "success");
+                })
+                .catch(() => {
+                    showToast("تعذر النسخ تلقائياً، يرجى نسخه يدوياً", "error");
+                });
+        }
+    </script>
+
+</body>
+</html>

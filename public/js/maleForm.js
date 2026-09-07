@@ -6,7 +6,7 @@
 
 const API_URL = "../../api/maleForms/addMaleForm";
 
-// Example: "https://wsal-kappa.vercel.app/api/maleForms/addMaleForm"
+// Example: "https://zolfa.vercel.app/api/maleForms/addMaleForm"
 // Replace the value above with your actual endpoint.
 
 // ============================================================
@@ -560,7 +560,10 @@ form.addEventListener("submit", async function (event) {
     try {
         const response = await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
             body: JSON.stringify(data)
         });
 
@@ -583,9 +586,17 @@ form.addEventListener("submit", async function (event) {
         handleEducation();
         hijabCheckboxes.forEach(cb => { cb.checked = false; });
         showStep(1);
+                // Check if user is already logged in
 
         window.scrollTo({ top: 0, behavior: "smooth" });
-
+        setTimeout(() => {
+        const user = localStorage.getItem('user');
+        if (user) {
+            if(user.paid != 'true') {
+                window.location.href = './payment.html';
+            }
+        }
+        }, 1000);
     } catch (error) {
         console.error(error);
         messageEl.textContent = error.message || "حدث خطأ أثناء إرسال البيانات. يرجى المحاولة مرة أخرى.";

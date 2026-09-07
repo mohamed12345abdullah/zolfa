@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة الإدارة — مراجعة الأعضاء</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --surface:   #181b24;
+      --surface2:  #1f2332;
+      --border:    #2a2f42;
+      --accent:    #6c63ff;
+      --accent2:   #a78bfa;
+      --green:     #22c55e;
+      --red:       #ef4444;
+      --yellow:    #f59e0b;
+      --text:      #e8eaf0;
+      --muted:     #8890a8;
+      --female:    #ec4899;
+      --male:      #3b82f6;
+      --radius:    10px;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: 0.5px;
+    }
+    .logo span { color: var(--muted); font-weight: 400; font-size: 13px; margin-right: 10px; }
+
+    /* ── TOASTS ── */
+    #toast-container {
+      position: fixed;
+      top: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .toast {
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      animation: fadeIn .2s ease;
+      box-shadow: 0 4px 20px #0006;
+    }
+    .toast.success { background: #166534; color: #bbf7d0; border: 1px solid #22c55e44; }
+    .toast.error   { background: #7f1d1d; color: #fecaca; border: 1px solid #ef444444; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── MAIN ── */
+    main { padding: 28px; max-width: 1400px; margin: 0 auto; }
+
+    /* ── STAT STRIP ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-card .num { font-size: 28px; font-weight: 700; line-height: 1.1; }
+    .stat-card .lbl { font-size: 12px; color: var(--muted); }
+    .stat-card.all   .num { color: var(--accent2); }
+    .stat-card.pend  .num { color: var(--yellow); }
+    .stat-card.appr  .num { color: var(--green); }
+    .stat-card.rej   .num { color: var(--red); }
+    .stat-card.paid  .num { color: #34d399; }
+
+    /* ── FILTERS ── */
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-group { display: flex; align-items: center; gap: 8px; }
+    .filter-group label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    select, input[type="text"] {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    select:focus, input[type="text"]:focus { border-color: var(--accent); }
+
+    input[type="text"] { min-width: 200px; }
+
+    /* ── LOADING ── */
+    #loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── EMPTY ── */
+    #empty {
+      text-align: center;
+      padding: 60px;
+      color: var(--muted);
+      display: none;
+    }
+
+    /* ── TABLE WRAPPER ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: var(--surface2);
+    }
+    th {
+      padding: 12px 16px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #ffffff06; }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .badge.pending  { background: #78350f44; color: var(--yellow); border: 1px solid #f59e0b44; }
+    .badge.approved { background: #14532d44; color: var(--green);  border: 1px solid #22c55e44; }
+    .badge.rejected { background: #7f1d1d44; color: var(--red);    border: 1px solid #ef444444; }
+    .badge.male   { background: #1e3a5f44; color: var(--male);   border: 1px solid #3b82f644; }
+    .badge.female { background: #4a044e44; color: var(--female); border: 1px solid #ec489944; }
+
+    /* ── AVATAR ── */
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .avatar.male   { background: #1e3a5f; color: var(--male); }
+    .avatar.female { background: #4a044e; color: var(--female); }
+
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .user-name  { font-weight: 600; font-size: 13.5px; }
+    .user-email { font-size: 11.5px; color: var(--muted); direction: ltr; text-align: right; }
+
+    /* ── PAID TOGGLE ── */
+    .toggle {
+      position: relative;
+      width: 42px; height: 22px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      background: var(--border);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--muted);
+      top: 3px; right: 3px;
+      transition: transform .2s, background .2s;
+    }
+    .toggle input:checked + .toggle-track { background: #166534; }
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(-20px);
+      background: var(--green);
+    }
+
+    /* ── ACTION BUTTONS ── */
+    .btn {
+      border: none;
+      border-radius: 7px;
+      padding: 6px 14px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn:active { transform: scale(.96); }
+    .btn:disabled { opacity: .35; cursor: not-allowed; }
+    .btn.approve  { background: #166534; color: #bbf7d0; }
+    .btn.reject   { background: #7f1d1d; color: #fecaca; }
+    .btn.details  { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+
+    .actions { display: flex; gap: 6px; align-items: center; }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+    .page-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 7px 14px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .page-btn:hover { border-color: var(--accent); color: var(--accent2); }
+    .page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .page-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .page-info { font-size: 12.5px; color: var(--muted); padding: 0 6px; }
+
+    /* ── ID SEARCH BANNER ── */
+    .id-search-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: #1e2a4a;
+      border: 1px solid #6c63ff55;
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .id-search-banner.show { display: flex; }
+    .id-search-banner .btn { flex-shrink: 0; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #00000088;
+      z-index: 200;
+      overflow-y: auto;
+      padding: 30px 16px;
+    }
+    .modal-overlay.open { display: flex; justify-content: center; align-items: flex-start; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 640px;
+      padding: 28px;
+      position: relative;
+      margin: auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .modal-sub {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin: 20px 0 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+    }
+    .info-row { display: flex; flex-direction: column; gap: 2px; }
+    .info-row .key { font-size: 11px; color: var(--muted); }
+    .info-row .val { font-size: 13px; font-weight: 500; }
+
+    @media (max-width: 700px) {
+      main { padding: 14px; }
+      .info-grid { grid-template-columns: 1fr; }
+      th, td { padding: 10px 10px; }
+      .btn { padding: 5px 10px; font-size: 11.5px; }
+      .id-search-banner { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">لوحة الإدارة <span>مراجعة وإدارة الأعضاء</span></div>
+  <div style="font-size:12px;color:var(--muted)" id="header-count"></div>
+</header>
+
+<div id="toast-container"></div>
+
+<main>
+  <!-- Stats -->
+  <div class="stats" id="stats">
+    <div class="stat-card all"><div class="num" id="s-all">—</div><div class="lbl">إجمالي الأعضاء</div></div>
+    <div class="stat-card pend"><div class="num" id="s-pend">—</div><div class="lbl">في الانتظار</div></div>
+    <div class="stat-card appr"><div class="num" id="s-appr">—</div><div class="lbl">معتمدون</div></div>
+    <div class="stat-card rej"><div class="num" id="s-rej">—</div><div class="lbl">مرفوضون</div></div>
+    <div class="stat-card paid"><div class="num" id="s-paid">—</div><div class="lbl">دفعوا الاشتراك</div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-group">
+      <label>الحالة</label>
+      <select id="filter-status">
+        <option value="all">الكل</option>
+        <option value="pending">في الانتظار</option>
+        <option value="approved">معتمد</option>
+        <option value="rejected">مرفوض</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>الدفع</label>
+      <select id="filter-paid">
+        <option value="all">الكل</option>
+        <option value="true">دفع</option>
+        <option value="false">لم يدفع</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>النوع</label>
+      <select id="filter-gender">
+        <option value="all">الكل</option>
+        <option value="Male">ذكر</option>
+        <option value="Female">أنثى</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>بحث بالـ ID</label>
+      <input type="text" id="id-search" placeholder="أدخل الـ ID..." style="min-width:180px" />
+      <button class="btn details" id="id-search-btn">🔍 بحث</button>
+    </div>
+    <div class="filter-group" style="margin-right:auto">
+      <input type="text" id="search" placeholder="بحث بالاسم أو البريد..." />
+    </div>
+    <button class="btn details" onclick="loadData(1)">↻ تحديث</button>
+  </div>
+
+  <!-- ID search mode banner -->
+  <div class="id-search-banner" id="id-search-banner">
+    <span id="id-search-banner-text"></span>
+    <button class="btn details" onclick="clearIdSearch()">✕ إلغاء البحث والعودة للقائمة</button>
+  </div>
+
+  <!-- Table -->
+  <div id="loading">
+    <div class="spinner"></div>
+    جارٍ تحميل البيانات...
+  </div>
+  <div id="empty">
+    <div style="font-size:36px;margin-bottom:10px">📭</div>
+    لا يوجد أعضاء مطابقون للفلاتر المحددة.
+  </div>
+
+  <div class="table-wrap" id="table-wrap" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th>العضو</th>
+          <th>النوع</th>
+          <th>الهاتف</th>
+          <th>الحالة</th>
+          <th>الدفع</th>
+          <th>تاريخ التسجيل</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+  const BASE = 'http://localhost:3000/api';
+  let currentPage = 1;
+  let totalPages = 1;
+  let perPage = null;           // detected dynamically from the first real page load
+  let allUsers = [];
+  let totalCount = 0;
+  let statsCache = { all: 0, pending: 0, approved: 0, rejected: 0, paid: 0 };
+  let idSearchActive = false;   // true while showing a single user found by ID
+
+  /* ── TOAST ── */
+  function toast(msg, type = 'success') {
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  /* ── FETCH DATA (paged list) ── */
+  async function loadData(page = 1) {
+    idSearchActive = false;
+    document.getElementById('id-search-banner').classList.remove('show');
+    currentPage = page;
+    const status = document.getElementById('filter-status').value;
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${BASE}/users/${status}/${page}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data.success) throw new Error('API returned failure');
+
+      allUsers = data.users || [];
+      totalCount = data.numberOfUsers ?? allUsers.length;
+
+      // Detect page size from the actual response instead of assuming a fixed
+      // number — this is what was breaking pagination when the backend's
+      // page size didn't match the hardcoded value.
+      if (page === 1 && allUsers.length > 0) {
+        perPage = allUsers.length;
+      }
+      totalPages = perPage ? Math.max(1, Math.ceil(totalCount / perPage)) : 1;
+      // Safety net: if the math says there should be more pages but this
+      // page came back short, trust what the server actually returned.
+      if (allUsers.length < (perPage || allUsers.length) && page >= totalPages) {
+        totalPages = page;
+      }
+
+      // update stats on first load or "all" filter
+      if (status === 'all') {
+        statsCache.all = totalCount;
+        statsCache.pending  = allUsers.filter(u => u.status === 'pending').length;
+        statsCache.approved = allUsers.filter(u => u.status === 'approved').length;
+        statsCache.rejected = allUsers.filter(u => u.status === 'rejected').length;
+        statsCache.paid     = allUsers.filter(u => u.paid === true).length;
+      }
+      updateStats();
+      renderTable();
+      renderPagination();
+    } catch (err) {
+      console.error(err);
+      toast('فشل تحميل البيانات: ' + err.message, 'error');
+      setLoading(false);
+    }
+  }
+
+  /* ── SEARCH BY ID ── */
+  async function searchById() {
+    const id = document.getElementById('id-search').value.trim();
+    if (!id) {
+      toast('من فضلك أدخل الـ ID', 'error');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE}/users/${id}`);
+      if (res.status === 404) throw new Error('لا يوجد عضو بهذا الـ ID');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || 'فشل البحث');
+
+      const user = data.user || data.data || data.users;
+      if (!user || (Array.isArray(user) && !user.length)) {
+        throw new Error('لا يوجد عضو بهذا الـ ID');
+      }
+
+      idSearchActive = true;
+      allUsers = Array.isArray(user) ? user : [user];
+      totalCount = allUsers.length;
+      currentPage = 1;
+      totalPages = 1;
+
+      const banner = document.getElementById('id-search-banner');
+      document.getElementById('id-search-banner-text').textContent =
+        `🔍 نتيجة البحث بالـ ID: ${id} — عضو واحد`;
+      banner.classList.add('show');
+
+      renderTable();
+      renderPagination();
+      toast('تم العثور على العضو ✓');
+    } catch (err) {
+      toast('خطأ: ' + err.message, 'error');
+      setLoading(false);
+      document.getElementById('table-wrap').style.display = 'none';
+      document.getElementById('empty').style.display = 'block';
+    }
+  }
+
+  function clearIdSearch() {
+    document.getElementById('id-search').value = '';
+    document.getElementById('id-search-banner').classList.remove('show');
+    loadData(1);
+  }
+
+  function setLoading(on) {
+    document.getElementById('loading').style.display = on ? 'block' : 'none';
+    document.getElementById('table-wrap').style.display = on ? 'none' : '';
+    document.getElementById('empty').style.display = 'none';
+  }
+
+  /* ── STATS ── */
+  function updateStats() {
+    document.getElementById('s-all').textContent   = statsCache.all;
+    document.getElementById('s-pend').textContent  = statsCache.pending;
+    document.getElementById('s-appr').textContent  = statsCache.approved;
+    document.getElementById('s-rej').textContent   = statsCache.rejected;
+    document.getElementById('s-paid').textContent  = statsCache.paid;
+  }
+
+  /* ── FILTER + RENDER ── */
+  function renderTable() {
+    setLoading(false);
+    const paidF   = document.getElementById('filter-paid').value;
+    const genderF = document.getElementById('filter-gender').value;
+    const search  = document.getElementById('search').value.trim().toLowerCase();
+
+    let users = allUsers.filter(u => {
+      if (paidF === 'true'  && u.paid !== true)  return false;
+      if (paidF === 'false' && u.paid !== false)  return false;
+      if (genderF !== 'all' && u.profileModel !== genderF) return false;
+      if (search) {
+        const hay = ((u.name||'') + (u.email||'')).toLowerCase();
+        if (!hay.includes(search)) return false;
+      }
+      return true;
+    });
+
+    document.getElementById('header-count').textContent = `${users.length} عضو معروض`;
+
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+
+    if (!users.length) {
+      document.getElementById('table-wrap').style.display = 'none';
+      document.getElementById('empty').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('table-wrap').style.display = '';
+    document.getElementById('empty').style.display = 'none';
+
+    users.forEach(u => {
+      const isMale  = u.profileModel === 'Male';
+      const letter  = (u.name || '؟')[0].toUpperCase();
+      const date    = new Date(u.createdAt).toLocaleDateString('ar-EG', { year:'numeric', month:'short', day:'numeric' });
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div class="user-cell">
+            <div class="avatar ${isMale ? 'male' : 'female'}">${letter}</div>
+            <div>
+              <div class="user-name">${u.name || '—'}</div>
+              <div class="user-email">${u.email}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge ${isMale ? 'male' : 'female'}">${isMale ? '♂ ذكر' : '♀ أنثى'}</span></td>
+        <td style="direction:ltr;text-align:right;color:var(--muted)">${u.phone || '—'}</td>
+        <td><span class="badge ${u.status}" id="status-badge-${u._id}">${statusLabel(u.status)}</span></td>
+        <td>
+          <label class="toggle" title="${u.paid ? 'مدفوع' : 'غير مدفوع'}">
+            <input type="checkbox" ${u.paid ? 'checked' : ''} onchange="updatePaid('${u._id}', this)" />
+            <div class="toggle-track"></div>
+          </label>
+        </td>
+        <td style="color:var(--muted);font-size:12px">${date}</td>
+        <td>
+          <div class="actions">
+            ${u.status !== 'approved' ? `<button class="btn approve" onclick="updateStatus('${u._id}','approved',this)">✓ قبول</button>` : ''}
+            ${u.status !== 'rejected' ? `<button class="btn reject"  onclick="updateStatus('${u._id}','rejected',this)">✗ رفض</button>`  : ''}
+            <button class="btn details" onclick="showDetails('${u._id}')">تفاصيل</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function statusLabel(s) {
+    return { pending:'⏳ انتظار', approved:'✓ معتمد', rejected:'✗ مرفوض' }[s] || s;
+  }
+
+  /* ── UPDATE STATUS ── */
+  async function updateStatus(id, status, btn) {
+    btn.disabled = true;
+    try {
+      const res = await fetch(`${BASE}/users/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'فشل التحديث');
+
+      // update local cache
+      const u = allUsers.find(x => x._id === id);
+      if (u) {
+        const old = u.status;
+        u.status = status;
+        if (old !== status && !idSearchActive) {
+          if (old === 'pending')  statsCache.pending--;
+          if (old === 'approved') statsCache.approved--;
+          if (old === 'rejected') statsCache.rejected--;
+          if (status === 'pending')  statsCache.pending++;
+          if (status === 'approved') statsCache.approved++;
+          if (status === 'rejected') statsCache.rejected++;
+          updateStats();
+        }
+      }
+
+      toast(`تم ${status === 'approved' ? 'قبول' : 'رفض'} العضو بنجاح ✓`);
+      renderTable();
+    } catch (err) {
+      toast('خطأ: ' + err.message, 'error');
+      btn.disabled = false;
+    }
+  }
+
+  /* ── UPDATE PAID ── */
+  async function updatePaid(id, checkbox) {
+    const paid = checkbox.checked;
+    checkbox.disabled = true;
+    try {
+      const res = await fetch(`${BASE}/users/${id}/paid`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paid })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'فشل التحديث');
+
+      const u = allUsers.find(x => x._id === id);
+      if (u) {
+        const was = u.paid;
+        u.paid = paid;
+        if (was !== paid && !idSearchActive) {
+          statsCache.paid += paid ? 1 : -1;
+          updateStats();
+        }
+      }
+
+      toast(`تم تحديث حالة الدفع إلى: ${paid ? 'مدفوع ✓' : 'غير مدفوع'}`);
+    } catch (err) {
+      checkbox.checked = !paid; // revert
+      toast('خطأ: ' + err.message, 'error');
+    } finally {
+      checkbox.disabled = false;
+    }
+  }
+
+  /* ── PAGINATION ── */
+  function renderPagination() {
+    const pg = document.getElementById('pagination');
+    pg.innerHTML = '';
+
+    // No pages to page through in ID-search mode.
+    if (idSearchActive) return;
+
+    if (totalPages <= 1) {
+      // Still show a small info line so it's clear pagination isn't "missing",
+      // there's just one page of results.
+      const info = document.createElement('span');
+      info.className = 'page-info';
+      info.textContent = `صفحة 1 من 1 (${totalCount} عضو)`;
+      pg.appendChild(info);
+      return;
+    }
+
+    const prev = document.createElement('button');
+    prev.className = 'page-btn';
+    prev.textContent = '→ السابق';
+    prev.disabled = currentPage <= 1;
+    prev.onclick = () => loadData(currentPage - 1);
+    pg.appendChild(prev);
+
+    // Windowed page numbers around the current page instead of always 1..7,
+    // so the current page is reachable even deep into a large list.
+    const windowSize = 7;
+    let start = Math.max(1, currentPage - Math.floor(windowSize / 2));
+    let end = Math.min(totalPages, start + windowSize - 1);
+    start = Math.max(1, end - windowSize + 1);
+
+    if (start > 1) {
+      pg.appendChild(makePageBtn(1));
+      if (start > 2) pg.appendChild(makeEllipsis());
+    }
+    for (let i = start; i <= end; i++) pg.appendChild(makePageBtn(i));
+    if (end < totalPages) {
+      if (end < totalPages - 1) pg.appendChild(makeEllipsis());
+      pg.appendChild(makePageBtn(totalPages));
+    }
+
+    const next = document.createElement('button');
+    next.className = 'page-btn';
+    next.textContent = '← التالي';
+    next.disabled = currentPage >= totalPages;
+    next.onclick = () => loadData(currentPage + 1);
+    pg.appendChild(next);
+
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    info.textContent = `صفحة ${currentPage} من ${totalPages}`;
+    pg.appendChild(info);
+  }
+
+  function makePageBtn(i) {
+    const b = document.createElement('button');
+    b.className = `page-btn${i === currentPage ? ' active' : ''}`;
+    b.textContent = i;
+    b.onclick = () => loadData(i);
+    return b;
+  }
+  function makeEllipsis() {
+    const s = document.createElement('span');
+    s.className = 'page-info';
+    s.textContent = '…';
+    return s;
+  }
+
+  /* ── DETAIL MODAL ── */
+  function showDetails(id) {
+    const u = allUsers.find(x => x._id === id);
+    if (!u) return;
+    const p = u.profileRef;
+    const isMale = u.profileModel === 'Male';
+
+    const fmt = (v) => v ?? '—';
+    const date = (d) => d ? new Date(d).toLocaleDateString('ar-EG') : '—';
+
+    let html = `
+      <h2>${fmt(p?.basicInfo?.name || u.name)}</h2>
+      <div class="modal-sub">${u.email} &nbsp;|&nbsp; ${u.phone} &nbsp;|&nbsp;
+        <span class="badge ${isMale?'male':'female'}">${isMale?'ذكر':'أنثى'}</span>
+        &nbsp;<span class="badge ${u.status}">${statusLabel(u.status)}</span>
+      </div>`;
+
+    if (p?.basicInfo) {
+      html += `<div class="section-title">المعلومات الأساسية</div>
+      <div class="info-grid">
+        <div class="info-row"><span class="key">الاسم</span><span class="val">${fmt(p.basicInfo.name)}</span></div>
+        <div class="info-row"><span class="key">تاريخ الميلاد</span><span class="val">${date(p.basicInfo.birthDate)}</span></div>
+        <div class="info-row"><span class="key">الجنسية</span><span class="val">${fmt(p.basicInfo.nationality)}</span></div>
+        <div class="info-row"><span class="key">الوزن / الطول</span><span class="val">${fmt(p.basicInfo.weight)} كغ / ${fmt(p.basicInfo.height)} سم</span></div>
+        <div class="info-row"><span class="key">لون البشرة</span><span class="val">${fmt(p.basicInfo.skinColor)}</span></div>
+        ${p.hijab ? `<div class="info-row"><span class="key">الحجاب</span><span class="val">${fmt(p.hijab)}</span></div>` : ''}
+        <div class="info-row" style="grid-column:1/-1"><span class="key">الوصف</span><span class="val">${fmt(p.basicInfo.description)}</span></div>
+      </div>`;
+    }
+
+    if (p?.educationAndWork) {
+      const e = p.educationAndWork;
+      html += `<div class="section-title">التعليم والعمل</div>
+      <div class="info-grid">
+        <div class="info-row"><span class="key">المؤهل</span><span class="val">${fmt(e.education)}</span></div>
+        ${e.universityMajor ? `<div class="info-row"><span class="key">التخصص</span><span class="val">${e.universityMajor}</span></div>` : ''}
+        ${e.job || e.jobDescription ? `<div class="info-row"><span class="key">الوظيفة</span><span class="val">${fmt(e.job || e.jobDescription)}</span></div>` : ''}
+        ${e.isWorking !== undefined ? `<div class="info-row"><span class="key">يعمل؟</span><span class="val">${e.isWorking ? 'نعم' : 'لا'}</span></div>` : ''}
+        ${e.acceptLeaveWorkIfHusbandAsks ? `<div class="info-row"><span class="key">قبول ترك العمل</span><span class="val">${e.acceptLeaveWorkIfHusbandAsks}</span></div>` : ''}
+      </div>`;
+    }
+
+    if (p?.residence) {
+      const r = p.residence;
+      html += `<div class="section-title">محل الإقامة</div>
+      <div class="info-grid">
+        <div class="info-row"><span class="key">المدينة</span><span class="val">${fmt(r.city)}</span></div>
+        <div class="info-row"><span class="key">مكان الإقامة</span><span class="val">${fmt(r.currentPlaceOfResidence)}</span></div>
+        <div class="info-row"><span class="key">مغترب؟</span><span class="val">${fmt(r.expatriate)}</span></div>
+        ${r.maritalHome ? `<div class="info-row"><span class="key">مسكن الزوجية</span><span class="val">${r.maritalHome}</span></div>` : ''}
+      </div>`;
+    }
+
+    if (p?.maritalInfo) {
+      const m = p.maritalInfo;
+      html += `<div class="section-title">الحالة الاجتماعية</div>
+      <div class="info-grid">
+        <div class="info-row"><span class="key">الحالة</span><span class="val">${fmt(m.maritalStatus)}</span></div>
+        <div class="info-row"><span class="key">نوع الزواج</span><span class="val">${fmt(m.marriageType)}</span></div>
+        <div class="info-row"><span class="key">الأطفال</span><span class="val">${fmt(m.haveChildren)}</span></div>
+        <div class="info-row"><span class="key">يريد أطفال؟</span><span class="val">${fmt(m.wantChildren)}</span></div>
+        ${m.polygamy !== undefined ? `<div class="info-row"><span class="key">التعدد</span><span class="val">${m.polygamy}</span></div>` : ''}
+        ${m.acceptPolygamy !== undefined ? `<div class="info-row"><span class="key">قبول التعدد</span><span class="val">${m.acceptPolygamy}</span></div>` : ''}
+      </div>`;
+    }
+
+    if (p?.religionAndHealth) {
+      const rh = p.religionAndHealth;
+      html += `<div class="section-title">الدين والصحة</div>
+      <div class="info-grid">
+        <div class="info-row"><span class="key">يصلي الفرائض</span><span class="val">${rh.prayFiveTimes ? 'نعم' : 'لا'}</span></div>
+        <div class="info-row"><span class="key">حفظ القرآن (جزءاً)</span><span class="val">${fmt(rh.quranMemorization)}</span></div>
+        ${rh.bearded !== undefined ? `<div class="info-row"><span class="key">ملتحي</span><span class="val">${rh.bearded ? 'نعم' : 'لا'}</span></div>` : ''}
+        ${rh.smoker !== undefined ? `<div class="info-row"><span class="key">مدخن</span><span class="val">${rh.smoker ? 'نعم' : 'لا'}</span></div>` : ''}
+        ${rh.prayInMosque ? `<div class="info-row"><span class="key">صلاة المسجد</span><span class="val">${rh.prayInMosque}</span></div>` : ''}
+        <div class="info-row"><span class="key">إعاقة / مرض</span><span class="val">${fmt(rh.hasDisabilityOrIllness)}</span></div>
+      </div>`;
+    }
+
+    // Requirements section
+    const req = isMale ? p?.brideRequirements : p?.groomRequirements;
+    if (req) {
+      const reqTitle = isMale ? 'متطلبات العروسة' : 'متطلبات العريس';
+      html += `<div class="section-title">${reqTitle}</div>
+      <div class="info-grid">
+        <div class="info-row"><span class="key">العمر</span><span class="val">${fmt(req.minAge)} — ${fmt(req.maxAge)} سنة</span></div>
+        ${req.education ? `<div class="info-row"><span class="key">التعليم</span><span class="val">${Array.isArray(req.education)?req.education.join('، '):req.education}</span></div>` : ''}
+        ${req.nationality ? `<div class="info-row"><span class="key">الجنسية</span><span class="val">${req.nationality}</span></div>` : ''}
+        ${req.maritalHome ? `<div class="info-row"><span class="key">مسكن الزوجية</span><span class="val">${req.maritalHome}</span></div>` : ''}
+        ${req.work ? `<div class="info-row"><span class="key">العمل</span><span class="val">${req.work}</span></div>` : ''}
+        ${req.hijab ? `<div class="info-row"><span class="key">الحجاب</span><span class="val">${Array.isArray(req.hijab)?req.hijab.join('، '):req.hijab}</span></div>` : ''}
+        ${req.acceptedMaritalStatus ? `<div class="info-row"><span class="key">الحالة الاجتماعية</span><span class="val">${Array.isArray(req.acceptedMaritalStatus)?req.acceptedMaritalStatus.join('، '):req.acceptedMaritalStatus}</span></div>` : ''}
+        ${req.requiresBeard ? `<div class="info-row"><span class="key">اشتراط اللحية</span><span class="val">${req.requiresBeard}</span></div>` : ''}
+        ${req.requiresPrayer ? `<div class="info-row"><span class="key">اشتراط الصلاة</span><span class="val">${req.requiresPrayer}</span></div>` : ''}
+        ${req.requiresNonSmoker ? `<div class="info-row"><span class="key">اشتراط عدم التدخين</span><span class="val">${req.requiresNonSmoker}</span></div>` : ''}
+        ${req.description ? `<div class="info-row" style="grid-column:1/-1"><span class="key">وصف إضافي</span><span class="val">${req.description}</span></div>` : ''}
+      </div>`;
+    }
+
+    if (p?.contactInfo) {
+      const c = p.contactInfo;
+      html += `<div class="section-title">بيانات التواصل</div>
+      <div class="info-grid">
+        ${c.whatsapp  ? `<div class="info-row"><span class="key">واتساب</span><span class="val" style="direction:ltr">${c.whatsapp}</span></div>` : ''}
+        ${c.telegram  ? `<div class="info-row"><span class="key">تيليجرام</span><span class="val" style="direction:ltr">${c.telegram}</span></div>` : ''}
+        ${c.facebook  ? `<div class="info-row"><span class="key">فيسبوك</span><span class="val" style="direction:ltr;word-break:break-all;font-size:11px">${c.facebook}</span></div>` : ''}
+        ${c.about     ? `<div class="info-row" style="grid-column:1/-1"><span class="key">عن نفسي</span><span class="val">${c.about}</span></div>` : ''}
+        ${c.additionalNotes ? `<div class="info-row" style="grid-column:1/-1"><span class="key">ملاحظات</span><span class="val">${c.additionalNotes}</span></div>` : ''}
+      </div>`;
+    }
+
+    // Quick actions inside modal
+    html += `<div style="margin-top:24px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">
+      ${u.status !== 'approved' ? `<button class="btn approve" onclick="updateStatus('${u._id}','approved',this);closeModal()">✓ قبول العضو</button>` : ''}
+      ${u.status !== 'rejected' ? `<button class="btn reject"  onclick="updateStatus('${u._id}','rejected',this);closeModal()">✗ رفض العضو</button>` : ''}
+      <label class="toggle" style="align-self:center" title="حالة الدفع">
+        <input type="checkbox" ${u.paid ? 'checked' : ''} onchange="updatePaid('${u._id}', this)" />
+        <div class="toggle-track"></div>
+      </label>
+      <span style="align-self:center;font-size:12px;color:var(--muted)">الدفع</span>
+    </div>`;
+
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  /* ── WIRE UP FILTERS ── */
+  document.getElementById('filter-status').addEventListener('change', () => loadData(1));
+  document.getElementById('filter-paid').addEventListener('change', renderTable);
+  document.getElementById('filter-gender').addEventListener('change', renderTable);
+  document.getElementById('search').addEventListener('input', renderTable);
+  document.getElementById('id-search-btn').addEventListener('click', searchById);
+  document.getElementById('id-search').addEventListener('keydown', e => {
+    if (e.key === 'Enter') searchById();
+  });
+
+  /* ── INIT ── */
+  loadData(1);
+
+  /* Keyboard shortcut */
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

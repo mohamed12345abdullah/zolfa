@@ -27,6 +27,13 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'manager', 'admin'],
         default: 'user'
     },
+    phone:{
+        type: String,
+        required: [true, 'phone is required'],
+        unique: true,
+        trim: true,
+        match: [/^01[0-9]{9}$/, 'phone is invalid']
+    },
     authToken: String,
     profileRef:{
         type: mongoose.Schema.Types.ObjectId,
@@ -71,7 +78,16 @@ const userSchema = new mongoose.Schema({
             default: 'pending'
           }
         }
-    ]
+    ],
+    status: {
+        type: String,
+        default: "pending",
+        enum: ["pending", "approved", "rejected"]
+    },
+    paid: {
+        type: Boolean,
+        default: false
+    },
     
 
 }, {

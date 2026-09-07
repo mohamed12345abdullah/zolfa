@@ -6,8 +6,25 @@ const asyncHandler = require('../utils/asyncHandler');
 const addFemaleForm = asyncHandler(async (req, res) => {
 
     const femaleData = req.body;
+
+    const user = await User.findById(req.user._id).populate('profileRef');
+    if( user.profileRef ){
+        return res.status(400).json({
+            success: false,
+            message: "Female form already exists"
+        });
+    }
     const female = await Female.create(femaleData);
-    res.status(201).json(female);
+
+    user.profileRef = female._id;
+    user.profileModel = "Female";
+    await user.save();
+    
+    res.status(201).json({
+        user,
+        success: true,
+        message: "Female form created successfully"
+    });
 });
  
 const editFemaleForm = asyncHandler(async (req, res) => {

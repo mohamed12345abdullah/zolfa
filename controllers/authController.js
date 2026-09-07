@@ -73,31 +73,64 @@ const sendVerificationChangePasswordEmail = async (email, name, verificationUrl)
 
 const authController = {
     // تسجيل مستخدم جديد
-    register: asyncHandler(async (req, res) => {
-        const { email, password, name ,phone} = req.body;
-        const existingUser = await User.findOne({ email });
-        if (existingUser ) {
-            throw new AppError('user already exists  ', 400);
-        }
-        // إنشاء المستخدم الجديد
-        const verificationToken =await generateToken({ email , name ,password,phone}  , '30m');
+    // register: asyncHandler(async (req, res) => {
+    //     const { email, password, name ,phone} = req.body;
+    //     const existingUser = await User.findOne({ email });
+    //     if (existingUser ) {
+    //         throw new AppError('user already exists  ', 400);
+    //     }
+    //     // إنشاء المستخدم الجديد
+    //     const verificationToken =await generateToken({ email , name ,password,phone}  , '30m');
 
-        const verificationUrl = `${process.env.BASE_URL}/api/auth/verify-email/${verificationToken}`;
+    //     const verificationUrl = `${process.env.BASE_URL}/api/auth/verify-email/${verificationToken}`;
         
        
-        const emailSent = await sendVerificationEmail(email, name, verificationUrl);
-        if (emailSent instanceof AppError) {
-            throw emailSent;
-        }
+    //     const emailSent = await sendVerificationEmail(email, name, verificationUrl);
+    //     if (emailSent instanceof AppError) {
+    //         throw emailSent;
+    //     }
 
-        res.status(201).json({
-            success: true,
-            message: 'تم إنشاء الحساب بنجاح. من فضلك تحقق من بريدك الإلكتروني (بما في ذلك قسم الرسائل غير المهمة) لتفعيل الحساب.'
-        });
+    //     res.status(201).json({
+    //         success: true,
+    //         message: 'تم إنشاء الحساب بنجاح. من فضلك تحقق من بريدك الإلكتروني (بما في ذلك قسم الرسائل غير المهمة) لتفعيل الحساب.'
+    //     });
 
-    }),
+    // }),
 
+register: asyncHandler(async (req, res) => {
+    const { email, password, name ,phone} = req.body;
+    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+    if (existingUser ) {
+        throw new AppError('user already exists  ', 400);
+    }
+    // إنشاء المستخدم الجديد
+    const verificationToken =await generateToken({ email , name ,password,phone}  , '30m');
 
+    const verificationUrl = `${process.env.BASE_URL}/api/auth/verify-email/${verificationToken}`;
+   
+   
+    const emailSent = await sendVerificationEmail(email, name, verificationUrl);
+    if (emailSent instanceof AppError) {
+        throw emailSent;
+    }
+
+    // إنشاء المستخدم الجديد
+    const hashedPassword=bcrypt.hashSync(password, 10); 
+
+    const user = await User.create({
+        email,
+        password:hashedPassword,
+        name,
+        phone,
+        isVerified: false
+    });
+
+    res.status(201).json({
+        success: true,
+        message: 'تم إنشاء الحساب بنجاح. من فضلك تحقق من بريدك الإلكتروني (بما في ذلك قسم الرسائل غير المهمة) لتفعيل الحساب.'
+    });
+
+}),
 
 
 
@@ -127,34 +160,8 @@ const authController = {
         await user.save();
         if (!user) throw new AppError('User not found', 404);
         
-        // خطوة 1: populate لـ profileRef 
-        if(user.role==='student'){
-            await user.populate({
-            path: 'profileRef',
-            model: user.profileModel, // Student مثلاً
-            populate: [
-                { path: 'courses' ,select:'title _id imageURL ' },
-                { path: 'groups' ,select:'title _id startDate endDate ',
-                    populate:{
-                        path:'instructor',
-                        select:'name '
-                    },
-                    populate:{
-                        path:'course',
-                        select:'title '
-                    },
-                    populate:{
-                        path:'lectures',
-                        // select:'title '
-                    }
-                 }
-            ]
-            });
-        }
-        else if(user.role==='instructor'){
-            await user.populate({
-                path: 'profileRef'
-            });
+        if(user.profileModel == 'Male' || user.profileModel == 'Female'){
+            await user.populate('profileRef');
         }
         
         res.status(200).json({
@@ -175,27 +182,14 @@ const authController = {
             if( !decoded){
                 throw new AppError('Invalid token', 401);
             }
-            const {name, email, password} = decoded;
+            const { email} = decoded;
             const existingUser=await User.findOne({email});
             console.log("exist user ",existingUser);
             
-            if (existingUser) {
-                let msg=await fs.readFile(
-                    path.join(__dirname,"../public/email/responses/message.html")
-                    ,"utf-8" 
-                )
-                msg =msg.replace('{{message}}',"user is already exist please login ")
-                msg=msg.replace('{{subject}}',"exist user")
-                res.end(msg);      
-                return;
-            }   
-            const hashedPassword=bcrypt.hashSync(password, 10); 
+
             
-            await User.create({
-                name,
-                email,
-                password:hashedPassword,
-            });
+            existingUser.isVerified = true;
+            await existingUser.save();
             
             // قراءة صفحة النجاح
             let successHtml = await fs.readFile(
@@ -381,7 +375,7 @@ const sendEmailtoAllUsers =asyncHandler(async (subject, message) => {
     <div>
         <h1> easy register and login </h1>
         <p>now you can login to your account with one click by clicking on continue with google or continue with facebook</p>
-        <button> <a href="https://code-minds-five.vercel.app/login"> go to log in page </a></button>
+        <button> <a href="https://zolfa.vercel.app/login"> go to log in page </a></button>
     </div>
     `
     for (const user of users) {

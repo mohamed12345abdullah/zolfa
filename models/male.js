@@ -298,15 +298,7 @@ const maleSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    status: {
-        type: String,
-        default: "pending",
-        enum: ["pending", "approved", "rejected"]
-    },
-    paid: {
-        type: Boolean,
-        default: false
-    },
+
 
 
 });

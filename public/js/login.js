@@ -1,13 +1,24 @@
+
+const showMessage = (type, message) => {
+    const messageElement = document.getElementById('message');
+    if (messageElement) {
+        messageElement.textContent = message;
+        if (type === 'error') {
+            messageElement.style.color = 'red';
+        } else {
+            messageElement.style.color = 'green';
+        }
+        setTimeout(() => {
+            messageElement.textContent = '';
+        }, 5000);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Login page loaded');
 
     // التحقق من حالة تسجيل الدخول
-    if (utils.isAuthenticated()) {
-        const user = JSON.parse(localStorage.getItem('user'));
-        redirectBasedOnRole(user);
-        return;
-    }
-    
+
     const form = document.getElementById('loginForm');
     if (!form) {
         console.error('Login form not found');
@@ -23,11 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value;
 
         if (!email || !password) {
-            utils.showToast("جميع الحقول مطلوبة", true);
+            // utils.showToast("جميع الحقول مطلوبة", true);
+            
             return false; // منع إرسال النموذج
         }
 
-        utils.toggleLoading(true);
 
         try {
             const response = await fetch('../../api/auth/login', {
@@ -44,16 +55,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                utils.showToast("تم تسجيل الدخول بنجاح");
+                // utils.showToast("تم تسجيل الدخول بنجاح");
+                showMessage('success', 'تم تسجيل الدخول بنجاح');
                 redirectBasedOnRole(data.user);
             } else {
                 throw new Error(data.message || "فشل تسجيل الدخول");
             }
         } catch (error) {
             console.error('Login error:', error);
-            utils.showToast(error.message || "حدث خطأ في الاتصال بالخادم", true);
+            showMessage('error', error.message || "حدث خطأ في الاتصال بالخادم");
         } finally {
-            utils.toggleLoading(false);
+            // utils.toggleLoading(false);
+            // showMessage('error', 'error occurred');
         }
 
         return false; // منع إرسال النموذج
@@ -66,7 +79,10 @@ function redirectBasedOnRole(user) {
         case 'manager':
             window.location.href = './manager-dashboard.html';
             break;
-        case 'instructor':
+        case 'male':
+            window.location.href = './instructor-dashboard.html';
+            break;
+        case 'female':
             window.location.href = './instructor-dashboard.html';
             break;
         case 'admin':
