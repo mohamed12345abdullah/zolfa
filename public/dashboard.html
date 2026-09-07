@@ -1194,7 +1194,13 @@ async function loadData() {
   showState("loading");
 
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL,{
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token"),
+      },
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     allData = json.males || [];

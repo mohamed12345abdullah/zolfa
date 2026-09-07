@@ -1,714 +1,1303 @@
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بحث عن شريك الحياة</title>
+<style>
+:root {
+  --green:      #1a5c38;
+  --green-mid:  #236b43;
+  --green-lt:   #d4ede1;
+  --green-pale: #f0f8f4;
+  --rose:       #9b3a68;
+  --rose-mid:   #7e2f55;
+  --rose-lt:    #f7e0ed;
+  --rose-pale:  #fdf2f8;
+  --gold:       #b8832a;
+  --gold-lt:    #fdf3e0;
+  --red:        #c0392b;
+  --red-lt:     #fdecea;
+  --blue:       #1e4fa3;
+  --blue-lt:    #dce8f9;
+  --purple:     #6c3d9e;
+  --purple-lt:  #ede4f7;
+  --gray:       #6b7280;
+  --gray-lt:    #f3f4f6;
 
-    <title>الملف الشخصي</title>
+  --bg:         #f4f6f5;
+  --surface:    #ffffff;
+  --border:     #e2e8e5;
+  --border-2:   #c8d5d0;
+  --text:       #111827;
+  --text-mid:   #374151;
+  --text-muted: #6b7280;
 
-    <link rel="stylesheet" href="css/profiile.css">
+  --accent:      var(--green);
+  --accent-mid:  var(--green-mid);
+  --accent-lt:   var(--green-lt);
+  --accent-pale: var(--green-pale);
+
+  --radius:    10px;
+  --radius-lg: 16px;
+  --shadow:    0 1px 4px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.13);
+}
+
+body.female {
+  --accent:      var(--rose);
+  --accent-mid:  var(--rose-mid);
+  --accent-lt:   var(--rose-lt);
+  --accent-pale: var(--rose-pale);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; scroll-behavior: smooth; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans Arabic', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  direction: rtl;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════
+   HEADER
+═══════════════════════════════════ */
+.header {
+  background: var(--accent);
+  color: #fff;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  transition: background .3s;
+  box-shadow: 0 2px 12px rgba(0,0,0,.15);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+  gap: 16px;
+}
+
+.header-logo {
+  font-size: 1.05rem;
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: -.01em;
+}
+.header-logo span { opacity: .7; font-weight: 400; font-size: .85rem; margin-right: 8px; }
+
+/* Gender switch */
+.gender-switch {
+  display: flex;
+  background: rgba(255,255,255,.15);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid rgba(255,255,255,.25);
+  flex-shrink: 0;
+}
+.gs-btn {
+  padding: 7px 18px;
+  font-size: .82rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.65);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .18s, color .18s;
+  white-space: nowrap;
+}
+.gs-btn.active { background: rgba(255,255,255,.22); color: #fff; }
+
+/* ═══════════════════════════════════
+   LAYOUT
+═══════════════════════════════════ */
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+/* ═══════════════════════════════════
+   FILTERS SIDEBAR
+═══════════════════════════════════ */
+.filters-panel {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 82px;
+  overflow: hidden;
+}
+
+.fp-head {
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 18px;
+  font-size: .88rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background .3s;
+}
+
+.fp-clear {
+  font-size: .73rem;
+  font-weight: 600;
+  background: rgba(255,255,255,.2);
+  border: none;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s;
+}
+.fp-clear:hover { background: rgba(255,255,255,.35); }
+
+.fp-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg label {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.fg input,
+.fg select {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: .82rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  direction: rtl;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.fg select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 10px center;
+  padding-left: 30px;
+}
+.fg input:focus,
+.fg select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(26,92,56,.1);
+}
+
+.fg-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+.fg-range input { text-align: center; }
+
+.fp-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 -16px;
+}
+
+.btn-search {
+  width: 100%;
+  padding: 11px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: .9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .18s, transform .1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.btn-search:hover { background: var(--accent-mid); }
+.btn-search:active { transform: scale(.98); }
+
+/* Mobile toggle for filters */
+.filter-toggle {
+  display: none;
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: .88rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  transition: background .18s;
+}
+.filter-toggle:hover { background: var(--accent-mid); }
+
+/* ═══════════════════════════════════
+   RESULTS AREA
+═══════════════════════════════════ */
+.results-area { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.results-count {
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+.results-count strong { color: var(--accent); font-size: 1.05rem; font-weight: 800; }
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+.sort-bar select {
+  padding: 6px 28px 6px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  font-size: .8rem;
+  font-family: inherit;
+  color: var(--text-mid);
+  background: var(--surface);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 8px center;
+  cursor: pointer;
+  direction: rtl;
+}
+.sort-bar select:focus { outline: none; border-color: var(--accent); }
+
+/* ═══════════════════════════════════
+   CARDS GRID
+═══════════════════════════════════ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow .2s, transform .18s;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+
+.card-top {
+  background: linear-gradient(140deg, var(--accent) 0%, var(--accent-mid) 100%);
+  padding: 16px 18px 14px;
+  color: #fff;
+  position: relative;
+}
+.card-id {
+  font-size: .7rem;
+  opacity: .65;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+.card-age {
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.card-age span { font-size: .8rem; font-weight: 500; opacity: .8; margin-right: 3px; }
+.card-city {
+  font-size: .76rem;
+  opacity: .75;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.card-badge-wrap {
+  position: absolute;
+  left: 14px; top: 14px;
+  display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
+}
+.card-badge {
+  font-size: .66rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.22);
+  color: #fff;
+  white-space: nowrap;
+}
+
+.card-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 0; }
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .79rem;
+  gap: 8px;
+}
+.card-row:last-child { border-bottom: none; }
+.card-row-key { color: var(--text-muted); flex-shrink: 0; }
+.card-row-val { color: var(--text); font-weight: 600; text-align: left; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.card-foot {
+  padding: 10px 16px;
+  background: var(--accent-pale);
+  border-top: 1px solid var(--accent-lt);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.btn-details {
+  font-size: .76rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s;
+}
+.btn-details:hover { background: var(--accent-mid); }
+
+/* ═══════════════════════════════════
+   BADGES
+═══════════════════════════════════ */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: .69rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badge-green  { background: var(--green-lt);  color: var(--green);  }
+.badge-rose   { background: var(--rose-lt);   color: var(--rose);   }
+.badge-gold   { background: var(--gold-lt);   color: var(--gold);   }
+.badge-red    { background: var(--red-lt);    color: var(--red);    }
+.badge-blue   { background: var(--blue-lt);   color: var(--blue);   }
+.badge-purple { background: var(--purple-lt); color: var(--purple); }
+.badge-gray   { background: var(--gray-lt);   color: var(--gray);   }
+
+/* ═══════════════════════════════════
+   PAGINATION
+═══════════════════════════════════ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+}
+.pg {
+  min-width: 36px; height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-mid);
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.pg:hover:not(:disabled):not(.active) { border-color: var(--accent); color: var(--accent); }
+.pg.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pg:disabled { opacity: .35; cursor: not-allowed; }
+.pg-dots { color: var(--text-muted); font-size: .85rem; padding: 0 4px; line-height: 36px; }
+
+/* ═══════════════════════════════════
+   STATES
+═══════════════════════════════════ */
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  gap: 14px;
+  text-align: center;
+}
+.state-icon { font-size: 3rem; }
+.state-title { font-size: 1rem; font-weight: 700; color: var(--text-mid); }
+.state-sub   { font-size: .83rem; }
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--accent-lt);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════
+   MODAL
+═══════════════════════════════════ */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 400;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+.overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 100%; max-width: 680px;
+  margin: auto;
+  box-shadow: 0 24px 64px rgba(0,0,0,.25);
+  animation: mIn .2s ease;
+  overflow: hidden;
+}
+@keyframes mIn { from { opacity:0; transform: translateY(14px) scale(.97); } }
+
+.modal-head {
+  background: linear-gradient(140deg, var(--accent) 0%, var(--accent-mid) 100%);
+  padding: 22px 24px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.modal-head-info h2 { font-size: 1.15rem; font-weight: 800; }
+.modal-head-info p  { font-size: .78rem; opacity: .75; margin-top: 5px; display: flex; gap: 12px; flex-wrap: wrap; }
+.modal-close {
+  background: rgba(255,255,255,.18); border: none; color: #fff;
+  width: 32px; height: 32px; border-radius: 50%;
+  font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background .15s;
+}
+.modal-close:hover { background: rgba(255,255,255,.32); }
+
+.modal-body {
+  padding: 20px 24px;
+  max-height: calc(90vh - 130px);
+  overflow-y: auto;
+}
+
+.msec { margin-bottom: 20px; }
+.msec-title {
+  font-size: .75rem;
+  font-weight: 800;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent-lt);
+  padding-bottom: 7px;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.mfields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mf { display: flex; flex-direction: column; gap: 2px; }
+.mf.full { grid-column: 1 / -1; }
+.mf-k { font-size: .68rem; font-weight: 700; color: var(--text-muted); }
+.mf-v {
+  font-size: .83rem; font-weight: 500; color: var(--text);
+  background: var(--bg); border-radius: 6px;
+  padding: 6px 10px; min-height: 32px; word-break: break-word;
+}
+.tick  { color: var(--green); font-weight: 800; }
+.cross { color: var(--red);   font-weight: 800; }
+.nd    { color: var(--text-muted); font-style: italic; }
+
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.tag {
+  font-size: .71rem; padding: 3px 9px; border-radius: 11px;
+  background: var(--accent-lt); color: var(--accent); font-weight: 600;
+}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr; }
+
+  .filter-toggle { display: flex; }
+
+  .filters-panel {
+    position: static;
+    display: none;
+  }
+  .filters-panel.open { display: block; }
+}
+
+@media (max-width: 580px) {
+  .header-logo span { display: none; }
+  .page { padding: 16px 14px 50px; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .mfields { grid-template-columns: 1fr; }
+  .mf.full { grid-column: 1; }
+  .modal-body { padding: 14px 16px; }
+  .modal-head { padding: 16px 16px; }
+  .modal-head-info h2 { font-size: 1rem; }
+}
+
+@media (max-width: 380px) {
+  .gs-btn { padding: 7px 12px; font-size: .76rem; }
+}
+
+.hidden { display: none !important; }
+</style>
 </head>
-
 <body>
 
-    <header class="profile-header">
-        <div>
-            <h1>الملف الشخصي</h1>
-            <p>بيانات حسابك وملفك الشخصي</p>
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">بحث عن شريك الحياة <span>منصة الزواج</span></div>
+    <div class="gender-switch">
+      <button class="gs-btn active" id="gsMale"   onclick="setGender('male')">🧔 ذكور</button>
+      <button class="gs-btn"        id="gsFemale" onclick="setGender('female')">👩 إناث</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ PAGE ═══ -->
+<div class="page" id="page">
+
+  <!-- FILTERS -->
+  <aside>
+    <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()">
+      <span>🔍 الفلاتر</span>
+      <span id="toggleIcon">▼</span>
+    </button>
+
+    <div class="filters-panel" id="filtersPanel">
+      <div class="fp-head">
+        <span>🔍 فلترة النتائج</span>
+        <button class="fp-clear" onclick="clearFilters()">مسح الكل</button>
+      </div>
+      <div class="fp-body" id="fpBody">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </aside>
+
+  <!-- RESULTS -->
+  <div class="results-area" id="resultsArea">
+    <div id="stateBox" class="state-box">
+      <div class="spinner"></div>
+      <div class="state-title">جاري التحميل...</div>
+    </div>
+
+    <div id="resultsWrap" class="hidden">
+      <div class="results-bar">
+        <div class="results-count" id="countLabel">—</div>
+        <div class="sort-bar">
+          <span>ترتيب:</span>
+          <select id="sortSel" onchange="applySort()">
+            <option value="age_asc">العمر: الأصغر أولاً</option>
+            <option value="age_desc">العمر: الأكبر أولاً</option>
+            <option value="quran_desc">الأكثر حفظاً للقرآن</option>
+          </select>
         </div>
-
-        <button onclick="logout()" class="logout-btn">
-            تسجيل الخروج
-        </button>
-    </header>
-
-
-    <main class="container">
-
-        <!-- ================= BASIC INFO ================= -->
-
-        <section class="profile-section">
-
-            <h2>البيانات الأساسية</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>الاسم</span>
-                    <strong id="name">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>تاريخ الميلاد</span>
-                    <strong id="birthDate">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>الجنسية</span>
-                    <strong id="nationality">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>الوزن</span>
-                    <strong id="weight">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>الطول</span>
-                    <strong id="height">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>لون البشرة</span>
-                    <strong id="skinColor">-</strong>
-                </div>
-
-            </div>
-
-            <div class="profile-description">
-                <span>نبذة</span>
-                <p id="description">-</p>
-            </div>
-
-        </section>
-
-
-        <!-- ================= EDUCATION ================= -->
-
-        <section class="profile-section">
-
-            <h2>التعليم والعمل</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>المؤهل الدراسي</span>
-                    <strong id="education">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>التخصص</span>
-                    <strong id="universityMajor">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>العمل</span>
-                    <strong id="job">-</strong>
-                </div>
-
-            </div>
-
-            <div class="profile-description">
-                <span>وصف العمل</span>
-                <p id="jobDescription">-</p>
-            </div>
-
-        </section>
-
-
-        <!-- ================= RESIDENCE ================= -->
-
-        <section class="profile-section">
-
-            <h2>السكن والإقامة</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>المحافظة / المدينة</span>
-                    <strong id="city">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>مكان الإقامة الحالي</span>
-                    <strong id="currentPlaceOfResidence">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>هل تقبل الاغتراب؟</span>
-                    <strong id="expatriate">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>نوع مسكن الزوجية</span>
-                    <strong id="maritalHome">-</strong>
-                </div>
-
-            </div>
-
-            <div class="profile-description">
-                <span>تفاصيل مسكن الزوجية</span>
-                <p id="maritalHomeDescription">-</p>
-            </div>
-
-        </section>
-
-
-        <!-- ================= FAMILY ================= -->
-
-        <section class="profile-section">
-
-            <h2>معلومات الأسرة</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>عمل الأب</span>
-                    <strong id="fatherJob">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>عمل الأم</span>
-                    <strong id="motherJob">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>هل الوالدان منفصلان؟</span>
-                    <strong id="parentsSeparated">-</strong>
-                </div>
-
-            </div>
-
-            <div class="profile-description">
-                <span>الإخوة</span>
-                <p id="siblingsInfo">-</p>
-            </div>
-
-        </section>
-
-
-        <!-- ================= MARITAL ================= -->
-
-        <section class="profile-section">
-
-            <h2>الحالة الاجتماعية والزواج</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>الحالة الاجتماعية</span>
-                    <strong id="maritalStatus">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>الأبناء</span>
-                    <strong id="haveChildren">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>نوع الزواج</span>
-                    <strong id="marriageType">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>رغبة الإنجاب</span>
-                    <strong id="wantChildren">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>التعدد</span>
-                    <strong id="polygamy">-</strong>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= RELIGION ================= -->
-
-        <section class="profile-section">
-
-            <h2>الدين والصحة</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>التدخين</span>
-                    <strong id="smoker">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>اللحية</span>
-                    <strong id="bearded">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>المحافظة على الصلوات الخمس</span>
-                    <strong id="prayFiveTimes">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>الصلاة في المسجد</span>
-                    <strong id="prayInMosque">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>حفظ القرآن</span>
-                    <strong id="quranMemorization">-</strong>
-                </div>
-
-            </div>
-
-            <div class="profile-description">
-                <span>حالة صحية أو إعاقة</span>
-                <p id="hasDisabilityOrIllness">-</p>
-            </div>
-
-        </section>
-
-
-        <!-- ================= BRIDE REQUIREMENTS ================= -->
-
-        <section class="profile-section">
-
-            <h2>مواصفات الزوجة المطلوبة</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>السن من</span>
-                    <strong id="minAge">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>السن إلى</span>
-                    <strong id="maxAge">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>المؤهل الدراسي</span>
-                    <strong id="brideEducation">-</strong>
-                </div>
-
-            </div>
-
-            <div class="profile-item">
-                <span>الحجاب</span>
-                <strong id="hijab">-</strong>
-            </div>
-
-            <div class="profile-description">
-                <span>مواصفات إضافية</span>
-                <p id="brideDescription">-</p>
-            </div>
-
-        </section>
-
-
-        <!-- ================= CONTACT ================= -->
-
-        <section class="profile-section">
-
-            <h2>معلومات التواصل</h2>
-
-            <div class="profile-grid">
-
-                <div class="profile-item">
-                    <span>WhatsApp</span>
-                    <strong id="whatsapp">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>Telegram</span>
-                    <strong id="telegram">-</strong>
-                </div>
-
-                <div class="profile-item">
-                    <span>Facebook</span>
-                    <strong id="facebook">-</strong>
-                </div>
-
-            </div>
-
-            <div class="profile-description">
-
-                <span>عن المستخدم</span>
-                <p id="about">-</p>
-
-            </div>
-
-            <div class="profile-description">
-
-                <span>ملاحظات إضافية</span>
-                <p id="additionalNotes">-</p>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <script>
-
-        // ============================================
-        // CHECK LOGIN
-        // ============================================
-
-        const user = localStorage.getItem("user");
-
-        if (!user) {
-
-            window.location.href = "/login.html";
-
-        }
-
-
-        // ============================================
-        // PARSE USER
-        // ============================================
-
-        const userData = JSON.parse(user);
-
-        console.log("User Data:", userData);
-
-
-        // ============================================
-        // CHECK PROFILE
-        // ============================================
-
-        if (!userData.profileModel || !userData.profileRef) {
-
-            window.location.href = "selectForm.html";
-
-        }
-        // if( ! userData.paid){
-        //     window.location.href = "payment.html"
-        // }
-
-
-        // ============================================
-        // PROFILE
-        // ============================================
-
-        const profile = userData.profileRef;
-
-
-        // ============================================
-        // HELPER
-        // ============================================
-
-        function setText(id, value) {
-
-            const element = document.getElementById(id);
-
-            if (!element) return;
-
-            if (
-                value === undefined ||
-                value === null ||
-                value === ""
-            ) {
-
-                element.textContent = "-";
-
-                return;
-
-            }
-
-            element.textContent = value;
-
-        }
-
-
-        function booleanToArabic(value) {
-
-            if (value === true) return "نعم";
-
-            if (value === false) return "لا";
-
-            return "-";
-
-        }
-
-
-        // ============================================
-        // BASIC INFO
-        // ============================================
-
-        setText(
-            "name",
-            profile.basicInfo?.name
-        );
-
-        setText(
-            "birthDate",
-            profile.basicInfo?.birthDate
-                ? new Date(profile.basicInfo.birthDate)
-                    .toLocaleDateString("ar-EG")
-                : "-"
-        );
-
-        setText(
-            "nationality",
-            profile.basicInfo?.nationality
-        );
-
-        setText(
-            "weight",
-            profile.basicInfo?.weight
-                ? `${profile.basicInfo.weight} كجم`
-                : "-"
-        );
-
-        setText(
-            "height",
-            profile.basicInfo?.height
-                ? `${profile.basicInfo.height} سم`
-                : "-"
-        );
-
-        setText(
-            "skinColor",
-            profile.basicInfo?.skinColor
-        );
-
-        setText(
-            "description",
-            profile.basicInfo?.description
-        );
-
-
-        // ============================================
-        // EDUCATION & WORK
-        // ============================================
-
-        setText(
-            "education",
-            profile.educationAndWork?.education
-        );
-
-        setText(
-            "universityMajor",
-            profile.educationAndWork?.universityMajor
-        );
-
-        setText(
-            "job",
-            profile.educationAndWork?.job
-        );
-
-        setText(
-            "jobDescription",
-            profile.educationAndWork?.jobDescription
-        );
-
-
-        // ============================================
-        // RESIDENCE
-        // ============================================
-
-        setText(
-            "city",
-            profile.residence?.city
-        );
-
-        setText(
-            "currentPlaceOfResidence",
-            profile.residence?.currentPlaceOfResidence
-        );
-
-        setText(
-            "expatriate",
-            profile.residence?.expatriate
-        );
-
-        setText(
-            "maritalHome",
-            profile.residence?.maritalHome
-        );
-
-        setText(
-            "maritalHomeDescription",
-            profile.residence?.maritalHomeDescription
-        );
-
-
-        // ============================================
-        // FAMILY
-        // ============================================
-
-        setText(
-            "fatherJob",
-            profile.familyInfo?.fatherJob
-        );
-
-        setText(
-            "motherJob",
-            profile.familyInfo?.motherJob
-        );
-
-        setText(
-            "siblingsInfo",
-            profile.familyInfo?.siblingsInfo
-        );
-
-        setText(
-            "parentsSeparated",
-            booleanToArabic(
-                profile.familyInfo?.parentsSeparated
-            )
-        );
-
-
-        // ============================================
-        // MARITAL INFO
-        // ============================================
-
-        setText(
-            "maritalStatus",
-            profile.maritalInfo?.maritalStatus
-        );
-
-        setText(
-            "haveChildren",
-            profile.maritalInfo?.haveChildren
-        );
-
-        setText(
-            "marriageType",
-            profile.maritalInfo?.marriageType
-        );
-
-        setText(
-            "polygamy",
-            profile.maritalInfo?.polygamy
-        );
-
-        setText(
-            "wantChildren",
-            profile.maritalInfo?.wantChildren
-        );
-
-
-        // ============================================
-        // RELIGION & HEALTH
-        // ============================================
-
-        setText(
-            "smoker",
-            booleanToArabic(
-                profile.religionAndHealth?.smoker
-            )
-        );
-
-        setText(
-            "bearded",
-            booleanToArabic(
-                profile.religionAndHealth?.bearded
-            )
-        );
-
-        setText(
-            "prayFiveTimes",
-            booleanToArabic(
-                profile.religionAndHealth?.prayFiveTimes
-            )
-        );
-
-        setText(
-            "prayInMosque",
-            profile.religionAndHealth?.prayInMosque
-        );
-
-        setText(
-            "quranMemorization",
-            profile.religionAndHealth?.quranMemorization !== undefined
-                ? `${profile.religionAndHealth.quranMemorization} جزء`
-                : "-"
-        );
-
-        setText(
-            "hasDisabilityOrIllness",
-            profile.religionAndHealth?.hasDisabilityOrIllness
-        );
-
-
-        // ============================================
-        // BRIDE REQUIREMENTS
-        // ============================================
-
-        setText(
-            "minAge",
-            profile.brideRequirements?.minAge
-                ? `${profile.brideRequirements.minAge} سنة`
-                : "-"
-        );
-
-        setText(
-            "maxAge",
-            profile.brideRequirements?.maxAge
-                ? `${profile.brideRequirements.maxAge} سنة`
-                : "-"
-        );
-
-        setText(
-            "brideEducation",
-            profile.brideRequirements?.education
-        );
-
-        // hijab is an array
-        setText(
-            "hijab",
-            Array.isArray(profile.brideRequirements?.hijab)
-                ? profile.brideRequirements.hijab.join("، ")
-                : profile.brideRequirements?.hijab
-        );
-
-        setText(
-            "brideDescription",
-            profile.brideRequirements?.description
-        );
-
-
-        // ============================================
-        // CONTACT
-        // ============================================
-
-        setText(
-            "whatsapp",
-            profile.contactInfo?.whatsapp
-        );
-
-        setText(
-            "telegram",
-            profile.contactInfo?.telegram
-        );
-
-        setText(
-            "facebook",
-            profile.contactInfo?.facebook
-        );
-
-        setText(
-            "about",
-            profile.contactInfo?.about
-        );
-
-        setText(
-            "additionalNotes",
-            profile.contactInfo?.additionalNotes
-        );
-
-
-        // ============================================
-        // LOGOUT
-        // ============================================
-
-        function logout() {
-
-            localStorage.removeItem("user");
-
-            window.location.href = "/login.html";
-
-        }
-
-    </script>
-
+      </div>
+
+      <div class="cards-grid" id="cardsGrid"></div>
+      <div class="pagination" id="pgBar"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ MODAL ═══ -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div class="modal-head-info">
+        <h2 id="mTitle">—</h2>
+        <p id="mMeta"></p>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════ */
+const API_BASE   = "http://localhost:3000/api/users";
+const STATUS     = "approved"; // always show approved for users
+const PER_PAGE   = 10;         // assumed from server
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+let gender      = "male";   // "male" | "female"
+let allData     = [];       // current page raw data
+let displayed   = [];       // after client-side filter+sort
+let currentPage = 1;
+let totalPages  = 1;
+let filtersOpen = false;
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════ */
+buildFilters();
+loadPage(1);
+
+/* ═══════════════════════════════════════════════════════════
+   GENDER
+═══════════════════════════════════════════════════════════ */
+function setGender(g) {
+  gender = g;
+  document.body.classList.toggle("female", g === "female");
+  document.getElementById("gsMale").classList.toggle("active",   g === "male");
+  document.getElementById("gsFemale").classList.toggle("active", g === "female");
+  buildFilters();
+  loadPage(1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE FILTER TOGGLE
+═══════════════════════════════════════════════════════════ */
+function toggleFilters() {
+  filtersOpen = !filtersOpen;
+  document.getElementById("filtersPanel").classList.toggle("open", filtersOpen);
+  document.getElementById("toggleIcon").textContent = filtersOpen ? "▲" : "▼";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FILTERS BUILD
+═══════════════════════════════════════════════════════════ */
+function buildFilters() {
+  const fp = document.getElementById("fpBody");
+
+  const commonTop = `
+    <div class="fg">
+      <label>العمر من — إلى</label>
+      <div class="fg-range">
+        <input type="number" id="fAgeMin" placeholder="من" min="18" max="80" onchange="applyFilters()">
+        <input type="number" id="fAgeMax" placeholder="إلى" min="18" max="80" onchange="applyFilters()">
+      </div>
+    </div>
+    <div class="fg">
+      <label>الجنسية</label>
+      <select id="fNat" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option>مصرية</option><option>مصرى</option>
+        <option>سعودية</option><option>إماراتية</option>
+        <option>أردنية</option><option>سورية</option>
+        <option>كويتية</option><option>لبنانية</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>المؤهل الدراسي</label>
+      <select id="fEdu" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option>بدون مؤهل</option>
+        <option>متوسط</option>
+        <option>فوق المتوسط</option>
+        <option>جامعي</option>
+        <option>دراسات عليا</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>المحافظة / المدينة</label>
+      <input type="text" id="fCity" placeholder="مثال: القاهرة..." oninput="applyFilters()">
+    </div>
+    <div class="fg">
+      <label>الحالة الاجتماعية</label>
+      <select id="fMarital" onchange="applyFilters()">
+        <option value="">الكل</option>
+        ${gender === "male"
+          ? `<option>عزب</option><option>مطلق</option><option>أرمل</option><option>أعزب سبق له عقد أو كتب كتاب</option>`
+          : `<option>عذراء</option><option>مطلقة</option><option>أرملة</option>`}
+      </select>
+    </div>
+    <div class="fg">
+      <label>المغترب</label>
+      <select id="fExpat" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option>نعم</option><option>لا</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>حفظ القرآن (أجزاء على الأقل)</label>
+      <input type="number" id="fQuran" placeholder="0 — 30" min="0" max="30" onchange="applyFilters()">
+    </div>`;
+
+  const maleExtra = `
+    <div class="fp-divider"></div>
+    <div class="fg">
+      <label>ملتحٍ</label>
+      <select id="fBearded" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option value="true">نعم</option>
+        <option value="false">لا</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>مدخن</label>
+      <select id="fSmoker" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option value="false">غير مدخن</option>
+        <option value="true">مدخن</option>
+      </select>
+    </div>`;
+
+  const femaleExtra = `
+    <div class="fp-divider"></div>
+    <div class="fg">
+      <label>نوع الحجاب</label>
+      <select id="fHijab" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option>نقاب أسود كامل</option>
+        <option>منتقبة فقط</option>
+        <option>محجبة مختمرة</option>
+        <option>محجبة</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>تعمل</label>
+      <select id="fWorking" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option value="true">نعم</option>
+        <option value="false">لا</option>
+      </select>
+    </div>`;
+
+  fp.innerHTML = commonTop
+    + (gender === "male" ? maleExtra : femaleExtra)
+    + `<div class="fp-divider"></div>
+       <button class="btn-search" onclick="applyFilters()">🔍 بحث</button>`;
+}
+
+function clearFilters() {
+  document.querySelectorAll("#fpBody input, #fpBody select").forEach(el => el.value = "");
+  applyFilters();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   API — LOAD PAGE
+═══════════════════════════════════════════════════════════ */
+async function loadPage(page) {
+  currentPage = page;
+  showState("loading");
+
+  try {
+    const res = await fetch(`${API_BASE}/${STATUS}/${page}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + (localStorage.getItem("token") || "")
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+
+    const raw = json.users || json.males || json.females || [];
+
+    // Filter by profileModel for current gender view
+    const key = gender === "male" ? "Male" : "Female";
+    allData = raw
+      .filter(u => u.profileModel === key)
+      .map(flatten);
+
+    const total = json.numberOfUsers || json.total || raw.length;
+    totalPages  = Math.max(1, Math.ceil(total / PER_PAGE));
+
+    applyFilters();
+    showState("data");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    console.error(err);
+    showState("error", err.message);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLATTEN USER OBJECT
+═══════════════════════════════════════════════════════════ */
+function flatten(u) {
+  const p = u.profileRef || {};
+  return {
+    _id: u._id,
+    profileModel: u.profileModel,
+    // basic
+    birthDate:   p.basicInfo?.birthDate,
+    nationality: (p.basicInfo?.nationality || "").trim(),
+    weight:      p.basicInfo?.weight,
+    height:      p.basicInfo?.height,
+    skinColor:   p.basicInfo?.skinColor,
+    description: p.basicInfo?.description,
+    // edu & work
+    education:       p.educationAndWork?.education,
+    universityMajor: p.educationAndWork?.universityMajor,
+    isWorking:       p.educationAndWork?.isWorking,
+    job:             p.educationAndWork?.job,
+    jobDescription:  p.educationAndWork?.jobDescription,
+    acceptLeaveWork: p.educationAndWork?.acceptLeaveWorkIfHusbandAsks,
+    // residence
+    city:       (p.residence?.city || "").trim(),
+    expatriate: p.residence?.expatriate,
+    maritalHome: p.residence?.maritalHome,
+    maritalHomeDesc: p.residence?.maritalHomeDescription,
+    // family
+    fatherJob:        p.familyInfo?.fatherJob,
+    motherJob:        p.familyInfo?.motherJob,
+    siblingsInfo:     p.familyInfo?.siblingsInfo,
+    parentsSeparated: p.familyInfo?.parentsSeparated,
+    familyDesc:       p.familyInfo?.familyDescription,
+    // marital
+    maritalStatus:  p.maritalInfo?.maritalStatus,
+    marriageType:   p.maritalInfo?.marriageType,
+    haveChildren:   p.maritalInfo?.haveChildren,
+    acceptPolygamy: p.maritalInfo?.acceptPolygamy || p.maritalInfo?.polygamy,
+    wantChildren:   p.maritalInfo?.wantChildren,
+    // religion
+    prayFiveTimes:   p.religionAndHealth?.prayFiveTimes,
+    prayInMosque:    p.religionAndHealth?.prayInMosque,
+    quranMemorization: p.religionAndHealth?.quranMemorization ?? 0,
+    hasIllness:      p.religionAndHealth?.hasDisabilityOrIllness,
+    smoker:          p.religionAndHealth?.smoker,
+    bearded:         p.religionAndHealth?.bearded,
+    // female
+    hijab:              p.hijab,
+    groomMinAge:        p.groomRequirements?.minAge,
+    groomMaxAge:        p.groomRequirements?.maxAge,
+    groomMaritalStatus: p.groomRequirements?.acceptedMaritalStatus,
+    groomPolygamy:      p.groomRequirements?.acceptPolygamy,
+    groomEducation:     p.groomRequirements?.education,
+    groomNationality:   p.groomRequirements?.nationality,
+    groomMaritalHome:   p.groomRequirements?.maritalHome,
+    groomBeard:         p.groomRequirements?.requiresBeard,
+    groomPrayer:        p.groomRequirements?.requiresPrayer,
+    groomNonSmoker:     p.groomRequirements?.requiresNonSmoker,
+    groomReligion:      p.groomRequirements?.religionLevel,
+    groomDesc:          p.groomRequirements?.description,
+    // male
+    brideMinAge:    p.brideRequirements?.minAge,
+    brideMaxAge:    p.brideRequirements?.maxAge,
+    brideEducation: p.brideRequirements?.education,
+    brideWork:      p.brideRequirements?.work,
+    brideHijab:     p.brideRequirements?.hijab || [],
+    brideDesc:      p.brideRequirements?.description,
+  };
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FILTERS APPLY (client-side on current page data)
+═══════════════════════════════════════════════════════════ */
+function applyFilters() {
+  const gv = id => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+
+  const ageMin  = parseInt(gv("fAgeMin"))  || 0;
+  const ageMax  = parseInt(gv("fAgeMax"))  || 999;
+  const nat     = gv("fNat");
+  const edu     = gv("fEdu");
+  const city    = gv("fCity").toLowerCase();
+  const marital = gv("fMarital");
+  const expat   = gv("fExpat");
+  const quranMin= parseInt(gv("fQuran")) || 0;
+  // male
+  const bearded = gv("fBearded");
+  const smoker  = gv("fSmoker");
+  // female
+  const hijab   = gv("fHijab");
+  const working = gv("fWorking");
+
+  displayed = allData.filter(d => {
+    const age = calcAge(d.birthDate);
+    if (age !== null && (age < ageMin || age > ageMax)) return false;
+    if (nat     && d.nationality !== nat)                return false;
+    if (edu     && d.education   !== edu)                return false;
+    if (city    && !(d.city||"").toLowerCase().includes(city)) return false;
+    if (marital && d.maritalStatus !== marital)          return false;
+    if (expat   && d.expatriate !== expat)               return false;
+    if (quranMin && (d.quranMemorization || 0) < quranMin) return false;
+    if (bearded && String(d.bearded) !== bearded)        return false;
+    if (smoker  && String(d.smoker)  !== smoker)         return false;
+    if (hijab   && d.hijab !== hijab)                    return false;
+    if (working && String(d.isWorking) !== working)      return false;
+    return true;
+  });
+
+  applySort();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SORT
+═══════════════════════════════════════════════════════════ */
+function applySort() {
+  const s = document.getElementById("sortSel")?.value || "age_asc";
+  displayed.sort((a, b) => {
+    const aa = calcAge(a.birthDate) ?? 99;
+    const ba = calcAge(b.birthDate) ?? 99;
+    if (s === "age_asc")    return aa - ba;
+    if (s === "age_desc")   return ba - aa;
+    if (s === "quran_desc") return (b.quranMemorization||0) - (a.quranMemorization||0);
+    return 0;
+  });
+  renderResults();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER RESULTS
+═══════════════════════════════════════════════════════════ */
+function renderResults() {
+  const grid = document.getElementById("cardsGrid");
+  const lbl  = document.getElementById("countLabel");
+  lbl.innerHTML = `عرض <strong>${displayed.length}</strong> نتيجة في هذه الصفحة`;
+
+  if (!displayed.length) {
+    grid.innerHTML = `
+      <div class="state-box" style="grid-column:1/-1;padding:60px 20px">
+        <div class="state-icon">🔍</div>
+        <div class="state-title">لا توجد نتائج</div>
+        <div class="state-sub">حاول تغيير معايير البحث</div>
+      </div>`;
+  } else {
+    grid.innerHTML = displayed.map((d, i) => buildCard(d, i)).join("");
+  }
+
+  renderPagination();
+}
+
+function buildCard(d, i) {
+  const age = calcAge(d.birthDate);
+  const num = (currentPage - 1) * PER_PAGE + i + 1;
+  const isMale = gender === "male";
+
+  const badges = isMale
+    ? `${d.bearded === true ? '<span class="card-badge">ملتحٍ ✔</span>' : ''}
+       ${d.smoker  === false ? '<span class="card-badge">غير مدخن</span>' : ''}`
+    : `${d.hijab ? `<span class="card-badge">${d.hijab}</span>` : ''}
+       ${d.isWorking === true ? '<span class="card-badge">تعمل</span>' : '<span class="card-badge">لا تعمل</span>'}`;
+
+  const extra1Key = isMale ? "الوظيفة"     : "الحجاب";
+  const extra1Val = isMale ? (d.job||"—")  : (d.hijab||"—");
+  const extra2Key = isMale ? "التعدد"      : "تقبل التعدد";
+  const extra2Val = isMale ? (d.acceptPolygamy||"—") : (d.acceptPolygamy||"—");
+
+  return `
+  <div class="card" onclick="openModal('${d._id}')">
+    <div class="card-top">
+      <div class="card-id">${isMale ? "🧔" : "👩"} طلب #${num}</div>
+      <div class="card-age">${age !== null ? age : "—"}<span>سنة</span></div>
+      <div class="card-city">📍 ${d.city || "—"} · ${d.nationality || "—"}</div>
+      <div class="card-badge-wrap">${badges}</div>
+    </div>
+    <div class="card-body">
+      <div class="card-row">
+        <span class="card-row-key">الحالة الاجتماعية</span>
+        <span class="card-row-val">${maritalBadge(d.maritalStatus)}</span>
+      </div>
+      <div class="card-row">
+        <span class="card-row-key">المؤهل</span>
+        <span class="card-row-val">${d.education||"—"}</span>
+      </div>
+      <div class="card-row">
+        <span class="card-row-key">${extra1Key}</span>
+        <span class="card-row-val" title="${extra1Val}">${extra1Val}</span>
+      </div>
+      <div class="card-row">
+        <span class="card-row-key">حفظ القرآن</span>
+        <span class="card-row-val">${quranTxt(d.quranMemorization)}</span>
+      </div>
+      <div class="card-row">
+        <span class="card-row-key">${extra2Key}</span>
+        <span class="card-row-val">${extra2Val}</span>
+      </div>
+    </div>
+    <div class="card-foot">
+      <button class="btn-details" onclick="event.stopPropagation();openModal('${d._id}')">
+        عرض التفاصيل ←
+      </button>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGINATION
+═══════════════════════════════════════════════════════════ */
+function renderPagination() {
+  const bar = document.getElementById("pgBar");
+  if (totalPages <= 1) { bar.innerHTML = ""; return; }
+
+  let h = `<button class="pg" onclick="loadPage(${currentPage-1})" ${currentPage===1?"disabled":""}>→</button>`;
+
+  const s = Math.max(1, currentPage - 2);
+  const e = Math.min(totalPages, currentPage + 2);
+
+  if (s > 1) {
+    h += `<button class="pg" onclick="loadPage(1)">1</button>`;
+    if (s > 2) h += `<span class="pg-dots">…</span>`;
+  }
+  for (let p = s; p <= e; p++)
+    h += `<button class="pg ${p===currentPage?"active":""}" onclick="loadPage(${p})">${p}</button>`;
+  if (e < totalPages) {
+    if (e < totalPages - 1) h += `<span class="pg-dots">…</span>`;
+    h += `<button class="pg" onclick="loadPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  h += `<button class="pg" onclick="loadPage(${currentPage+1})" ${currentPage===totalPages?"disabled":""}>←</button>`;
+  bar.innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════════════ */
+function openModal(id) {
+  const d = allData.find(x => x._id === id);
+  if (!d) return;
+
+  const age   = calcAge(d.birthDate);
+  const isMale = gender === "male";
+  const icon  = isMale ? "🧔" : "👩";
+  const idx   = allData.indexOf(d) + 1 + (currentPage-1)*PER_PAGE;
+
+  document.getElementById("mTitle").textContent = `${icon} طلب #${idx}`;
+  document.getElementById("mMeta").innerHTML = `
+    <span>📍 ${d.nationality||"—"}</span>
+    <span>🎂 ${age!==null?age+" سنة":"—"}</span>
+    <span>🏙 ${d.city||"—"}</span>`;
+
+  // ── sections ──
+  let html = `
+    <div class="msec">
+      <div class="msec-title">👤 البيانات الأساسية</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">العمر</div><div class="mf-v">${age!==null?age+" سنة":"—"}</div></div>
+        <div class="mf"><div class="mf-k">الجنسية</div><div class="mf-v">${sv(d.nationality)}</div></div>
+        <div class="mf"><div class="mf-k">لون البشرة</div><div class="mf-v">${sv(d.skinColor)}</div></div>
+        <div class="mf"><div class="mf-k">الوزن / الطول</div><div class="mf-v">${d.weight?d.weight+" كجم":""} ${d.height?d.height+" سم":""}</div></div>
+        ${isMale?"":
+          `<div class="mf"><div class="mf-k">الحجاب</div><div class="mf-v">${sv(d.hijab)}</div></div>`}
+        ${d.description?
+          `<div class="mf full"><div class="mf-k">نبذة شخصية</div><div class="mf-v">${d.description}</div></div>`:""}
+      </div>
+    </div>
+
+    <div class="msec">
+      <div class="msec-title">🎓 التعليم والعمل</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">المؤهل</div><div class="mf-v">${sv(d.education)}</div></div>
+        <div class="mf"><div class="mf-k">التخصص</div><div class="mf-v">${sv(d.universityMajor)}</div></div>
+        ${isMale?
+          `<div class="mf"><div class="mf-k">الوظيفة</div><div class="mf-v">${sv(d.job)}</div></div>`
+          :
+          `<div class="mf"><div class="mf-k">تعمل</div><div class="mf-v">${boolTxt(d.isWorking)}</div></div>
+           <div class="mf"><div class="mf-k">قبول ترك العمل</div><div class="mf-v">${sv(d.acceptLeaveWork)}</div></div>`}
+        ${d.jobDescription?
+          `<div class="mf full"><div class="mf-k">وصف العمل</div><div class="mf-v">${d.jobDescription}</div></div>`:""}
+      </div>
+    </div>
+
+    <div class="msec">
+      <div class="msec-title">🏠 السكن والإقامة</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">المدينة</div><div class="mf-v">${sv(d.city)}</div></div>
+        <div class="mf"><div class="mf-k">مغترب</div><div class="mf-v">${sv(d.expatriate)}</div></div>
+        ${isMale?`<div class="mf"><div class="mf-k">السكن الزوجي</div><div class="mf-v">${sv(d.maritalHome)}</div></div>`:""}
+        ${d.maritalHomeDesc?`<div class="mf full"><div class="mf-k">وصف السكن</div><div class="mf-v">${d.maritalHomeDesc}</div></div>`:""}
+      </div>
+    </div>
+
+    <div class="msec">
+      <div class="msec-title">👨‍👩‍👧‍👦 الأسرة</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">مهنة الوالد</div><div class="mf-v">${sv(d.fatherJob)}</div></div>
+        <div class="mf"><div class="mf-k">مهنة الوالدة</div><div class="mf-v">${sv(d.motherJob)}</div></div>
+        <div class="mf"><div class="mf-k">الوالدان منفصلان</div><div class="mf-v">${boolTxt(d.parentsSeparated)}</div></div>
+        ${d.siblingsInfo?`<div class="mf full"><div class="mf-k">الإخوة والأخوات</div><div class="mf-v">${d.siblingsInfo}</div></div>`:""}
+      </div>
+    </div>
+
+    <div class="msec">
+      <div class="msec-title">💍 الحالة الاجتماعية</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">الحالة</div><div class="mf-v">${sv(d.maritalStatus)}</div></div>
+        <div class="mf"><div class="mf-k">نوع الزواج</div><div class="mf-v">${sv(d.marriageType)}</div></div>
+        <div class="mf"><div class="mf-k">عدد الأولاد</div><div class="mf-v">${d.haveChildren||"0"}</div></div>
+        <div class="mf"><div class="mf-k">التعدد</div><div class="mf-v">${sv(d.acceptPolygamy)}</div></div>
+        <div class="mf"><div class="mf-k">يريد الإنجاب</div><div class="mf-v">${sv(d.wantChildren)}</div></div>
+      </div>
+    </div>
+
+    <div class="msec">
+      <div class="msec-title">🕌 الدين والصحة</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">الصلوات الخمس</div><div class="mf-v">${boolTxt(d.prayFiveTimes)}</div></div>
+        ${isMale?`
+        <div class="mf"><div class="mf-k">الصلاة في المسجد</div><div class="mf-v">${sv(d.prayInMosque)}</div></div>
+        <div class="mf"><div class="mf-k">ملتحٍ</div><div class="mf-v">${boolTxt(d.bearded)}</div></div>
+        <div class="mf"><div class="mf-k">مدخن</div><div class="mf-v">${boolTxt(d.smoker)}</div></div>`:""}
+        <div class="mf"><div class="mf-k">حفظ القرآن</div><div class="mf-v">${quranTxt(d.quranMemorization)}</div></div>
+        <div class="mf"><div class="mf-k">أمراض / إعاقات</div><div class="mf-v">${sv(d.hasIllness)}</div></div>
+      </div>
+    </div>`;
+
+  // Partner requirements
+  if (isMale) {
+    const hijabTags = (d.brideHijab||[]).map(h=>`<span class="tag">${h}</span>`).join("");
+    html += `
+    <div class="msec">
+      <div class="msec-title">🌸 مواصفات الزوجة المطلوبة</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">نطاق العمر</div><div class="mf-v">${d.brideMinAge||"—"} — ${d.brideMaxAge||"—"} سنة</div></div>
+        <div class="mf"><div class="mf-k">المؤهل</div><div class="mf-v">${sv(d.brideEducation)}</div></div>
+        <div class="mf"><div class="mf-k">العمل</div><div class="mf-v">${sv(d.brideWork)}</div></div>
+        <div class="mf full"><div class="mf-k">الحجاب المقبول</div>
+          <div class="mf-v"><div class="tags-wrap">${hijabTags||"<span class='nd'>—</span>"}</div></div></div>
+        ${d.brideDesc?`<div class="mf full"><div class="mf-k">ملاحظات إضافية</div><div class="mf-v">${d.brideDesc}</div></div>`:""}
+      </div>
+    </div>`;
+  } else {
+    const mTags  = (d.groomMaritalStatus||[]).map(h=>`<span class="tag">${h}</span>`).join("");
+    const eTags  = (d.groomEducation||[]).map(h=>`<span class="tag">${h}</span>`).join("");
+    const rTags  = (d.groomReligion||[]).map(h=>`<span class="tag">${h}</span>`).join("");
+    html += `
+    <div class="msec">
+      <div class="msec-title">💎 مواصفات الزوج المطلوب</div>
+      <div class="mfields">
+        <div class="mf"><div class="mf-k">نطاق العمر</div><div class="mf-v">${d.groomMinAge||"—"} — ${d.groomMaxAge||"—"} سنة</div></div>
+        <div class="mf"><div class="mf-k">الجنسية</div><div class="mf-v">${sv(d.groomNationality)}</div></div>
+        <div class="mf"><div class="mf-k">السكن الزوجي</div><div class="mf-v">${sv(d.groomMaritalHome)}</div></div>
+        <div class="mf"><div class="mf-k">قبول التعدد</div><div class="mf-v">${sv(d.groomPolygamy)}</div></div>
+        <div class="mf"><div class="mf-k">اشتراط اللحية</div><div class="mf-v">${sv(d.groomBeard)}</div></div>
+        <div class="mf"><div class="mf-k">اشتراط الصلاة</div><div class="mf-v">${sv(d.groomPrayer)}</div></div>
+        <div class="mf"><div class="mf-k">اشتراط عدم التدخين</div><div class="mf-v">${sv(d.groomNonSmoker)}</div></div>
+        <div class="mf full"><div class="mf-k">الحالة الاجتماعية المقبولة</div>
+          <div class="mf-v"><div class="tags-wrap">${mTags||"<span class='nd'>—</span>"}</div></div></div>
+        <div class="mf full"><div class="mf-k">المؤهل المطلوب</div>
+          <div class="mf-v"><div class="tags-wrap">${eTags||"<span class='nd'>—</span>"}</div></div></div>
+        <div class="mf full"><div class="mf-k">المستوى الديني</div>
+          <div class="mf-v"><div class="tags-wrap">${rTags||"<span class='nd'>—</span>"}</div></div></div>
+        ${d.groomDesc?`<div class="mf full"><div class="mf-k">ملاحظات إضافية</div><div class="mf-v">${d.groomDesc}</div></div>`:""}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById("mBody").innerHTML = html;
+  document.getElementById("overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(e) { if (e.target === document.getElementById("overlay")) closeModalDirect(); }
+function closeModalDirect() {
+  document.getElementById("overlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModalDirect(); });
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE STATE
+═══════════════════════════════════════════════════════════ */
+function showState(s, msg) {
+  const box  = document.getElementById("stateBox");
+  const wrap = document.getElementById("resultsWrap");
+  if (s === "loading") {
+    box.innerHTML = `<div class="spinner"></div><div class="state-title">جاري التحميل...</div>`;
+    box.classList.remove("hidden"); wrap.classList.add("hidden");
+  } else if (s === "error") {
+    box.innerHTML = `<div class="state-icon">⚠️</div>
+      <div class="state-title">حدث خطأ</div>
+      <div class="state-sub">${msg||""}</div>
+      <button class="btn-search" style="max-width:200px;margin-top:10px" onclick="loadPage(${currentPage})">إعادة المحاولة</button>`;
+    box.classList.remove("hidden"); wrap.classList.add("hidden");
+  } else {
+    box.classList.add("hidden"); wrap.classList.remove("hidden");
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════ */
+function calcAge(bd) {
+  if (!bd) return null;
+  const d = new Date(bd), n = new Date();
+  let a = n.getFullYear() - d.getFullYear();
+  if (n.getMonth() - d.getMonth() < 0 ||
+     (n.getMonth() === d.getMonth() && n.getDate() < d.getDate())) a--;
+  return a;
+}
+
+function sv(v) {
+  return (v == null || v === "")
+    ? `<span class="nd">—</span>`
+    : v;
+}
+
+function boolTxt(v) {
+  if (v === true  || v === "true")  return `<span class="tick">✔ نعم</span>`;
+  if (v === false || v === "false") return `<span class="cross">✖ لا</span>`;
+  return `<span class="nd">—</span>`;
+}
+
+function quranTxt(n) {
+  if (!n || n === 0) return "لا يحفظ";
+  if (n === 30)      return "30 جزءاً ⭐";
+  return `${n} جزء`;
+}
+
+function maritalBadge(s) {
+  const m = {
+    "عزب":"badge-green","عذراء":"badge-green",
+    "مطلق":"badge-gold","مطلقة":"badge-gold",
+    "أرمل":"badge-purple","أرملة":"badge-purple",
+    "أعزب سبق له عقد أو كتب كتاب":"badge-blue"
+  };
+  return s ? `<span class="badge ${m[s]||'badge-gray'}">${s}</span>` : "—";
+}
+</script>
 </body>
-
 </html>
-
