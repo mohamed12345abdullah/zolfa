@@ -67,7 +67,7 @@ const getViews = asyncHandler(async (req, res) => {
 
 const showAllUsers = asyncHandler(async (req, res) => {
     const { status, page } = req.params;
-    const limit=2;
+    const limit=10;
     let users;
     let numOfUsers = 0;
     if(status=='all'){
