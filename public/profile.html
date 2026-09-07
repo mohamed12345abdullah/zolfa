@@ -599,6 +599,7 @@ body {
 <!-- ═══ HEADER ═══ -->
 <header class="header">
   <div class="header-inner">
+    <div><button onclick="logout()">تسجيل خروج</button></div>
     <div class="header-logo">بحث عن شريك الحياة <span>منصة الزواج</span></div>
     <div class="gender-switch">
       <button class="gs-btn active" id="gsMale"   onclick="setGender('male')">🧔 ذكور</button>
@@ -675,7 +676,7 @@ body {
 /* ═══════════════════════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════════════════════ */
-const API_BASE   = "http://localhost:3000/api/users";
+const API_BASE   = "../api/users";
 const STATUS     = "approved"; // always show approved for users
 const PER_PAGE   = 10;         // assumed from server
 
@@ -694,6 +695,21 @@ let filtersOpen = false;
 ═══════════════════════════════════════════════════════════ */
 buildFilters();
 loadPage(1);
+
+
+// check if not log in go to log in 
+// get user from localstorage
+const user =JSON.parse(localStorage.getItem ('user') )
+if(!user){
+    window.location.href="login.html";
+    console.log(localStorage.getItem ('user'));
+    
+}
+
+function logout(){
+    localStorage.removeItem('user')
+    window.location.href="login.html"
+}
 
 /* ═══════════════════════════════════════════════════════════
    GENDER

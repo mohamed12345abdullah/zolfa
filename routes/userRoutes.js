@@ -6,6 +6,8 @@ const { upload } = require('../utils/fileUpload');
 const uploadFileToGoogleDrive = require('../utils/googleDrive');
 
 const controller = require('../controllers/userController');
+const {auth} = require('../middlewares/jwt');
+router.use(auth);
 router.post('/view', controller.viewUser);
 router.get('/views', controller.getViews);
 router.get('/:status/:page', controller.showAllUsers);
