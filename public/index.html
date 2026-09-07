@@ -4,106 +4,1714 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>اختيار نوع التسجيل</title>
+    <title>زُلفى للزواج | مبادرة زُلفى</title>
+
+    <meta
+        name="description"
+        content="زُلفى للزواج - مبادرة تهدف إلى مساعدة الشباب والفتيات على إيجاد شريك الحياة المناسب في إطار جاد ومحترم."
+    >
 
     <style>
+        /* =========================
+           RESET
+        ========================== */
+
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
+        html {
+            scroll-behavior: smooth;
+        }
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        body {
+            font-family: "Tahoma", "Arial", sans-serif;
+            background: #faf9f6;
+            color: #2d2d2d;
+            line-height: 1.8;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
         }
 
         .container {
-            text-align: center;
+            width: min(1150px, 92%);
+            margin: auto;
         }
 
-        h1 {
+
+        /* =========================
+           COLORS
+        ========================== */
+
+        :root {
+            --primary: #7b4b3a;
+            --primary-dark: #5f382c;
+            --secondary: #c49a6c;
+            --cream: #faf9f6;
+            --white: #ffffff;
+            --text: #2d2d2d;
+            --muted: #777;
+            --light: #f3eee8;
+            --border: #e8ded5;
+            --success: #4f8065;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================== */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar {
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .logo-text h2 {
+            font-size: 22px;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            color: #444;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            border: none;
+            cursor: pointer;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .menu-btn {
+            display: none;
+            border: none;
+            background: transparent;
+            font-size: 27px;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+
+        /* =========================
+           HERO
+        ========================== */
+
+        .hero {
+            min-height: calc(100vh - 76px);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(196, 154, 108, 0.18),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    #fbfaf7,
+                    #f4ece4
+                );
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border: 1px solid rgba(123, 75, 58, 0.1);
+            border-radius: 50%;
+            left: -150px;
+            bottom: -150px;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 70px;
+            align-items: center;
+        }
+
+        .hero-text {
+            animation: fadeUp 0.8s ease;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(123, 75, 58, 0.08);
+            color: var(--primary);
+            padding: 7px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .badge span {
+            width: 7px;
+            height: 7px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 5vw, 62px);
+            line-height: 1.25;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 strong {
+            color: var(--secondary);
+        }
+
+        .hero-description {
+            color: #666;
+            font-size: 17px;
+            max-width: 600px;
             margin-bottom: 30px;
         }
 
-        .options {
+        .hero-buttons {
             display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero-buttons .btn {
+            padding: 14px 28px;
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            animation: fadeIn 1s ease;
+        }
+
+        .heart-card {
+            width: 390px;
+            height: 390px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(123, 75, 58, 0.18);
+        }
+
+        .circle.one {
+            width: 380px;
+            height: 380px;
+        }
+
+        .circle.two {
+            width: 290px;
+            height: 290px;
+        }
+
+        .circle.three {
+            width: 200px;
+            height: 200px;
+            background: rgba(196, 154, 108, 0.15);
+        }
+
+        .heart {
+            position: relative;
+            z-index: 3;
+            font-size: 90px;
+            color: var(--primary);
+            animation: heartbeat 2s infinite;
+        }
+
+        .floating-card {
+            position: absolute;
+            z-index: 5;
+            background: white;
+            padding: 13px 17px;
+            border-radius: 14px;
+            box-shadow: 0 12px 40px rgba(80, 50, 30, 0.12);
+            font-size: 13px;
+            color: #555;
+        }
+
+        .floating-card.card-one {
+            top: 40px;
+            right: 0;
+        }
+
+        .floating-card.card-two {
+            bottom: 50px;
+            left: 5px;
+        }
+
+
+        /* =========================
+           SECTION
+        ========================== */
+
+        section {
+            padding: 90px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto 50px;
+        }
+
+        .section-label {
+            color: var(--secondary);
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .section-header h2 {
+            font-size: 34px;
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           ABOUT
+        ========================== */
+
+        .about {
+            background: white;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-box {
+            background: var(--light);
+            padding: 45px;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-box::after {
+            content: "زُلفى";
+            position: absolute;
+            left: -20px;
+            bottom: -35px;
+            font-size: 100px;
+            font-weight: bold;
+            color: rgba(123, 75, 58, 0.05);
+        }
+
+        .about-box h3 {
+            color: var(--primary);
+            font-size: 25px;
+            margin-bottom: 15px;
+        }
+
+        .about-box p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .about-list {
+            list-style: none;
+            margin-top: 25px;
+        }
+
+        .about-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            color: #555;
+        }
+
+        .check {
+            width: 25px;
+            height: 25px;
+            flex-shrink: 0;
+            background: rgba(79, 128, 101, 0.12);
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           STEPS
+        ========================== */
+
+        .steps {
+            background: var(--cream);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
 
-        .option {
-            width: 200px;
-            padding: 30px;
+        .step-card {
             background: white;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #222;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: 0.2s;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 30px 22px;
+            text-align: center;
+            transition: 0.3s;
         }
 
-        .option:hover {
-            transform: translateY(-5px);
+        .step-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 35px rgba(80, 50, 30, 0.08);
         }
 
-        .option h2 {
-            margin: 0 0 10px;
+        .step-number {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 18px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
         }
 
-        .option p {
-            margin: 0;
-            color: #666;
+        .step-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .step-card p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           FEATURES
+        ========================== */
+
+        .features {
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .feature {
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            transition: 0.3s;
+        }
+
+        .feature:hover {
+            border-color: var(--secondary);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--light);
+            color: var(--primary);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 18px;
+        }
+
+        .feature h3 {
+            color: var(--primary-dark);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           STATS
+        ========================== */
+
+        .stats {
+            background: var(--primary);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+            gap: 20px;
+        }
+
+        .stat h3 {
+            font-size: 42px;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .stat p {
+            color: rgba(255,255,255,0.75);
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           CTA
+        ========================== */
+
+        .cta {
+            padding: 80px 0;
+            background: var(--light);
+        }
+
+        .cta-box {
+            background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--primary-dark)
+            );
+            border-radius: 28px;
+            padding: 60px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before,
+        .cta-box::after {
+            content: "♡";
+            position: absolute;
+            font-size: 180px;
+            color: rgba(255,255,255,0.04);
+        }
+
+        .cta-box::before {
+            right: 30px;
+            top: -50px;
+        }
+
+        .cta-box::after {
+            left: 30px;
+            bottom: -90px;
+        }
+
+        .cta-box h2 {
+            font-size: 34px;
+            margin-bottom: 12px;
+        }
+
+        .cta-box p {
+            color: rgba(255,255,255,0.78);
+            margin-bottom: 25px;
+        }
+
+        .cta-box .btn {
+            background: white;
+            color: var(--primary);
+            padding: 14px 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-box .btn:hover {
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            background: #2b211d;
+            color: white;
+            padding: 55px 0 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 50px;
+            padding-bottom: 40px;
+        }
+
+        .footer-logo {
+            color: white;
+            font-size: 23px;
+            margin-bottom: 12px;
+        }
+
+        .footer-about {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            max-width: 400px;
+        }
+
+        .footer-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 18px;
+            text-align: center;
+            color: rgba(255,255,255,0.45);
+            font-size: 12px;
+        }
+
+
+        /* =========================
+           ANIMATIONS
+        ========================== */
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+
+            15% {
+                transform: scale(1.08);
+            }
+
+            30% {
+                transform: scale(1);
+            }
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 900px) {
+
+            .nav-links,
+            .nav-actions {
+                display: none;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .nav-links.mobile-open {
+                display: flex;
+                position: absolute;
+                top: 76px;
+                right: 0;
+                left: 0;
+                background: white;
+                flex-direction: column;
+                padding: 25px;
+                gap: 18px;
+                border-bottom: 1px solid var(--border);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: -1;
+            }
+
+            .heart-card {
+                width: 300px;
+                height: 300px;
+            }
+
+            .circle.one {
+                width: 290px;
+                height: 290px;
+            }
+
+            .circle.two {
+                width: 220px;
+                height: 220px;
+            }
+
+            .circle.three {
+                width: 150px;
+                height: 150px;
+            }
+
+            .heart {
+                font-size: 70px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            section {
+                padding: 65px 0;
+            }
+
+            .hero {
+                min-height: auto;
+                padding: 70px 0;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .heart-card {
+                width: 250px;
+                height: 250px;
+            }
+
+            .circle.one {
+                width: 240px;
+                height: 240px;
+            }
+
+            .circle.two {
+                width: 180px;
+                height: 180px;
+            }
+
+            .circle.three {
+                width: 120px;
+                height: 120px;
+            }
+
+            .heart {
+                font-size: 55px;
+            }
+
+            .floating-card {
+                font-size: 11px;
+                padding: 9px 12px;
+            }
+
+            .section-header h2 {
+                font-size: 28px;
+            }
+
+            .steps-grid,
+            .features-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-box {
+                padding: 30px 25px;
+            }
+
+            .cta-box {
+                padding: 45px 22px;
+            }
+
+            .cta-box h2 {
+                font-size: 27px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
 
-        <h1>اختر نوع التسجيل</h1>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-        <div class="options">
+    <header>
+        <div class="container navbar">
 
-            <!-- صفحة الرجل -->
-            <a href="./male.html" class="option">
-                <h2>رجل</h2>
-                <p>التسجيل كزوج</p>
+            <a href="#" class="logo">
+
+                <div class="logo-icon">
+                    ♡
+                </div>
+
+                <div class="logo-text">
+                    <h2>زُلفى</h2>
+                    <span>مبادرة للزواج</span>
+                </div>
+
             </a>
 
-            <!-- صفحة المرأة -->
-            <a href="./female.html" class="option">
-                <h2>امرأة</h2>
-                <p>التسجيل كزوجة</p>
-            </a>
+
+            <ul class="nav-links" id="navLinks">
+
+                <li>
+                    <a href="#home">الرئيسية</a>
+                </li>
+
+                <li>
+                    <a href="#about">عن المبادرة</a>
+                </li>
+
+                <li>
+                    <a href="#steps">كيف تعمل؟</a>
+                </li>
+
+                <li>
+                    <a href="#features">مميزاتنا</a>
+                </li>
+
+            </ul>
+
+
+            <div class="nav-actions">
+
+                <a href="login.html" class="btn btn-outline">
+                    تسجيل الدخول
+                </a>
+
+                <a href="register.html" class="btn btn-primary">
+                    التسجيل الآن
+                </a>
+
+            </div>
+
+
+            <button class="menu-btn" id="menuBtn">
+                ☰
+            </button>
+
+        </div>
+    </header>
+
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <main>
+
+        <section class="hero" id="home">
+
+            <div class="container hero-content">
+
+                <div class="hero-text">
+
+                    <div class="badge">
+                        <span></span>
+                        مبادرة زُلفى للزواج
+                    </div>
+
+                    <h1>
+                        نساعدك في العثور على
+                        <strong>شريك الحياة</strong>
+                        المناسب
+                    </h1>
+
+                    <p class="hero-description">
+                        زُلفى مبادرة تهدف إلى تيسير الزواج ومساعدة الشباب
+                        والفتيات على التعارف الجاد والوصول إلى شريك الحياة
+                        المناسب، في إطار من الخصوصية والاحترام.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                        <a
+                            href="register.html"
+                            class="btn btn-primary"
+                        >
+                            ابدأ التسجيل
+                        </a>
+
+                        <a
+                            href="#about"
+                            class="btn btn-outline"
+                        >
+                            تعرف علينا
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-visual">
+
+                    <div class="heart-card">
+
+                        <div class="circle one"></div>
+                        <div class="circle two"></div>
+                        <div class="circle three"></div>
+
+                        <div class="heart">
+                            ♥
+                        </div>
+
+                        <div class="floating-card card-one">
+                            ✓ تعارف جاد ومحترم
+                        </div>
+
+                        <div class="floating-card card-two">
+                            ♡ نبحث عن التوافق
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             ABOUT
+        ========================== -->
+
+        <section class="about" id="about">
+
+            <div class="container">
+
+                <div class="section-header">
+
+                    <div class="section-label">
+                        من نحن؟
+                    </div>
+
+                    <h2>
+                        زُلفى... بداية لطريق جديد
+                    </h2>
+
+                    <p>
+                        نؤمن أن الزواج الناجح يبدأ من الاختيار الصحيح
+                        والتعارف الجاد المبني على الاحترام والتوافق.
+                    </p>
+
+                </div>
+
+
+                <div class="about-grid">
+
+                    <div class="about-box">
+
+                        <h3>
+                            هدفنا
+                        </h3>
+
+                        <p>
+                            نسعى إلى إنشاء بيئة تساعد الراغبين في الزواج
+                            على الوصول إلى الأشخاص المناسبين لهم بطريقة
+                            منظمة، جادة، وتحافظ على خصوصية بيانات الجميع.
+                        </p>
+
+                        <ul class="about-list">
+
+                            <li>
+                                <span class="check">✓</span>
+                                تسجيل بياناتك بشكل آمن
+                            </li>
+
+                            <li>
+                                <span class="check">✓</span>
+                                مراجعة البيانات قبل اعتمادها
+                            </li>
+
+                            <li>
+                                <span class="check">✓</span>
+                                البحث عن التوافق المناسب
+                            </li>
+
+                            <li>
+                                <span class="check">✓</span>
+                                الحفاظ على الخصوصية
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3
+                            style="
+                                color:var(--primary);
+                                font-size:27px;
+                                margin-bottom:15px;
+                            "
+                        >
+                            لماذا زُلفى؟
+                        </h3>
+
+                        <p style="color:#666;">
+                            لأننا نريد أن نجعل رحلة البحث عن شريك الحياة
+                            أكثر وضوحًا وتنظيمًا، بعيدًا عن العلاقات غير
+                            الجادة، مع التركيز على البيانات والتوافق
+                            والنية الحقيقية للزواج.
+                        </p>
+
+                        <br>
+
+                        <p style="color:#666;">
+                            تبدأ رحلتك بتسجيل بياناتك، ثم تتم مراجعتها،
+                            وبعد اعتماد الملف يمكنك الاستفادة من خدمات
+                            المبادرة والتعرف على الترشيحات المناسبة لك.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             STEPS
+        ========================== -->
+
+        <section class="steps" id="steps">
+
+            <div class="container">
+
+                <div class="section-header">
+
+                    <div class="section-label">
+                        خطوات بسيطة
+                    </div>
+
+                    <h2>
+                        كيف تعمل المبادرة؟
+                    </h2>
+
+                    <p>
+                        أربع خطوات بسيطة تبدأ بها رحلتك نحو الزواج.
+                    </p>
+
+                </div>
+
+
+                <div class="steps-grid">
+
+                    <div class="step-card">
+
+                        <div class="step-number">
+                            1
+                        </div>
+
+                        <h3>
+                            التسجيل
+                        </h3>
+
+                        <p>
+                            أنشئ حسابك وسجل بياناتك الأساسية.
+                        </p>
+
+                    </div>
+
+
+                    <div class="step-card">
+
+                        <div class="step-number">
+                            2
+                        </div>
+
+                        <h3>
+                            استكمال الملف
+                        </h3>
+
+                        <p>
+                            أضف المعلومات التي تساعدنا على فهم احتياجاتك
+                            وتفضيلاتك.
+                        </p>
+
+                    </div>
+
+
+                    <div class="step-card">
+
+                        <div class="step-number">
+                            3
+                        </div>
+
+                        <h3>
+                            مراجعة البيانات
+                        </h3>
+
+                        <p>
+                            تتم مراجعة بيانات الملف قبل اعتماده.
+                        </p>
+
+                    </div>
+
+
+                    <div class="step-card">
+
+                        <div class="step-number">
+                            4
+                        </div>
+
+                        <h3>
+                            الترشيح
+                        </h3>
+
+                        <p>
+                            بعد الاعتماد تبدأ مرحلة البحث عن التوافق
+                            والترشيحات المناسبة.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             FEATURES
+        ========================== -->
+
+        <section class="features" id="features">
+
+            <div class="container">
+
+                <div class="section-header">
+
+                    <div class="section-label">
+                        مميزات زُلفى
+                    </div>
+
+                    <h2>
+                        تجربة أكثر أمانًا ووضوحًا
+                    </h2>
+
+                    <p>
+                        صممنا المبادرة لتكون بسيطة، منظمة، وتحافظ على
+                        خصوصية المستخدمين.
+                    </p>
+
+                </div>
+
+
+                <div class="features-grid">
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            🔒
+                        </div>
+
+                        <h3>
+                            الخصوصية
+                        </h3>
+
+                        <p>
+                            نحافظ على خصوصية بياناتك ولا يتم عرض ملفك
+                            بشكل عام إلا وفق نظام المبادرة.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            ✓
+                        </div>
+
+                        <h3>
+                            ملفات موثقة
+                        </h3>
+
+                        <p>
+                            يتم مراجعة البيانات قبل اعتماد الملف
+                            وإتاحته ضمن المبادرة.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            ♡
+                        </div>
+
+                        <h3>
+                            توافق أفضل
+                        </h3>
+
+                        <p>
+                            نعتمد على مجموعة من البيانات والتفضيلات
+                            للمساعدة في الوصول إلى ترشيحات مناسبة.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            👤
+                        </div>
+
+                        <h3>
+                            حساب شخصي
+                        </h3>
+
+                        <p>
+                            يمكنك إدارة بياناتك ومتابعة حالة حسابك
+                            من خلال حسابك الشخصي.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            📋
+                        </div>
+
+                        <h3>
+                            بيانات منظمة
+                        </h3>
+
+                        <p>
+                            يتم جمع البيانات بطريقة منظمة لتسهيل عملية
+                            البحث والترشيح.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            🤝
+                        </div>
+
+                        <h3>
+                            هدف جاد
+                        </h3>
+
+                        <p>
+                            المبادرة مخصصة للراغبين في الزواج الجاد
+                            وتكوين أسرة مستقرة.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             STATS
+        ========================== -->
+
+        <section class="stats">
+
+            <div class="container">
+
+                <div class="stats-grid">
+
+                    <div class="stat">
+
+                        <h3 data-target="100">
+                            0
+                        </h3>
+
+                        <p>
+                            مستفيد من المبادرة
+                        </p>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <h3 data-target="50">
+                            0
+                        </h3>
+
+                        <p>
+                            ملف تم مراجعته
+                        </p>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <h3 data-target="25">
+                            0
+                        </h3>
+
+                        <p>
+                            ترشيح ناجح
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             CTA
+        ========================== -->
+
+        <section class="cta">
+
+            <div class="container">
+
+                <div class="cta-box">
+
+                    <h2>
+                        مستعد تبدأ رحلتك؟
+                    </h2>
+
+                    <p>
+                        سجل بياناتك وابدأ أول خطوة نحو العثور على شريك
+                        الحياة المناسب.
+                    </p>
+
+                    <a
+                        href="register.html"
+                        class="btn"
+                    >
+                        التسجيل في زُلفى
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div>
+
+                    <div class="footer-logo">
+                        زُلفى للزواج
+                    </div>
+
+                    <p class="footer-about">
+                        مبادرة تهدف إلى مساعدة الشباب والفتيات على
+                        الوصول إلى شريك الحياة المناسب من خلال
+                        التعارف الجاد والمنظم.
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <h3 class="footer-title">
+                        روابط سريعة
+                    </h3>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="#home">
+                                الرئيسية
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#about">
+                                عن المبادرة
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#steps">
+                                كيف تعمل؟
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="register.html">
+                                التسجيل
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div>
+
+                    <h3 class="footer-title">
+                        حسابك
+                    </h3>
+
+                    <ul class="footer-links">
+
+                        <li>
+                            <a href="login.html">
+                                تسجيل الدخول
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="register.html">
+                                إنشاء حساب
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                © <span id="year"></span>
+                زُلفى للزواج — جميع الحقوق محفوظة
+
+            </div>
 
         </div>
 
-    </div>
+    </footer>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
 
     <script>
-        console.log('Index page loaded');
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            console.log('User found:', user.profileModel);
-            if(user.profileModel) {
-                console.log('User has profile ref');
-                if( user.paid ) {
-                    console.log('User has paid');
-                    window.location.href = './profile.html';
-                } else {
-                    console.log('User has not paid');
-                    window.location.href = './payment.html';
-                }
+
+        /* =========================
+           MOBILE MENU
+        ========================== */
+
+        const menuBtn = document.getElementById("menuBtn");
+        const navLinks = document.getElementById("navLinks");
+
+        menuBtn.addEventListener("click", () => {
+
+            navLinks.classList.toggle("mobile-open");
+
+            if (navLinks.classList.contains("mobile-open")) {
+                menuBtn.textContent = "✕";
+            } else {
+                menuBtn.textContent = "☰";
             }
-        } else {
-            window.location.href = './login.html';
+
+        });
+
+
+        /* Close menu after clicking link */
+
+        document.querySelectorAll(".nav-links a").forEach(link => {
+
+            link.addEventListener("click", () => {
+
+                navLinks.classList.remove("mobile-open");
+                menuBtn.textContent = "☰";
+
+            });
+
+        });
+
+
+        /* =========================
+           CURRENT YEAR
+        ========================== */
+
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+
+        /* =========================
+           STATS COUNTER
+        ========================== */
+
+        const counters =
+            document.querySelectorAll("[data-target]");
+
+        let started = false;
+
+        function startCounters() {
+
+            if (started) return;
+
+            const statsSection =
+                document.querySelector(".stats");
+
+            const position =
+                statsSection.getBoundingClientRect().top;
+
+            if (position < window.innerHeight - 100) {
+
+                started = true;
+
+                counters.forEach(counter => {
+
+                    const target =
+                        Number(counter.dataset.target);
+
+                    let current = 0;
+
+                    const increment =
+                        Math.max(1, Math.ceil(target / 60));
+
+                    const timer =
+                        setInterval(() => {
+
+                            current += increment;
+
+                            if (current >= target) {
+
+                                current = target;
+
+                                clearInterval(timer);
+
+                            }
+
+                            counter.textContent =
+                                current + "+";
+
+                        }, 25);
+
+                });
+
+            }
+
         }
+
+
+        window.addEventListener(
+            "scroll",
+            startCounters
+        );
+
+        startCounters();
+
     </script>
+
 </body>
-</html>
 </html>

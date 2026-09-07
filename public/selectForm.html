@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>زُلفى | اختيار نوع التسجيل</title>
+
+    <style>
+
+        /* =========================
+           RESET
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(
+                    circle at 10% 20%,
+                    rgba(196, 154, 108, 0.15),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 80%,
+                    rgba(123, 75, 58, 0.08),
+                    transparent 30%
+                ),
+                #faf9f6;
+
+            color: #2d2d2d;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            height: 76px;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid #e8ded5;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar {
+            width: min(1150px, 92%);
+            margin: auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+
+        /* LOGO */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+
+            border-radius: 50%;
+
+            background: #7b4b3a;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 23px;
+        }
+
+        .logo-text h2 {
+            color: #7b4b3a;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            display: block;
+            color: #888;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+
+        /* LOGIN */
+
+        .login-btn {
+            text-decoration: none;
+
+            padding: 10px 20px;
+
+            border: 1px solid #7b4b3a;
+            border-radius: 9px;
+
+            color: #7b4b3a;
+            background: transparent;
+
+            font-size: 14px;
+
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #7b4b3a;
+            color: white;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        main {
+            flex: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 70px 20px;
+        }
+
+        .container {
+            width: min(900px, 100%);
+            text-align: center;
+        }
+
+
+        /* =========================
+           INTRO
+        ========================= */
+
+        .intro {
+            margin-bottom: 45px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 15px;
+
+            border-radius: 30px;
+
+            background: rgba(123, 75, 58, 0.08);
+            color: #7b4b3a;
+
+            font-size: 13px;
+
+            margin-bottom: 18px;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+
+            background: #c49a6c;
+
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-size: clamp(30px, 5vw, 45px);
+            color: #5f382c;
+
+            margin-bottom: 12px;
+        }
+
+        .intro p {
+            max-width: 600px;
+            margin: auto;
+
+            color: #777;
+            font-size: 15px;
+            line-height: 2;
+        }
+
+
+        /* =========================
+           OPTIONS
+        ========================= */
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 25px;
+
+            max-width: 700px;
+            margin: auto;
+        }
+
+
+        .option {
+            position: relative;
+
+            background: white;
+
+            border: 1px solid #e8ded5;
+            border-radius: 22px;
+
+            padding: 40px 30px;
+
+            text-decoration: none;
+            color: #2d2d2d;
+
+            box-shadow:
+                0 10px 35px rgba(80, 50, 30, 0.06);
+
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            right: 0;
+            left: 0;
+
+            height: 4px;
+
+            background: #c49a6c;
+
+            transform: scaleX(0);
+
+            transition: 0.3s;
+        }
+
+        .option:hover {
+            transform: translateY(-8px);
+
+            border-color: #c49a6c;
+
+            box-shadow:
+                0 18px 45px rgba(80, 50, 30, 0.12);
+        }
+
+        .option:hover::before {
+            transform: scaleX(1);
+        }
+
+
+        /* ICON */
+
+        .option-icon {
+            width: 75px;
+            height: 75px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 50%;
+
+            background: #f3eee8;
+
+            color: #7b4b3a;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 34px;
+
+            transition: 0.3s;
+        }
+
+        .option:hover .option-icon {
+            background: #7b4b3a;
+            color: white;
+            transform: scale(1.05);
+        }
+
+
+        .option h2 {
+            color: #5f382c;
+
+            font-size: 24px;
+
+            margin-bottom: 7px;
+        }
+
+        .option p {
+            color: #777;
+
+            font-size: 14px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* CHOOSE */
+
+        .choose {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            color: #7b4b3a;
+
+            font-size: 13px;
+            font-weight: bold;
+
+            padding: 9px 17px;
+
+            background: #faf7f3;
+
+            border-radius: 8px;
+
+            transition: 0.3s;
+        }
+
+        .option:hover .choose {
+            background: #7b4b3a;
+            color: white;
+        }
+
+
+        /* =========================
+           NOTE
+        ========================= */
+
+        .note {
+            margin-top: 30px;
+
+            color: #888;
+
+            font-size: 12px;
+        }
+
+        .note span {
+            color: #7b4b3a;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #2b211d;
+
+            padding: 20px;
+
+            text-align: center;
+
+            color: rgba(255,255,255,0.55);
+
+            font-size: 12px;
+        }
+
+        footer strong {
+            color: white;
+        }
+
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+            position: fixed;
+
+            inset: 0;
+
+            background: #faf9f6;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            z-index: 9999;
+
+            transition: opacity 0.3s;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-heart {
+            font-size: 45px;
+
+            color: #7b4b3a;
+
+            animation: heartbeat 1.2s infinite;
+        }
+
+        .loader-content p {
+            margin-top: 10px;
+
+            color: #777;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           ANIMATIONS
+        ========================= */
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.12);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeUp {
+
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+
+        .intro,
+        .option {
+            animation: fadeUp 0.7s ease both;
+        }
+
+        .option:nth-child(2) {
+            animation-delay: 0.12s;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 650px) {
+
+            header {
+                height: 68px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo-text h2 {
+                font-size: 19px;
+            }
+
+            .login-btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            main {
+                padding: 50px 18px;
+            }
+
+            .intro {
+                margin-bottom: 30px;
+            }
+
+            .intro p {
+                font-size: 14px;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .option {
+                padding: 30px 20px;
+            }
+
+            .option-icon {
+                width: 65px;
+                height: 65px;
+                font-size: 29px;
+            }
+
+            .option h2 {
+                font-size: 21px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header>
+
+        <div class="navbar">
+
+            <a href="./index.html" class="logo">
+
+                <div class="logo-icon">
+                    ♡
+                </div>
+
+                <div class="logo-text">
+
+                    <h2>
+                        زُلفى
+                    </h2>
+
+                    <span>
+                        مبادرة للزواج
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <a href="./login.html" class="login-btn">
+                تسجيل الدخول
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main>
+
+        <div class="container">
+
+
+            <!-- INTRO -->
+
+            <div class="intro">
+
+                <div class="badge">
+
+                    <span class="badge-dot"></span>
+
+                    مبادرة زُلفى للزواج
+
+                </div>
+
+
+                <h1>
+                    اختر نوع التسجيل
+                </h1>
+
+
+                <p>
+                    حتى نتمكن من إعداد ملفك بالشكل المناسب،
+                    اختر نوع التسجيل الذي يتوافق معك.
+                </p>
+
+            </div>
+
+
+
+            <!-- OPTIONS -->
+
+            <div class="options">
+
+
+                <!-- MALE -->
+
+                <a href="./male.html" class="option">
+
+                    <div class="option-icon">
+                        👨
+                    </div>
+
+                    <h2>
+                        رجل
+                    </h2>
+
+                    <p>
+                        التسجيل كزوج
+                    </p>
+
+                    <span class="choose">
+                        التسجيل كزوج
+                        <span>←</span>
+                    </span>
+
+                </a>
+
+
+
+                <!-- FEMALE -->
+
+                <a href="./female.html" class="option">
+
+                    <div class="option-icon">
+                        👩
+                    </div>
+
+                    <h2>
+                        امرأة
+                    </h2>
+
+                    <p>
+                        التسجيل كزوجة
+                    </p>
+
+                    <span class="choose">
+                        التسجيل كزوجة
+                        <span>←</span>
+                    </span>
+
+                </a>
+
+
+            </div>
+
+
+            <div class="note">
+                🔒 بياناتك يتم التعامل معها بسرية واحترام
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        © <span id="year"></span>
+
+        <strong>
+            زُلفى للزواج
+        </strong>
+
+        — جميع الحقوق محفوظة
+
+    </footer>
+
+
+
+    <!-- =========================
+         LOADING
+    ========================= -->
+
+    <div class="loading" id="loading">
+
+        <div class="loader-content">
+
+            <div class="loader-heart">
+                ♥
+            </div>
+
+            <p>
+                جاري التحقق من حسابك...
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        console.log("Zulfa registration page loaded");
+
+
+        /* =========================
+           YEAR
+        ========================= */
+
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+
+
+        /* =========================
+           USER CHECK
+        ========================= */
+
+        const userData =
+            localStorage.getItem("user");
+
+
+        if (!userData) {
+
+            console.log("No user found");
+
+            window.location.href = "./login.html";
+
+        } else {
+
+            try {
+
+                const user =
+                    JSON.parse(userData);
+
+                console.log("User found:", user);
+
+
+                /*
+                    لو المستخدم بالفعل عنده Profile
+                */
+
+                if (user.profileModel) {
+
+                    console.log(
+                        "User already has profile:",
+                        user.profileModel
+                    );
+
+
+                    /*
+                        لو دفع بالفعل
+                        -> profile
+                    */
+
+                    if (user.paid === true) {
+
+                        console.log(
+                            "User has paid -> profile"
+                        );
+
+                        window.location.href =
+                            "./profile.html";
+
+                    }
+
+
+                    /*
+                        عنده Profile لكن لم يدفع
+                        -> payment
+                    */
+
+                    else {
+
+                        console.log(
+                            "User has profile but has not paid"
+                        );
+
+                        window.location.href =
+                            "./payment.html";
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Invalid user data in localStorage:",
+                    error
+                );
+
+                localStorage.removeItem("user");
+
+                window.location.href =
+                    "./login.html";
+
+            }
+
+        }
+
+
+        /* =========================
+           HIDE LOADING
+        ========================= */
+
+        setTimeout(() => {
+
+            document
+                .getElementById("loading")
+                .classList.add("hidden");
+
+        }, 500);
+
+
+    </script>
+
+</body>
+
+</html>
