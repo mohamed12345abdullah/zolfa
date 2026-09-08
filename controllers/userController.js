@@ -150,6 +150,26 @@ const updateStatus = asyncHandler(async (req, res) => {
 })
 
 
+const assignAdmin = asyncHandler(async(req,res)=>{
+    console.log("assigning admin");
+    const phone = req.body.phone;
+    const user = await User.findOne({phone});
+    if(!user){
+        return res.status(404).json({
+            success: false,
+            message: 'User not found'
+        });
+    }
+    user.role = 'admin';
+    await user.save();
+    res.status(200).json({
+        success: true,
+        user,
+        message: 'Admin role assigned successfully'
+    });
+})
+
+
 module.exports = {
     viewUser,
     getViews,
@@ -158,5 +178,6 @@ module.exports = {
     deleteUser,
     getUserById,
     updatePaid,
-    updateStatus
+    updateStatus,
+    assignAdmin    
 }

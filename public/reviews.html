@@ -669,7 +669,12 @@ if(user.role!='admin' && user.role!='manager'){
     setLoading(true);
 
     try {
-      const res = await fetch(`${BASE}/users/${status}/${page}`);
+      const res = await fetch(`${BASE}/users/${status}/${page}`,{
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${user.authToken}`
+        }
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!data.success) throw new Error('API returned failure');
@@ -717,7 +722,12 @@ if(user.role!='admin' && user.role!='manager'){
     }
     setLoading(true);
     try {
-      const res = await fetch(`${BASE}/users/${id}`);
+      const res = await fetch(`${BASE}/users/${id}`,{
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${user.authToken}`
+        }
+      });
       if (res.status === 404) throw new Error('لا يوجد عضو بهذا الـ ID');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();

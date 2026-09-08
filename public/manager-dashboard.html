@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assign Admin Role</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      color: #818cf8;
+      font-weight: 700;
+    }
+
+    .btn-dashboard {
+      background-color: #334155;
+      color: #e2e8f0;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.875rem;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      border: 1px solid #475569;
+      transition: background-color 0.2s;
+    }
+
+    .btn-dashboard:hover {
+      background-color: #475569;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      color: #f8fafc;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #6366f1;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.625rem;
+      background-color: #4f46e5;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #6366f1;
+    }
+
+    .btn-submit:disabled {
+      background-color: #334155;
+      cursor: not-allowed;
+    }
+
+    .alert {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .alert-success {
+      background-color: rgba(6, 78, 59, 0.8);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #a7f3d0;
+    }
+
+    .alert-error {
+      background-color: rgba(136, 19, 55, 0.8);
+      border: 1px solid rgba(244, 63, 94, 0.5);
+      color: #fecdd3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="header">
+      <h1>Assign Admin</h1>
+      <a href="/reviews.html" class="btn-dashboard">Dashboard &rarr;</a>
+    </div>
+
+    <form id="assignAdminForm">
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input 
+          type="text" 
+          id="phone" 
+          name="phone" 
+          placeholder="e.g. 01000000000" 
+          required
+        >
+      </div>
+
+      <button type="submit" id="submitBtn" class="btn-submit">Assign Role</button>
+    </form>
+
+    <div id="alertBox" class="alert"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('assignAdminForm');
+    const phoneInput = document.getElementById('phone');
+    const submitBtn = document.getElementById('submitBtn');
+    const alertBox = document.getElementById('alertBox');
+
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = `alert alert-${type}`;
+      alertBox.style.display = 'block';
+    }
+
+    function hideAlert() {
+      alertBox.style.display = 'none';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const phone = phoneInput.value.trim();
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        showAlert('No authentication token found in local storage.', 'error');
+        return;
+      }
+      console.log(token);
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+
+      try {
+        const response = await fetch('../api/users/assign-admin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            phone: phone
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to assign admin role.');
+        }
+
+        showAlert('Admin assigned successfully!', 'success');
+        phoneInput.value = '';
+
+      } catch (err) {
+        showAlert(err.message || 'An error occurred while assigning admin.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Assign Role';
+      }
+    });
+  </script>
+
+</body>
+</html>

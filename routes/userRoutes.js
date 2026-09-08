@@ -7,6 +7,9 @@ const uploadFileToGoogleDrive = require('../utils/googleDrive');
 
 const controller = require('../controllers/userController');
 const {auth} = require('../middlewares/jwt');
+const checkRole = require('../middlewares/checkRole');
+
+
 router.use(auth);
 router.post('/view', controller.viewUser);
 router.get('/views', controller.getViews);
@@ -15,12 +18,15 @@ router.delete('/:id', controller.deleteUser);
 router.get('/:id', controller.getUserById);
 router.put('/:id/paid', controller.updatePaid);
 router.put('/:id/status', controller.updateStatus);
+router.post('/assign-admin',checkRole('manager'), controller.assignAdmin);
+
 
 
 // documets for apis : 
 // paid update api : /api/users/:id/paid
 // status update api : /api/users/:id/status
 // get user by id api : /api/users/:id
+// assign admin api : /api/users/assign-admin 
 
 
 const uploadFile = upload(['application/pdf', 'image/jpeg', 'image/png', 'image/jpg']);
