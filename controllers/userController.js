@@ -123,9 +123,16 @@ const deleteUser = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(id).populate('profileRef');
+    if(!user){
+        return res.status(404).json({
+            success: false,
+            message: 'user not found'
+        });
+    }
     res.status(200).json({
         success: true,
-        user
+        user,
+        message: 'user found successfully'
     });
 })
 

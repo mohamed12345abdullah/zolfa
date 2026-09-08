@@ -672,7 +672,8 @@ if(user.role!='admin' && user.role!='manager'){
       const res = await fetch(`${BASE}/users/${status}/${page}`,{
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${user.authToken}`
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+
         }
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -725,7 +726,7 @@ if(user.role!='admin' && user.role!='manager'){
       const res = await fetch(`${BASE}/users/${id}`,{
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${user.authToken}`
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
       });
       if (res.status === 404) throw new Error('لا يوجد عضو بهذا الـ ID');
@@ -753,6 +754,8 @@ if(user.role!='admin' && user.role!='manager'){
       renderPagination();
       toast('تم العثور على العضو ✓');
     } catch (err) {
+      console.log(err);
+      
       toast('خطأ: ' + err.message, 'error');
       setLoading(false);
       document.getElementById('table-wrap').style.display = 'none';
@@ -861,7 +864,9 @@ if(user.role!='admin' && user.role!='manager'){
     try {
       const res = await fetch(`${BASE}/users/${id}/status`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+         },
         body: JSON.stringify({ status })
       });
       const data = await res.json();
@@ -898,7 +903,9 @@ if(user.role!='admin' && user.role!='manager'){
     try {
       const res = await fetch(`${BASE}/users/${id}/paid`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+         },
         body: JSON.stringify({ paid })
       });
       const data = await res.json();
