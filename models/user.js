@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -79,6 +81,7 @@ const userSchema = new mongoose.Schema({
           }
         }
     ],
+
     status: {
         type: String,
         default: "pending",
@@ -88,6 +91,18 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    requestsSent:[
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Request"
+      }
+    ],
+    requestsReceived: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Request"
+      }
+    ]
     
 
 }, {

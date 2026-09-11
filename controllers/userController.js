@@ -89,6 +89,35 @@ const showAllUsers = asyncHandler(async (req, res) => {
     });
 });
 
+
+const getApprovedUsers = asyncHandler(async (req, res) => {
+    console.log("getApprovedUsers");
+    const userData = req.user;
+    let gender;
+    const limit=10;
+    const page = req.params.page || 1;
+    // console.log(userData);
+    if( userData.profileModel == null){
+        console.log('this user does not have a profile data');
+        return res.status(400).json({
+            success: false,
+            message: 'this user does not have a profile data'
+        });
+    }
+    if(userData.profileModel == "Male"){
+        gender = "Female";
+    }else{
+        gender = "Male";
+    }
+    const users = await User.find({status:'approved',role:'user',profileModel:gender},{'password':0,'authToken':0}).populate('profileRef')
+    .limit(limit)
+    .skip((page-1)*limit);
+    res.status(200).json({
+        success: true,
+        users
+    });
+});
+
 // const uploadFileToGoogleDrive = asyncHandler(async (req, res) => {
 //     const { file } = req;
 //     const {fileId,fileUrl}=req;
@@ -186,5 +215,6 @@ module.exports = {
     getUserById,
     updatePaid,
     updateStatus,
-    assignAdmin    
+    assignAdmin,
+    getApprovedUsers
 }

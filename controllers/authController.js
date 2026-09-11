@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Request = require('../models/request');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -144,6 +145,7 @@ register: asyncHandler(async (req, res) => {
         }
         let user = await User.findOne({ [type]: email })
         .populate('profileRef')
+        .populate('requestsReceived')
   
         if (!user ) {
             throw new AppError('user not found', 401);
@@ -161,7 +163,8 @@ register: asyncHandler(async (req, res) => {
         if (!user) throw new AppError('User not found', 404);
         
         if(user.profileModel == 'Male' || user.profileModel == 'Female'){
-            await user.populate('profileRef');
+            await user.populate('profileRef')
+                    // .populate('requestsReceived');
         }
         
         res.status(200).json({

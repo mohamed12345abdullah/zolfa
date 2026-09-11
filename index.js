@@ -43,6 +43,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/maleForms", require("./routes/male"));
 app.use("/api/femaleForms", require("./routes/female"));
+app.use("/api/requests", require("./routes/requestRouter"));
  
  
 // 404 Handler

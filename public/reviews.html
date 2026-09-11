@@ -530,6 +530,12 @@
   <div class="logo">لوحة الإدارة <span>مراجعة وإدارة الأعضاء</span></div>
   <div style="font-size:12px;color:var(--muted)" id="header-count"></div>
   <button id="logout-btn" class="btn">تسجيل الخروج</button>
+  <button id="dashboard-btn" class="btn">إدارة الطلبات</button>
+  <script>
+    document.getElementById('dashboard-btn').addEventListener('click', function() {
+      window.location.href = '/manageRequests.html';
+    });
+  </script>
 </header>
 
 <div id="toast-container"></div>

@@ -592,9 +592,12 @@ form.addEventListener("submit", async function (event) {
         setTimeout(() => {
         const user = localStorage.getItem('user');
         if (user) {
-            if(user.paid != 'true') {
-                window.location.href = './payment.html';
-            }
+
+            window.location.href = './profile.html';
+            
+            // if(user.paid != 'true') {
+            //     window.location.href = './payment.html';
+            // }
         }
         }, 1000);
     } catch (error) {

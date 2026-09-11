@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Requests — Matching Platform</title>
+  <style>
+    /* ─── Design Tokens ───────────────────────────────────────────── */
+    :root {
+      --c-bg:          #f7f6f3;
+      --c-surface:     #ffffff;
+      --c-surface-2:   #f0ede8;
+      --c-border:      #e2ddd6;
+      --c-border-2:    #cdc7be;
+      --c-text:        #1a1714;
+      --c-text-2:      #5a534b;
+      --c-text-3:      #938c83;
+
+      --c-accent:      #2d6a4f;
+      --c-accent-lt:   #d8f3dc;
+      --c-accent-dk:   #1b4332;
+
+      --c-pending-bg:  #fff8e1;
+      --c-pending-fg:  #7b5800;
+      --c-pending-bd:  #f6d860;
+
+      --c-accepted-bg: #e8f5e9;
+      --c-accepted-fg: #1b5e20;
+      --c-accepted-bd: #81c784;
+
+      --c-rejected-bg: #fce4ec;
+      --c-rejected-fg: #880e4f;
+      --c-rejected-bd: #f48fb1;
+
+      --c-whatsapp:    #25d366;
+      --c-telegram:    #0088cc;
+      --c-facebook:    #1877f2;
+
+      --radius-sm:  6px;
+      --radius-md:  12px;
+      --radius-lg:  18px;
+      --radius-xl:  24px;
+
+      --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+      --shadow-modal: 0 8px 40px rgba(0,0,0,.18);
+
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+
+      --transition: 180ms ease;
+    }
+
+    /* ─── Reset & Base ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--c-bg);
+      color: var(--c-text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+    img { display: block; max-width: 100%; }
+    ul, ol { list-style: none; }
+
+    /* ─── Layout ──────────────────────────────────────────────────── */
+    .page-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* ─── Page Header ─────────────────────────────────────────────── */
+    .page-header {
+      padding: 40px 0 32px;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 32px;
+    }
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--c-text);
+      line-height: 1.1;
+    }
+    .page-header p {
+      margin-top: 8px;
+      font-size: 0.9375rem;
+      color: var(--c-text-2);
+      max-width: 520px;
+    }
+
+    /* ─── Status Tabs ─────────────────────────────────────────────── */
+    .status-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-md);
+      padding: 4px;
+      width: fit-content;
+      margin-bottom: 28px;
+    }
+    .tab-btn {
+      padding: 8px 22px;
+      border-radius: 9px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--c-text-2);
+      transition: background var(--transition), color var(--transition);
+    }
+    .tab-btn:hover { color: var(--c-text); background: var(--c-surface-2); }
+    .tab-btn.active {
+      background: var(--c-accent);
+      color: #fff;
+    }
+
+    /* ─── Request Grid ────────────────────────────────────────────── */
+    .requests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    /* ─── Request Card ────────────────────────────────────────────── */
+    .request-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .request-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,.06), 0 12px 32px rgba(0,0,0,.1);
+    }
+    .request-card:focus-visible {
+      outline: 3px solid var(--c-accent);
+      outline-offset: 2px;
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 20px 20px 16px;
+    }
+    .card-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--c-surface-2);
+      border: 2px solid var(--c-border);
+      object-fit: cover;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--c-text-3);
+      overflow: hidden;
+    }
+    .card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .card-identity { flex: 1; min-width: 0; }
+    .card-name {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--c-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .meta-chip {
+      font-size: 0.75rem;
+      color: var(--c-text-2);
+      background: var(--c-surface-2);
+      border: 1px solid var(--c-border);
+      border-radius: 20px;
+      padding: 2px 9px;
+      white-space: nowrap;
+    }
+    .card-status-badge {
+      margin-top: 2px;
+    }
+
+    .card-body {
+      padding: 0 20px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .card-field { display: flex; flex-direction: column; gap: 2px; }
+    .card-field-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--c-text-3);
+    }
+    .card-field-value {
+      font-size: 0.8125rem;
+      color: var(--c-text-2);
+    }
+    .card-description {
+      padding: 0 20px 14px;
+      font-size: 0.8125rem;
+      color: var(--c-text-2);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-contact {
+      border-top: 1px solid var(--c-border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .card-phone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-phone-number {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--c-text);
+      direction: ltr;
+    }
+    .btn-copy {
+      font-size: 0.75rem;
+      color: var(--c-accent);
+      border: 1px solid var(--c-accent);
+      border-radius: var(--radius-sm);
+      padding: 3px 9px;
+      transition: background var(--transition), color var(--transition);
+      font-weight: 500;
+    }
+    .btn-copy:hover { background: var(--c-accent); color: #fff; }
+    .btn-copy.copied { background: var(--c-accent); color: #fff; }
+
+    .contact-icons { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid currentColor;
+      transition: background var(--transition), color var(--transition);
+      flex-shrink: 0;
+    }
+    .icon-btn svg { width: 15px; height: 15px; fill: currentColor; }
+    .icon-btn.wa { color: var(--c-whatsapp); }
+    .icon-btn.wa:hover { background: var(--c-whatsapp); color: #fff; }
+    .icon-btn.tg { color: var(--c-telegram); }
+    .icon-btn.tg:hover { background: var(--c-telegram); color: #fff; }
+    .icon-btn.fb { color: var(--c-facebook); }
+    .icon-btn.fb:hover { background: var(--c-facebook); color: #fff; }
+
+    .card-footer {
+      border-top: 1px solid var(--c-border);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--c-surface-2);
+    }
+    .card-date {
+      font-size: 0.75rem;
+      color: var(--c-text-3);
+    }
+
+    /* ─── Status Badge ────────────────────────────────────────────── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      border-radius: 20px;
+      padding: 3px 10px;
+      border: 1px solid;
+    }
+    .status-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+    .status-badge.pending {
+      background: var(--c-pending-bg);
+      color: var(--c-pending-fg);
+      border-color: var(--c-pending-bd);
+    }
+    .status-badge.accepted {
+      background: var(--c-accepted-bg);
+      color: var(--c-accepted-fg);
+      border-color: var(--c-accepted-bd);
+    }
+    .status-badge.rejected {
+      background: var(--c-rejected-bg);
+      color: var(--c-rejected-fg);
+      border-color: var(--c-rejected-bd);
+    }
+
+    /* ─── Skeleton Loading ────────────────────────────────────────── */
+    @keyframes shimmer {
+      0%   { background-position: -600px 0; }
+      100% { background-position: 600px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, var(--c-surface-2) 25%, var(--c-border) 50%, var(--c-surface-2) 75%);
+      background-size: 1200px 100%;
+      animation: shimmer 1.5s infinite linear;
+      border-radius: 4px;
+    }
+    .skeleton-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .skeleton-header { display: flex; gap: 14px; align-items: flex-start; }
+    .skeleton-avatar { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; }
+    .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skeleton-line { height: 12px; }
+    .skeleton-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .skeleton-cell { height: 36px; border-radius: var(--radius-sm); }
+    .skeleton-footer { height: 32px; border-radius: var(--radius-sm); }
+
+    /* ─── Empty & Error States ────────────────────────────────────── */
+    .state-panel {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 72px 20px;
+    }
+    .state-panel .state-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .state-panel h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .state-panel p {
+      font-size: 0.9rem;
+      color: var(--c-text-2);
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--c-accent);
+      color: #fff;
+      border-radius: var(--radius-md);
+      padding: 10px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: opacity var(--transition);
+    }
+    .btn-primary:hover { opacity: .85; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ─── Pagination ──────────────────────────────────────────────── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+    .page-btn {
+      min-width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--c-border);
+      background: var(--c-surface);
+      color: var(--c-text-2);
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+    }
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+    }
+    .page-btn.active {
+      background: var(--c-accent);
+      border-color: var(--c-accent);
+      color: #fff;
+    }
+    .page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ─── Modal Overlay ───────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 250ms ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Side drawer */
+    .modal-drawer {
+      width: min(520px, 100vw);
+      height: 100dvh;
+      background: var(--c-surface);
+      box-shadow: var(--shadow-modal);
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 280ms cubic-bezier(.4,0,.2,1);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-overlay.open .modal-drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--c-border);
+      position: sticky;
+      top: 0;
+      background: var(--c-surface);
+      z-index: 1;
+    }
+    .drawer-title {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: var(--c-text);
+    }
+    .btn-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--c-surface-2);
+      border: 1px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c-text-2);
+      font-size: 1.125rem;
+      transition: background var(--transition);
+    }
+    .btn-close:hover { background: var(--c-border); }
+
+    .drawer-body {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ─── Profile Hero ────────────────────────────────────────────── */
+    .profile-hero {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--c-surface-2);
+      border: 2px solid var(--c-border);
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--c-text-3);
+    }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-info { flex: 1; min-width: 0; }
+    .profile-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--c-text);
+    }
+    .profile-sub {
+      font-size: 0.875rem;
+      color: var(--c-text-2);
+      margin-top: 4px;
+    }
+    .profile-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    /* ─── Sections ────────────────────────────────────────────────── */
+    .section-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 13px 18px;
+      background: var(--c-surface-2);
+      border-bottom: 1px solid var(--c-border);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--c-text);
+      letter-spacing: 0.01em;
+    }
+    .section-body {
+      padding: 4px 0;
+    }
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .field-row:last-child { border-bottom: none; }
+    .field-label {
+      font-size: 0.8rem;
+      color: var(--c-text-3);
+      flex-shrink: 0;
+    }
+    .field-value {
+      font-size: 0.875rem;
+      color: var(--c-text);
+      text-align: right;
+      font-weight: 500;
+      max-width: 240px;
+      word-break: break-word;
+    }
+    .field-value.bool-yes { color: var(--c-accepted-fg); }
+    .field-value.bool-no  { color: var(--c-rejected-fg); }
+
+    /* Tag chips (for arrays) */
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+    .tag {
+      background: var(--c-accent-lt);
+      color: var(--c-accent-dk);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Contact rows inside drawer */
+    .contact-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .contact-row:last-child { border-bottom: none; }
+    .contact-row-label {
+      font-size: 0.8rem;
+      color: var(--c-text-3);
+      flex-shrink: 0;
+    }
+    .contact-row-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .contact-row-value {
+      font-size: 0.875rem;
+      color: var(--c-text);
+      font-weight: 500;
+      direction: ltr;
+    }
+    .btn-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      padding: 4px 11px;
+      border: 1.5px solid;
+      transition: background var(--transition), color var(--transition);
+      white-space: nowrap;
+    }
+    .btn-contact.wa { color: var(--c-whatsapp); border-color: var(--c-whatsapp); }
+    .btn-contact.wa:hover { background: var(--c-whatsapp); color: #fff; }
+    .btn-contact.tg { color: var(--c-telegram); border-color: var(--c-telegram); }
+    .btn-contact.tg:hover { background: var(--c-telegram); color: #fff; }
+    .btn-contact.fb { color: var(--c-facebook); border-color: var(--c-facebook); }
+    .btn-contact.fb:hover { background: var(--c-facebook); color: #fff; }
+
+    /* ─── Get All Information Button ──────────────────────────────── */
+    .get-all-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      background: var(--c-accent-dk);
+      color: #fff;
+      border-radius: var(--radius-md);
+      padding: 13px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: opacity var(--transition);
+    }
+    .get-all-btn:hover:not(:disabled) { opacity: .88; }
+    .get-all-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .get-all-btn .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .full-profile-error {
+      background: var(--c-rejected-bg);
+      border: 1px solid var(--c-rejected-bd);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: 0.875rem;
+      color: var(--c-rejected-fg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* ─── Toast ───────────────────────────────────────────────────── */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      pointer-events: none;
+    }
+    .toast {
+      background: #1a1714;
+      color: #fff;
+      border-radius: var(--radius-md);
+      padding: 10px 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: toastIn .25s ease forwards, toastOut .25s ease 2.5s forwards;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    @keyframes toastIn  { to { opacity:1; transform: translateY(0); } }
+    @keyframes toastOut { to { opacity:0; transform: translateY(8px); } }
+
+    /* ─── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .page-header { padding: 24px 0 20px; }
+      .page-header h1 { font-size: 1.5rem; }
+      .requests-grid { grid-template-columns: 1fr; }
+      .status-tabs { width: 100%; justify-content: stretch; }
+      .tab-btn { flex: 1; text-align: center; padding: 8px 12px; }
+      .modal-drawer { width: 100vw; height: 100dvh; }
+      .card-body { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ─── Page Header ──────────────────────────────────────────── -->
+  <header class="page-header">
+    <h1>Matching Requests</h1>
+    <p>Review and manage connection requests between profiles on this platform.</p>
+  </header>
+
+  <!-- ─── Status Tabs ──────────────────────────────────────────── -->
+  <nav class="status-tabs" role="tablist" aria-label="Request status">
+    <button class="tab-btn active" role="tab" data-status="pending"  aria-selected="true">Pending</button>
+    <button class="tab-btn"        role="tab" data-status="accepted" aria-selected="false">Accepted</button>
+    <button class="tab-btn"        role="tab" data-status="rejected" aria-selected="false">Rejected</button>
+  </nav>
+
+  <!-- ─── Requests Grid ────────────────────────────────────────── -->
+  <main>
+    <div class="requests-grid" id="requests-grid" role="list"></div>
+    <div class="pagination" id="pagination" role="navigation" aria-label="Pagination"></div>
+  </main>
+
+</div>
+
+<!-- ─── Profile Drawer ────────────────────────────────────────── -->
+<div class="modal-overlay" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="modal-drawer" id="modal-drawer">
+    <div class="drawer-top">
+      <span class="drawer-title" id="drawer-title">Profile Details</span>
+      <button class="btn-close" id="close-modal" aria-label="Close profile details">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </div>
+</div>
+
+<!-- ─── Toast Container ───────────────────────────────────────── -->
+<div id="toast-container" aria-live="polite"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════════════ */
+const BASE_URL = "../";
+
+/* ═══════════════════════════════════════════════════════════════════
+   AUTH HELPERS
+═══════════════════════════════════════════════════════════════════ */
+function getToken() {
+  return localStorage.getItem("token") || localStorage.getItem("authToken") || "";
+}
+
+function authHeaders() {
+  const token = getToken();
+  return token ? { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
+}
+
+function getCurrentUserId() {
+  // Try common storage patterns used by various frameworks
+  try {
+    const user = JSON.parse(localStorage.getItem("user") || localStorage.getItem("currentUser") || "null");
+    if (user?._id) return user._id;
+    if (user?.id)  return user.id;
+  } catch {}
+  // Fallback: decode JWT payload
+  const token = getToken();
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload._id || payload.id || payload.sub || null;
+    } catch {}
+  }
+  return null;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   API LAYER
+═══════════════════════════════════════════════════════════════════ */
+async function apiFetch(path) {
+  const res = await fetch(`${BASE_URL}${path}`, { headers: authHeaders() });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function getRequests(status, page) {
+  return apiFetch(`api/requests/${status}/${page}`);
+}
+
+async function getUserById(userId) {
+  return apiFetch(`api/users/${userId}`);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SECURITY: SANITISE SENSITIVE FIELDS
+═══════════════════════════════════════════════════════════════════ */
+function sanitiseUser(user) {
+  if (!user) return user;
+  const { password, authToken, resetPasswordTokenUsed, ...safe } = user;
+  return safe;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HELPER UTILITIES
+═══════════════════════════════════════════════════════════════════ */
+function getOtherUser(request, currentUserId) {
+  if (!currentUserId) return request.from; // graceful fallback
+  return request.from._id === currentUserId ? request.to : request.from;
+}
+
+function calculateAge(birthDate) {
+  if (!birthDate) return null;
+  const birth = new Date(birthDate);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+function formatDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric", month: "short", year: "numeric",
+    hour: "2-digit", minute: "2-digit"
+  }).replace(",", ",");
+}
+
+function formatBirthDate(iso) {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+}
+
+/** Egyptian phone → WhatsApp URL (20XXXXXXXXX) */
+function formatWhatsAppNumber(phone) {
+  if (!phone) return null;
+  const digits = phone.replace(/\D/g, "");
+  // If starts with 0, replace with country code 20
+  if (digits.startsWith("0")) return "20" + digits.slice(1);
+  // If already has 20 prefix
+  if (digits.startsWith("20")) return digits;
+  return digits;
+}
+function getWhatsAppUrl(phone) {
+  const num = formatWhatsAppNumber(phone);
+  return num ? `https://wa.me/${num}` : null;
+}
+
+function getTelegramUrl(handle) {
+  if (!handle) return null;
+  const clean = handle.replace(/^@/, "").trim();
+  return clean ? `https://t.me/${clean}` : null;
+}
+
+function getFacebookUrl(raw) {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("http")) return trimmed;
+  return `https://facebook.com/${trimmed}`;
+}
+
+function openSafe(url) {
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Fallback for older browsers
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    return true;
+  }
+}
+
+function showToast(msg) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  document.getElementById("toast-container").appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+/** True if a value should be displayed (not absent) */
+function hasValue(v) {
+  if (v === null || v === undefined) return false;
+  if (typeof v === "string" && v.trim() === "") return false;
+  return true; // false and 0 are valid display values
+}
+
+function boolLabel(v) {
+  if (v === true  || v === "نعم" || v === "yes") return { label: "Yes", cls: "bool-yes" };
+  if (v === false || v === "لا"  || v === "no")  return { label: "No",  cls: "bool-no"  };
+  return { label: String(v), cls: "" };
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════════ */
+let state = {
+  status: "pending",
+  page: 1,
+  requests: [],
+  loading: false,
+  error: null,
+  currentUserId: getCurrentUserId(),
+  hasMore: true,           // true while we don't know otherwise
+  openRequest: null,       // request shown in drawer
+  fullProfile: null,       // data from /api/users/:id
+  fullProfileLoading: false,
+  fullProfileError: null,
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   FETCH REQUESTS
+═══════════════════════════════════════════════════════════════════ */
+async function fetchRequests() {
+  state.loading = true;
+  state.error = null;
+  renderGrid();
+
+  try {
+    const json = await getRequests(state.status, state.page);
+    if (json.success) {
+      state.requests = json.data || [];
+      // If fewer results than expected, probably no more pages
+      state.hasMore = state.requests.length >= 10;
+    } else {
+      throw new Error(json.message || "Unknown error");
+    }
+  } catch (e) {
+    state.error = e.message;
+    state.requests = [];
+  } finally {
+    state.loading = false;
+    renderGrid();
+    renderPagination();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENDER — GRID
+═══════════════════════════════════════════════════════════════════ */
+function renderGrid() {
+  const grid = document.getElementById("requests-grid");
+
+  if (state.loading) {
+    grid.innerHTML = Array.from({ length: 6 }, () => skeletonCardHTML()).join("");
+    return;
+  }
+
+  if (state.error) {
+    grid.innerHTML = `
+      <div class="state-panel">
+        <span class="state-icon">⚠️</span>
+        <h3>Failed to load requests</h3>
+        <p>${escHtml(state.error)}</p>
+        <button class="btn-primary" onclick="fetchRequests()">Try again</button>
+      </div>`;
+    return;
+  }
+
+  if (!state.requests.length) {
+    const label = capitalize(state.status);
+    grid.innerHTML = `
+      <div class="state-panel">
+        <span class="state-icon">📭</span>
+        <h3>No ${label.toLowerCase()} requests</h3>
+        <p>When requests appear here, they'll show up in this list.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = state.requests.map(req => requestCardHTML(req)).join("");
+  // Attach click listeners
+  grid.querySelectorAll(".request-card").forEach(el => {
+    el.addEventListener("click", (e) => {
+      // Prevent opening modal when clicking contact buttons/copy
+      if (e.target.closest(".contact-icons, .btn-copy, .icon-btn")) return;
+      const id = el.dataset.requestId;
+      const req = state.requests.find(r => r._id === id);
+      if (req) openModal(req);
+    });
+    el.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") el.click();
+    });
+  });
+  // Copy buttons on cards
+  grid.querySelectorAll(".btn-copy[data-phone]").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      await copyToClipboard(btn.dataset.phone);
+      btn.textContent = "Copied!";
+      btn.classList.add("copied");
+      showToast("Phone number copied");
+      setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
+    });
+  });
+  // Contact icon buttons on cards
+  grid.querySelectorAll(".icon-btn[data-url]").forEach(btn => {
+    btn.addEventListener("click", e => { e.stopPropagation(); openSafe(btn.dataset.url); });
+  });
+}
+
+function skeletonCardHTML() {
+  return `<div class="skeleton-card">
+    <div class="skeleton-header">
+      <div class="skeleton skeleton-avatar"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton skeleton-line" style="width:60%"></div>
+        <div class="skeleton skeleton-line" style="width:45%"></div>
+        <div class="skeleton skeleton-line" style="width:35%"></div>
+      </div>
+    </div>
+    <div class="skeleton-grid">
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell"></div>
+    </div>
+    <div class="skeleton skeleton-footer"></div>
+  </div>`;
+}
+
+function requestCardHTML(req) {
+  const other = getOtherUser(req, state.currentUserId);
+  const basic = other?.profileRef?.basicInfo || {};
+  const contact = other?.profileRef?.contactInfo || {};
+  const phone = other?.phone || "";
+  const age = calculateAge(basic.birthDate);
+
+  const avatarHTML = basic.photo
+    ? `<div class="card-avatar"><img src="${escHtml(basic.photo)}" alt="Profile photo" loading="lazy" /></div>`
+    : `<div class="card-avatar">${genderEmoji(other?.profileModel)}</div>`;
+
+  const metaChips = [
+    other?.profileModel,
+    age !== null ? `${age} yrs` : null,
+    basic.nationality,
+  ].filter(hasValue).map(v => `<span class="meta-chip">${escHtml(String(v))}</span>`).join("");
+
+  const bodyFields = [
+    { label: "Height", value: basic.height ? `${basic.height} cm` : null },
+    { label: "Weight", value: basic.weight ? `${basic.weight} kg` : null },
+    { label: "Skin color", value: basic.skinColor },
+  ].filter(f => hasValue(f.value));
+
+  const bodyHTML = bodyFields.map(f => `
+    <div class="card-field">
+      <span class="card-field-label">${f.label}</span>
+      <span class="card-field-value">${escHtml(String(f.value))}</span>
+    </div>`).join("");
+
+  const descHTML = hasValue(basic.description)
+    ? `<p class="card-description">${escHtml(basic.description)}</p>` : "";
+
+  // Contact icons
+  const waUrl = getWhatsAppUrl(contact.whatsapp);
+  const tgUrl = getTelegramUrl(contact.telegram);
+  const fbUrl = getFacebookUrl(contact.facebook);
+
+  const iconsHTML = [
+    waUrl ? `<button class="icon-btn wa" data-url="${escHtml(waUrl)}" title="Open WhatsApp" aria-label="Open WhatsApp">${svgWA()}</button>` : "",
+    tgUrl ? `<button class="icon-btn tg" data-url="${escHtml(tgUrl)}" title="Open Telegram" aria-label="Open Telegram">${svgTG()}</button>` : "",
+    fbUrl ? `<button class="icon-btn fb" data-url="${escHtml(fbUrl)}" title="Open Facebook" aria-label="Open Facebook">${svgFB()}</button>` : "",
+  ].join("");
+
+  return `<article class="request-card" data-request-id="${escHtml(req._id)}" tabindex="0" role="listitem" aria-label="Request from ${escHtml(other?.name || 'Unknown')}">
+    <div class="card-header">
+      ${avatarHTML}
+      <div class="card-identity">
+        <div class="card-name">${escHtml(other?.name || basic.name || "Unknown")}</div>
+        <div class="card-meta">${metaChips}</div>
+        <div class="card-status-badge">${statusBadgeHTML(req.status)}</div>
+      </div>
+    </div>
+    ${bodyFields.length ? `<div class="card-body">${bodyHTML}</div>` : ""}
+    ${descHTML}
+    <div class="card-contact">
+      <div class="card-phone">
+        ${phone ? `<span class="card-phone-number" dir="ltr">${escHtml(phone)}</span>` : ""}
+        ${phone ? `<button class="btn-copy" data-phone="${escHtml(phone)}" aria-label="Copy phone number">Copy</button>` : ""}
+      </div>
+      ${iconsHTML ? `<div class="contact-icons">${iconsHTML}</div>` : ""}
+    </div>
+    <div class="card-footer">
+      <span class="card-date">Sent: ${formatDate(req.createdAt)}</span>
+      ${req.updatedAt && req.updatedAt !== req.createdAt
+        ? `<span class="card-date">Updated: ${formatDate(req.updatedAt)}</span>` : ""}
+    </div>
+  </article>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENDER — PAGINATION
+═══════════════════════════════════════════════════════════════════ */
+function renderPagination() {
+  const el = document.getElementById("pagination");
+  if (state.loading || state.error) { el.innerHTML = ""; return; }
+
+  const prev = state.page > 1;
+  const next = state.hasMore && state.requests.length > 0;
+
+  el.innerHTML = `
+    <button class="page-btn" id="pg-prev" ${!prev ? "disabled" : ""} aria-label="Previous page">← Prev</button>
+    <button class="page-btn active" aria-current="page">${state.page}</button>
+    <button class="page-btn" id="pg-next" ${!next ? "disabled" : ""} aria-label="Next page">Next →</button>`;
+
+  el.querySelector("#pg-prev")?.addEventListener("click", () => {
+    if (state.page > 1) { state.page--; fetchRequests(); window.scrollTo(0,0); }
+  });
+  el.querySelector("#pg-next")?.addEventListener("click", () => {
+    state.page++;
+    fetchRequests();
+    window.scrollTo(0,0);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   STATUS TABS
+═══════════════════════════════════════════════════════════════════ */
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.dataset.status === state.status) return;
+    document.querySelectorAll(".tab-btn").forEach(b => {
+      b.classList.remove("active");
+      b.setAttribute("aria-selected", "false");
+    });
+    btn.classList.add("active");
+    btn.setAttribute("aria-selected", "true");
+    state.status = btn.dataset.status;
+    state.page = 1;
+    state.requests = [];
+    fetchRequests();
+  });
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   MODAL / DRAWER
+═══════════════════════════════════════════════════════════════════ */
+function openModal(req) {
+  state.openRequest = req;
+  state.fullProfile = null;
+  state.fullProfileLoading = false;
+  state.fullProfileError = null;
+  renderDrawer();
+  document.getElementById("profile-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+  document.getElementById("close-modal").focus();
+}
+
+function closeModal() {
+  document.getElementById("profile-modal").classList.remove("open");
+  document.body.style.overflow = "";
+  state.openRequest = null;
+  state.fullProfile = null;
+}
+
+document.getElementById("profile-modal").addEventListener("click", e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+document.getElementById("close-modal").addEventListener("click", closeModal);
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && state.openRequest) closeModal();
+});
+
+async function handleGetAllInfo() {
+  if (!state.openRequest || state.fullProfileLoading) return;
+  const other = getOtherUser(state.openRequest, state.currentUserId);
+  state.fullProfileLoading = true;
+  state.fullProfileError = null;
+  renderDrawer();
+  try {
+    const json = await getUserById(other._id);
+    if (json.success) {
+      state.fullProfile = sanitiseUser(json.user);
+    } else {
+      throw new Error(json.message || "Failed to fetch profile");
+    }
+  } catch (e) {
+    state.fullProfileError = e.message;
+  } finally {
+    state.fullProfileLoading = false;
+    renderDrawer();
+  }
+}
+
+function renderDrawer() {
+  const body = document.getElementById("drawer-body");
+  if (!state.openRequest) { body.innerHTML = ""; return; }
+
+  const req = state.openRequest;
+  const other = getOtherUser(req, state.currentUserId);
+  const basic = other?.profileRef?.basicInfo || {};
+  const contact = other?.profileRef?.contactInfo || {};
+  const phone = other?.phone || "";
+  const age = calculateAge(basic.birthDate);
+
+  let html = "";
+
+  // ── Profile Hero
+  const avatarImg = basic.photo
+    ? `<div class="profile-avatar"><img src="${escHtml(basic.photo)}" alt="Profile" /></div>`
+    : `<div class="profile-avatar" aria-hidden="true">${genderEmoji(other?.profileModel)}</div>`;
+
+  html += `<div class="profile-hero">
+    ${avatarImg}
+    <div class="profile-info">
+      <div class="profile-name">${escHtml(other?.name || basic.name || "Unknown")}</div>
+      <div class="profile-sub">${escHtml(other?.email || "")}</div>
+      <div class="profile-badges">
+        ${statusBadgeHTML(req.status)}
+        ${other?.profileModel ? `<span class="meta-chip">${escHtml(other.profileModel)}</span>` : ""}
+      </div>
+    </div>
+  </div>`;
+
+  // ── Basic Info Section
+  const basicFields = [
+    { label: "Full name",    value: basic.name },
+    { label: "Birth date",   value: formatBirthDate(basic.birthDate) },
+    { label: "Age",          value: age !== null ? `${age} years` : null },
+    { label: "Nationality",  value: basic.nationality },
+    { label: "Height",       value: basic.height ? `${basic.height} cm` : null },
+    { label: "Weight",       value: basic.weight ? `${basic.weight} kg` : null },
+    { label: "Skin color",   value: basic.skinColor },
+    { label: "Description",  value: basic.description },
+  ].filter(f => hasValue(f.value));
+
+  html += sectionCard("Basic Information", basicFields.map(fieldRow).join(""));
+
+  // ── User Account Info
+  const userFields = [
+    { label: "Account name",  value: other?.name },
+    { label: "Email",         value: other?.email },
+    { label: "Phone",         value: null, custom: phone ? phoneRowHTML(phone) : null },
+    { label: "Profile type",  value: other?.profileModel },
+  ].filter(f => hasValue(f.value) || f.custom);
+
+  const userRowsHTML = userFields.map(f => f.custom || fieldRow(f)).join("");
+  html += sectionCard("Account Information", userRowsHTML);
+
+  // ── Contact Information
+  html += sectionCard("Contact Information", contactSectionHTML(contact, phone));
+
+  // ── Request Information
+  const reqFields = [
+    { label: "Request ID",  value: req._id },
+    { label: "Status",      value: null, custom: `<div class="field-row"><span class="field-label">Status</span><span class="field-value">${statusBadgeHTML(req.status)}</span></div>` },
+    { label: "Created",     value: formatDate(req.createdAt) },
+    { label: "Updated",     value: formatDate(req.updatedAt) },
+  ];
+  html += sectionCard("Request Information",
+    reqFields.map(f => f.custom || fieldRow(f)).join("")
+  );
+
+  // ── Get All Information / full profile
+  if (!state.fullProfile) {
+    html += `<button class="get-all-btn" id="get-all-btn" ${state.fullProfileLoading ? "disabled" : ""}>
+      ${state.fullProfileLoading
+        ? `<span class="spinner"></span> Loading full profile…`
+        : `🔍 Get All Information`}
+    </button>`;
+    if (state.fullProfileError) {
+      html += `<div class="full-profile-error">
+        <span>⚠️ Failed to load complete profile: ${escHtml(state.fullProfileError)}</span>
+        <button class="btn-primary" style="padding:6px 14px;font-size:.8rem" id="retry-all-btn">Retry</button>
+      </div>`;
+    }
+  } else {
+    // Full profile loaded — render all sections
+    html += fullProfileHTML(state.fullProfile);
+  }
+
+  body.innerHTML = html;
+
+  // Bind get-all button
+  body.querySelector("#get-all-btn")?.addEventListener("click", handleGetAllInfo);
+  body.querySelector("#retry-all-btn")?.addEventListener("click", handleGetAllInfo);
+
+  // Bind copy buttons inside drawer
+  body.querySelectorAll(".btn-copy[data-phone]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      await copyToClipboard(btn.dataset.phone);
+      btn.textContent = "Copied!";
+      btn.classList.add("copied");
+      showToast("Phone number copied");
+      setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
+    });
+  });
+
+  // Bind contact open buttons inside drawer
+  body.querySelectorAll(".btn-contact[data-url]").forEach(btn => {
+    btn.addEventListener("click", () => openSafe(btn.dataset.url));
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FULL PROFILE RENDER
+═══════════════════════════════════════════════════════════════════ */
+function fullProfileHTML(user) {
+  const profile = user?.profileRef || {};
+  const basic = profile.basicInfo || {};
+  const eduWork = profile.educationAndWork || {};
+  const residence = profile.residence || {};
+  const family = profile.familyInfo || {};
+  const marital = profile.maritalInfo || {};
+  const religion = profile.religionAndHealth || {};
+  const contact = profile.contactInfo || {};
+  const isFemale = user.profileModel === "Female";
+  const phone = user.phone || "";
+
+  let html = `<hr style="border:none;border-top:1px solid var(--c-border);margin:4px 0">
+    <div class="section-header" style="background:var(--c-accent-lt);color:var(--c-accent-dk);padding:12px 0;border-radius:var(--radius-sm);text-align:center;font-size:.875rem">
+      ✅ Full profile loaded
+    </div>`;
+
+  // ── Basic Information (full)
+  const basicFull = [
+    { label: "Full name",    value: basic.name },
+    { label: "Birth date",   value: formatBirthDate(basic.birthDate) },
+    { label: "Age",          value: calculateAge(basic.birthDate) !== null ? `${calculateAge(basic.birthDate)} years` : null },
+    { label: "Nationality",  value: basic.nationality },
+    { label: "Height",       value: basic.height !== undefined && basic.height !== null ? `${basic.height} cm` : null },
+    { label: "Weight",       value: basic.weight !== undefined && basic.weight !== null ? `${basic.weight} kg` : null },
+    { label: "Skin color",   value: basic.skinColor },
+    { label: "Description",  value: basic.description },
+    { label: "Hijab",        value: profile.hijab },
+  ].filter(f => hasValue(f.value));
+  html += sectionCard("Basic Information", basicFull.map(fieldRow).join(""));
+
+  // ── Education & Work
+  const eduFields = [
+    { label: "Education",                   value: eduWork.education },
+    { label: "University major",             value: eduWork.universityMajor },
+    // Female-specific
+    ...(hasValue(eduWork.isWorking) ? [{ label: "Currently working", value: null, custom: boolFieldRow("Currently working", eduWork.isWorking) }] : []),
+    { label: "Job description",             value: eduWork.jobDescription },
+    { label: "Accept leave work if husband asks", value: eduWork.acceptLeaveWorkIfHusbandAsks },
+    // Male-specific
+    { label: "Job",                         value: eduWork.job },
+  ].filter(f => hasValue(f.value) || f.custom);
+
+  if (eduFields.length) {
+    html += sectionCard("Education & Work",
+      eduFields.map(f => f.custom || fieldRow(f)).join("")
+    );
+  }
+
+  // ── Residence
+  const resFields = [
+    { label: "City",                      value: residence.city },
+    { label: "Current residence",         value: residence.currentPlaceOfResidence },
+    { label: "Expatriate",                value: residence.expatriate },
+    { label: "Marital home",              value: residence.maritalHome },
+    { label: "Marital home description",  value: residence.maritalHomeDescription },
+  ].filter(f => hasValue(f.value));
+  if (resFields.length) html += sectionCard("Residence", resFields.map(fieldRow).join(""));
+
+  // ── Family Information
+  const famFields = [
+    { label: "Father's job",       value: family.fatherJob },
+    { label: "Mother's job",       value: family.motherJob },
+    { label: "Siblings info",      value: family.siblingsInfo },
+    ...(hasValue(family.parentsSeparated) ? [{ label: "Parents separated", custom: boolFieldRow("Parents separated", family.parentsSeparated) }] : []),
+    { label: "Family description", value: family.familyDescription },
+  ].filter(f => hasValue(f.value) || f.custom);
+  if (famFields.length) {
+    html += sectionCard("Family Information",
+      famFields.map(f => f.custom || fieldRow(f)).join("")
+    );
+  }
+
+  // ── Marital Information
+  const maritalFields = [
+    { label: "Marital status",  value: marital.maritalStatus },
+    { label: "Marriage type",   value: marital.marriageType },
+    { label: "Have children",   value: marital.haveChildren },
+    // Female uses acceptPolygamy, male uses polygamy
+    { label: "Polygamy",        value: marital.acceptPolygamy ?? marital.polygamy },
+    { label: "Want children",   value: marital.wantChildren },
+  ].filter(f => hasValue(f.value));
+  if (maritalFields.length) html += sectionCard("Marital Information", maritalFields.map(fieldRow).join(""));
+
+  // ── Religion & Health
+  const relFields = [
+    ...(hasValue(religion.prayFiveTimes)  ? [{ label: "Prays five times",   custom: boolFieldRow("Prays five times", religion.prayFiveTimes) }] : []),
+    ...(hasValue(religion.prayInMosque)   ? [{ label: "Prays in mosque",    custom: boolFieldRow("Prays in mosque", religion.prayInMosque) }] : []),
+    ...(hasValue(religion.bearded)        ? [{ label: "Has beard",          custom: boolFieldRow("Has beard", religion.bearded) }] : []),
+    ...(hasValue(religion.smoker)         ? [{ label: "Smoker",             custom: boolFieldRow("Smoker", religion.smoker) }] : []),
+    { label: "Quran memorization", value: hasValue(religion.quranMemorization) ? `${religion.quranMemorization} juz` : null },
+    { label: "Disability / illness", value: religion.hasDisabilityOrIllness },
+  ].filter(f => hasValue(f.value) || f.custom);
+  if (relFields.length) {
+    html += sectionCard("Religion & Health",
+      relFields.map(f => f.custom || fieldRow(f)).join("")
+    );
+  }
+
+  // ── Requirements (gender-specific)
+  const groomReq = profile.groomRequirements;
+  const brideReq = profile.brideRequirements;
+
+  if (groomReq && Object.keys(groomReq).length) {
+    html += sectionCard("Groom Requirements", requirementsHTML(groomReq, "groom"));
+  }
+  if (brideReq && Object.keys(brideReq).length) {
+    html += sectionCard("Bride Requirements", requirementsHTML(brideReq, "bride"));
+  }
+
+  // ── Contact (full)
+  html += sectionCard("Contact Information", contactSectionHTML(contact, phone));
+
+  // ── Profile Metadata (safe fields only)
+  const metaFields = [
+    { label: "Account status", value: user.status },
+    { label: "Paid",           value: null, custom: hasValue(user.paid) ? boolFieldRow("Paid", user.paid) : null },
+    { label: "Role",           value: user.role },
+    { label: "Created",        value: formatDate(user.createdAt) },
+    { label: "Updated",        value: formatDate(user.updatedAt) },
+  ].filter(f => hasValue(f.value) || f.custom);
+  if (metaFields.length) {
+    html += sectionCard("Account Metadata",
+      metaFields.map(f => f.custom || fieldRow(f)).join("")
+    );
+  }
+
+  return html;
+}
+
+function requirementsHTML(req, type) {
+  const fields = [
+    { label: "Min age",       value: hasValue(req.minAge) ? `${req.minAge} yrs` : null },
+    { label: "Max age",       value: hasValue(req.maxAge) ? `${req.maxAge} yrs` : null },
+    { label: "Nationality",   value: req.nationality },
+    { label: "Education",     value: Array.isArray(req.education) ? null : req.education,
+                               tags: Array.isArray(req.education) ? req.education : null },
+    { label: "Marital status",value: null, tags: req.acceptedMaritalStatus },
+    { label: "Accept polygamy",value: req.acceptPolygamy },
+    { label: "Marital home",  value: req.maritalHome },
+    { label: "Requires beard",value: req.requiresBeard },
+    { label: "Requires prayer",value: req.requiresPrayer },
+    { label: "Non-smoker",    value: req.requiresNonSmoker },
+    { label: "Religion level",value: null, tags: req.religionLevel },
+    // bride requirements
+    { label: "Work",          value: req.work },
+    { label: "Hijab",         value: null, tags: Array.isArray(req.hijab) ? req.hijab : (req.hijab ? [req.hijab] : null) },
+    { label: "Description",   value: req.description },
+  ];
+
+  return fields.map(f => {
+    if (f.tags?.length) {
+      return `<div class="field-row">
+        <span class="field-label">${escHtml(f.label)}</span>
+        <div class="tags-row">${f.tags.map(t => `<span class="tag">${escHtml(t)}</span>`).join("")}</div>
+      </div>`;
+    }
+    if (hasValue(f.value)) return fieldRow(f);
+    return "";
+  }).join("");
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SMALL HTML BUILDERS
+═══════════════════════════════════════════════════════════════════ */
+function sectionCard(title, innerHTML) {
+  if (!innerHTML.trim()) return "";
+  return `<div class="section-card">
+    <div class="section-header">${escHtml(title)}</div>
+    <div class="section-body">${innerHTML}</div>
+  </div>`;
+}
+
+function fieldRow(f) {
+  if (!hasValue(f.value)) return "";
+  return `<div class="field-row">
+    <span class="field-label">${escHtml(f.label)}</span>
+    <span class="field-value">${escHtml(String(f.value))}</span>
+  </div>`;
+}
+
+function boolFieldRow(label, v) {
+  const { label: lbl, cls } = boolLabel(v);
+  return `<div class="field-row">
+    <span class="field-label">${escHtml(label)}</span>
+    <span class="field-value ${cls}">${escHtml(lbl)}</span>
+  </div>`;
+}
+
+function phoneRowHTML(phone) {
+  return `<div class="contact-row">
+    <span class="contact-row-label">Phone</span>
+    <div class="contact-row-right">
+      <span class="contact-row-value" dir="ltr">${escHtml(phone)}</span>
+      <button class="btn-copy" data-phone="${escHtml(phone)}" aria-label="Copy phone">Copy</button>
+    </div>
+  </div>`;
+}
+
+function contactSectionHTML(contact, phone) {
+  const waUrl = getWhatsAppUrl(contact.whatsapp);
+  const tgUrl = getTelegramUrl(contact.telegram);
+  const fbUrl = getFacebookUrl(contact.facebook);
+  let html = "";
+
+  if (phone) html += phoneRowHTML(phone);
+
+  if (waUrl) {
+    html += `<div class="contact-row">
+      <span class="contact-row-label">WhatsApp</span>
+      <div class="contact-row-right">
+        <span class="contact-row-value" dir="ltr">${escHtml(contact.whatsapp)}</span>
+        <button class="btn-contact wa" data-url="${escHtml(waUrl)}" aria-label="Open WhatsApp">${svgWA()} WhatsApp</button>
+      </div>
+    </div>`;
+  }
+  if (tgUrl) {
+    html += `<div class="contact-row">
+      <span class="contact-row-label">Telegram</span>
+      <div class="contact-row-right">
+        <span class="contact-row-value">${escHtml(contact.telegram)}</span>
+        <button class="btn-contact tg" data-url="${escHtml(tgUrl)}" aria-label="Open Telegram">${svgTG()} Telegram</button>
+      </div>
+    </div>`;
+  }
+  if (fbUrl) {
+    html += `<div class="contact-row">
+      <span class="contact-row-label">Facebook</span>
+      <div class="contact-row-right">
+        <button class="btn-contact fb" data-url="${escHtml(fbUrl)}" aria-label="Open Facebook">${svgFB()} Facebook</button>
+      </div>
+    </div>`;
+  }
+  if (hasValue(contact.about)) {
+    html += `<div class="field-row">
+      <span class="field-label">About</span>
+      <span class="field-value" style="max-width:none;text-align:left">${escHtml(contact.about)}</span>
+    </div>`;
+  }
+  if (hasValue(contact.additionalNotes)) {
+    html += `<div class="field-row">
+      <span class="field-label">Notes</span>
+      <span class="field-value" style="max-width:none;text-align:left">${escHtml(contact.additionalNotes)}</span>
+    </div>`;
+  }
+  return html;
+}
+
+function statusBadgeHTML(status) {
+  const labels = { pending: "Pending", accepted: "Accepted", rejected: "Rejected" };
+  const cls = status || "pending";
+  return `<span class="status-badge ${cls}">${labels[cls] || capitalize(cls)}</span>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SVG ICONS
+═══════════════════════════════════════════════════════════════════ */
+function svgWA() {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>`;
+}
+function svgTG() {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>`;
+}
+function svgFB() {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MISC HELPERS
+═══════════════════════════════════════════════════════════════════ */
+function genderEmoji(model) {
+  if (!model) return "👤";
+  const m = model.toLowerCase();
+  if (m === "male" || m === "ذكر") return "👨";
+  if (m === "female" || m === "أنثى") return "👩";
+  return "👤";
+}
+
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function escHtml(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════════ */
+fetchRequests();
+</script>
+</body>
+</html>     

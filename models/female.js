@@ -305,9 +305,18 @@ const femaleSchema = new mongoose.Schema({
     deleted: {
         type: Boolean,
         default: false
+    },
+    requestsSent: {
+        type: Array,
+        default: []
+    },
+    requestsReceived: {
+        type: Array,
+        default: []
     }
 
-}, { timestamps: true });
+}, 
+{ timestamps: true });
 
 const Female = mongoose.model("Female", femaleSchema);
 module.exports = Female;

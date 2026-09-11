@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -45,13 +44,6 @@
   --shadow-lg: 0 8px 32px rgba(0,0,0,.13);
 }
 
-body.female {
-  --accent:      var(--rose);
-  --accent-mid:  var(--rose-mid);
-  --accent-lt:   var(--rose-lt);
-  --accent-pale: var(--rose-pale);
-}
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 15px; scroll-behavior: smooth; }
 body {
@@ -72,10 +64,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 200;
-  transition: background .3s;
   box-shadow: 0 2px 12px rgba(0,0,0,.15);
 }
-
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -85,25 +75,23 @@ body {
   height: 62px;
   gap: 16px;
 }
-
 .header-logo {
   font-size: 1.05rem;
   font-weight: 800;
   white-space: nowrap;
-  letter-spacing: -.01em;
 }
 .header-logo span { opacity: .7; font-weight: 400; font-size: .85rem; margin-right: 8px; }
 
-/* Gender switch */
-.gender-switch {
+/* Main tab navigation */
+.main-tabs {
   display: flex;
-  background: rgba(255,255,255,.15);
-  border-radius: 8px;
+  background: rgba(255,255,255,.12);
+  border-radius: 9px;
   overflow: hidden;
-  border: 1.5px solid rgba(255,255,255,.25);
+  border: 1.5px solid rgba(255,255,255,.2);
   flex-shrink: 0;
 }
-.gs-btn {
+.mt-btn {
   padding: 7px 18px;
   font-size: .82rem;
   font-weight: 700;
@@ -114,11 +102,40 @@ body {
   font-family: inherit;
   transition: background .18s, color .18s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.gs-btn.active { background: rgba(255,255,255,.22); color: #fff; }
+.mt-btn.active { background: rgba(255,255,255,.22); color: #fff; }
+
+.tab-badge {
+  background: #e53e3e;
+  color: #fff;
+  border-radius: 10px;
+  font-size: .64rem;
+  padding: 1px 6px;
+  font-weight: 800;
+  min-width: 18px;
+  text-align: center;
+}
+
+.btn-logout {
+  padding: 7px 15px;
+  border-radius: 7px;
+  border: 1.5px solid rgba(255,255,255,.3);
+  background: transparent;
+  color: rgba(255,255,255,.8);
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .18s;
+  white-space: nowrap;
+}
+.btn-logout:hover { background: rgba(255,255,255,.15); color: #fff; }
 
 /* ═══════════════════════════════════
-   LAYOUT
+   BROWSE LAYOUT
 ═══════════════════════════════════ */
 .page {
   max-width: 1200px;
@@ -142,7 +159,6 @@ body {
   top: 82px;
   overflow: hidden;
 }
-
 .fp-head {
   background: var(--accent);
   color: #fff;
@@ -152,9 +168,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background .3s;
 }
-
 .fp-clear {
   font-size: .73rem;
   font-weight: 600;
@@ -168,7 +182,6 @@ body {
   transition: background .15s;
 }
 .fp-clear:hover { background: rgba(255,255,255,.35); }
-
 .fp-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 
 .fg { display: flex; flex-direction: column; gap: 5px; }
@@ -176,10 +189,7 @@ body {
   font-size: .72rem;
   font-weight: 700;
   color: var(--text-muted);
-  text-transform: none;
-  letter-spacing: 0;
 }
-
 .fg input,
 .fg select {
   width: 100%;
@@ -207,19 +217,9 @@ body {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(26,92,56,.1);
 }
-
-.fg-range {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 7px;
-}
+.fg-range { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
 .fg-range input { text-align: center; }
-
-.fp-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 0 -16px;
-}
+.fp-divider { height: 1px; background: var(--border); margin: 0 -16px; }
 
 .btn-search {
   width: 100%;
@@ -241,7 +241,6 @@ body {
 .btn-search:hover { background: var(--accent-mid); }
 .btn-search:active { transform: scale(.98); }
 
-/* Mobile toggle for filters */
 .filter-toggle {
   display: none;
   width: 100%;
@@ -257,15 +256,12 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
-  transition: background .18s;
 }
-.filter-toggle:hover { background: var(--accent-mid); }
 
 /* ═══════════════════════════════════
    RESULTS AREA
 ═══════════════════════════════════ */
 .results-area { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-
 .results-bar {
   display: flex;
   align-items: center;
@@ -273,13 +269,8 @@ body {
   flex-wrap: wrap;
   gap: 10px;
 }
-
-.results-count {
-  font-size: .85rem;
-  color: var(--text-muted);
-}
+.results-count { font-size: .85rem; color: var(--text-muted); }
 .results-count strong { color: var(--accent); font-size: 1.05rem; font-weight: 800; }
-
 .sort-bar {
   display: flex;
   align-items: center;
@@ -310,10 +301,9 @@ body {
 ═══════════════════════════════════ */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
   gap: 14px;
 }
-
 .card {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -326,50 +316,20 @@ body {
   flex-direction: column;
 }
 .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
-
 .card-top {
   background: linear-gradient(140deg, var(--accent) 0%, var(--accent-mid) 100%);
   padding: 16px 18px 14px;
   color: #fff;
   position: relative;
 }
-.card-id {
-  font-size: .7rem;
-  opacity: .65;
-  margin-bottom: 5px;
-  font-weight: 600;
-}
-.card-age {
-  font-size: 1.5rem;
-  font-weight: 900;
-  line-height: 1;
-}
+.card-id    { font-size: .7rem; opacity: .65; margin-bottom: 5px; font-weight: 600; }
+.card-age   { font-size: 1.5rem; font-weight: 900; line-height: 1; }
 .card-age span { font-size: .8rem; font-weight: 500; opacity: .8; margin-right: 3px; }
-.card-city {
-  font-size: .76rem;
-  opacity: .75;
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.card-badge-wrap {
-  position: absolute;
-  left: 14px; top: 14px;
-  display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
-}
-.card-badge {
-  font-size: .66rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
-  background: rgba(255,255,255,.22);
-  color: #fff;
-  white-space: nowrap;
-}
+.card-city  { font-size: .76rem; opacity: .75; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+.card-badge-wrap { position: absolute; left: 14px; top: 14px; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+.card-badge { font-size: .66rem; font-weight: 700; padding: 3px 8px; border-radius: 12px; background: rgba(255,255,255,.22); color: #fff; white-space: nowrap; }
 
-.card-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 0; }
-
+.card-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; }
 .card-row {
   display: flex;
   justify-content: space-between;
@@ -381,17 +341,17 @@ body {
 }
 .card-row:last-child { border-bottom: none; }
 .card-row-key { color: var(--text-muted); flex-shrink: 0; }
-.card-row-val { color: var(--text); font-weight: 600; text-align: left; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-row-val { color: var(--text); font-weight: 600; text-align: left; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .card-foot {
-  padding: 10px 16px;
+  padding: 10px 14px;
   background: var(--accent-pale);
   border-top: 1px solid var(--accent-lt);
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 8px;
 }
-
 .btn-details {
   font-size: .76rem;
   font-weight: 700;
@@ -403,20 +363,40 @@ body {
   cursor: pointer;
   font-family: inherit;
   transition: background .15s;
+  white-space: nowrap;
 }
 .btn-details:hover { background: var(--accent-mid); }
+
+/* Send Request button (on cards) */
+.btn-send-req {
+  font-size: .76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-send-req:hover:not(:disabled) { background: var(--accent); color: #fff; }
+.btn-send-req.sent {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-lt);
+  cursor: default;
+}
+.btn-send-req:disabled { opacity: .65; cursor: not-allowed; }
 
 /* ═══════════════════════════════════
    BADGES
 ═══════════════════════════════════ */
-.badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: .69rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: .69rem; font-weight: 700; white-space: nowrap; }
 .badge-green  { background: var(--green-lt);  color: var(--green);  }
 .badge-rose   { background: var(--rose-lt);   color: var(--rose);   }
 .badge-gold   { background: var(--gold-lt);   color: var(--gold);   }
@@ -428,25 +408,12 @@ body {
 /* ═══════════════════════════════════
    PAGINATION
 ═══════════════════════════════════ */
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  flex-wrap: wrap;
-  padding-top: 6px;
-}
+.pagination { display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; padding-top: 6px; }
 .pg {
-  min-width: 36px; height: 36px;
-  padding: 0 10px;
-  border-radius: 8px;
-  border: 1.5px solid var(--border);
-  background: var(--surface);
-  color: var(--text-mid);
-  font-size: .82rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
+  min-width: 36px; height: 36px; padding: 0 10px;
+  border-radius: 8px; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text-mid);
+  font-size: .82rem; font-weight: 600; cursor: pointer; font-family: inherit;
   display: flex; align-items: center; justify-content: center;
   transition: all .15s;
 }
@@ -459,19 +426,13 @@ body {
    STATES
 ═══════════════════════════════════ */
 .state-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  color: var(--text-muted);
-  gap: 14px;
-  text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 80px 20px; color: var(--text-muted);
+  gap: 14px; text-align: center;
 }
-.state-icon { font-size: 3rem; }
+.state-icon  { font-size: 3rem; }
 .state-title { font-size: 1rem; font-weight: 700; color: var(--text-mid); }
 .state-sub   { font-size: .83rem; }
-
 .spinner {
   width: 40px; height: 40px;
   border: 3px solid var(--accent-lt);
@@ -480,6 +441,193 @@ body {
   animation: spin .7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════
+   REQUESTS PAGE
+═══════════════════════════════════ */
+.req-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.req-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: box-shadow .18s, border-color .18s, background .18s;
+}
+.stat-card:hover { box-shadow: var(--shadow-lg); border-color: var(--border-2); }
+.stat-card.active-stat { border-color: var(--accent); background: var(--accent-pale); }
+.stat-icon { font-size: 2rem; flex-shrink: 0; }
+.stat-num  { font-size: 1.9rem; font-weight: 900; color: var(--accent); line-height: 1; }
+.stat-lbl  { font-size: .78rem; color: var(--text-muted); margin-top: 3px; }
+
+/* Sub-tabs */
+.req-subtabs {
+  display: flex;
+  gap: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.rst-btn {
+  flex: 1;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.rst-btn.active { background: var(--accent); color: #fff; }
+
+/* Request list */
+.req-list { display: flex; flex-direction: column; gap: 12px; }
+
+.req-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow .18s;
+}
+.req-card:hover { box-shadow: var(--shadow-lg); }
+
+.req-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.req-card-info h3 { font-size: .93rem; font-weight: 800; color: var(--text); margin-bottom: 5px; }
+.req-card-meta    { font-size: .76rem; color: var(--text-muted); }
+
+.req-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.req-date { font-size: .7rem; color: var(--text-muted); white-space: nowrap; }
+
+.req-card-tags {
+  padding: 10px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.req-tag {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: .74rem;
+  color: var(--text-mid);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.req-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.req-actions { display: flex; gap: 8px; align-items: center; }
+
+/* Status badges */
+.status-badge {
+  font-size: .73rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.status-pending  { background: var(--gold-lt);  color: var(--gold);  }
+.status-accepted { background: var(--green-lt); color: var(--green); }
+.status-rejected { background: var(--red-lt);   color: var(--red);   }
+
+/* Accept / Reject buttons */
+.btn-accept {
+  padding: 7px 16px;
+  border-radius: 7px;
+  border: none;
+  background: var(--green);
+  color: #fff;
+  font-size: .79rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.btn-accept:hover:not(:disabled) { background: #165030; }
+.btn-accept:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-reject {
+  padding: 7px 16px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--red);
+  font-size: .79rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.btn-reject:hover:not(:disabled) { background: var(--red-lt); border-color: var(--red); }
+.btn-reject:disabled { opacity: .5; cursor: not-allowed; }
+
+.req-empty {
+  text-align: center;
+  padding: 70px 20px;
+  color: var(--text-muted);
+}
+.req-empty-icon  { font-size: 3rem; margin-bottom: 12px; }
+.req-empty-title { font-size: .95rem; font-weight: 700; color: var(--text-mid); margin-bottom: 6px; }
+.req-empty-sub   { font-size: .82rem; margin-bottom: 18px; }
 
 /* ═══════════════════════════════════
    MODAL
@@ -495,7 +643,6 @@ body {
   overflow-y: auto;
 }
 .overlay.open { display: flex; }
-
 .modal {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -506,7 +653,6 @@ body {
   overflow: hidden;
 }
 @keyframes mIn { from { opacity:0; transform: translateY(14px) scale(.97); } }
-
 .modal-head {
   background: linear-gradient(140deg, var(--accent) 0%, var(--accent-mid) 100%);
   padding: 22px 24px;
@@ -525,70 +671,109 @@ body {
   flex-shrink: 0; transition: background .15s;
 }
 .modal-close:hover { background: rgba(255,255,255,.32); }
-
 .modal-body {
   padding: 20px 24px;
-  max-height: calc(90vh - 130px);
+  max-height: calc(90vh - 190px);
   overflow-y: auto;
 }
+.modal-foot {
+  padding: 14px 24px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.btn-modal-send {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: .9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-modal-send:hover:not(:disabled) { background: var(--accent-mid); }
+.btn-modal-send.sent {
+  background: var(--green-lt);
+  color: var(--green);
+  cursor: default;
+}
+.btn-modal-send:disabled { cursor: default; }
 
 .msec { margin-bottom: 20px; }
 .msec-title {
-  font-size: .75rem;
-  font-weight: 800;
+  font-size: .75rem; font-weight: 800;
   color: var(--accent);
   border-bottom: 2px solid var(--accent-lt);
-  padding-bottom: 7px;
-  margin-bottom: 12px;
+  padding-bottom: 7px; margin-bottom: 12px;
   display: flex; align-items: center; gap: 6px;
 }
 .mfields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .mf { display: flex; flex-direction: column; gap: 2px; }
 .mf.full { grid-column: 1 / -1; }
 .mf-k { font-size: .68rem; font-weight: 700; color: var(--text-muted); }
-.mf-v {
-  font-size: .83rem; font-weight: 500; color: var(--text);
-  background: var(--bg); border-radius: 6px;
-  padding: 6px 10px; min-height: 32px; word-break: break-word;
-}
+.mf-v { font-size: .83rem; font-weight: 500; color: var(--text); background: var(--bg); border-radius: 6px; padding: 6px 10px; min-height: 32px; word-break: break-word; }
 .tick  { color: var(--green); font-weight: 800; }
 .cross { color: var(--red);   font-weight: 800; }
 .nd    { color: var(--text-muted); font-style: italic; }
-
 .tags-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
-.tag {
-  font-size: .71rem; padding: 3px 9px; border-radius: 11px;
-  background: var(--accent-lt); color: var(--accent); font-weight: 600;
+.tag { font-size: .71rem; padding: 3px 9px; border-radius: 11px; background: var(--accent-lt); color: var(--accent); font-weight: 600; }
+
+/* ═══════════════════════════════════
+   TOAST
+═══════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: .84rem;
+  font-weight: 600;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  max-width: 90vw;
+  text-align: center;
+  transition: opacity .3s, transform .3s;
 }
+.toast.success { background: var(--green); }
+.toast.error   { background: var(--red); }
+.toast.hide    { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(10px); }
 
 /* ═══════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════ */
 @media (max-width: 860px) {
   .page { grid-template-columns: 1fr; }
-
   .filter-toggle { display: flex; }
-
-  .filters-panel {
-    position: static;
-    display: none;
-  }
+  .filters-panel { position: static; display: none; }
   .filters-panel.open { display: block; }
 }
-
-@media (max-width: 580px) {
+@media (max-width: 600px) {
+  .req-stats { gap: 10px; }
+  .stat-num  { font-size: 1.4rem; }
+  .req-page  { padding: 16px 14px 50px; }
+  .mfields   { grid-template-columns: 1fr; }
+  .mf.full   { grid-column: 1; }
+  .modal-body { padding: 14px 16px; }
+  .modal-head { padding: 16px; }
+  .modal-head-info h2 { font-size: 1rem; }
+  .modal-foot { padding: 12px 16px 16px; }
+}
+@media (max-width: 500px) {
   .header-logo span { display: none; }
   .page { padding: 16px 14px 50px; }
   .cards-grid { grid-template-columns: 1fr; }
-  .mfields { grid-template-columns: 1fr; }
-  .mf.full { grid-column: 1; }
-  .modal-body { padding: 14px 16px; }
-  .modal-head { padding: 16px 16px; }
-  .modal-head-info h2 { font-size: 1rem; }
-}
-
-@media (max-width: 380px) {
-  .gs-btn { padding: 7px 12px; font-size: .76rem; }
+  .main-tabs .mt-btn { padding: 6px 12px; font-size: .76rem; }
 }
 
 .hidden { display: none !important; }
@@ -599,144 +784,218 @@ body {
 <!-- ═══ HEADER ═══ -->
 <header class="header">
   <div class="header-inner">
-    <div><button onclick="logout()">تسجيل خروج</button></div>
+    <button class="btn-logout" onclick="logout()">تسجيل خروج</button>
+
     <div class="header-logo">بحث عن شريك الحياة <span>منصة الزواج</span></div>
-    <div class="gender-switch">
-      <button class="gs-btn active" id="gsMale"   onclick="setGender('male')">🧔 ذكور</button>
-      <button class="gs-btn"        id="gsFemale" onclick="setGender('female')">👩 إناث</button>
+
+    <div class="main-tabs">
+      <button class="mt-btn active" id="tabBrowseBtn" onclick="switchTab('browse')">🔍 البحث</button>
+      <button class="mt-btn" id="tabRequestsBtn" onclick="switchTab('requests')">
+        📬 الطلبات
+        <span class="tab-badge hidden" id="reqBadge">0</span>
+      </button>
     </div>
   </div>
 </header>
 
-<!-- ═══ PAGE ═══ -->
-<div class="page" id="page">
+<!-- ═══ BROWSE TAB ═══ -->
+<div id="browseContent">
+  <div class="page">
 
-  <!-- FILTERS -->
-  <aside>
-    <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()">
-      <span>🔍 الفلاتر</span>
-      <span id="toggleIcon">▼</span>
-    </button>
-
-    <div class="filters-panel" id="filtersPanel">
-      <div class="fp-head">
-        <span>🔍 فلترة النتائج</span>
-        <button class="fp-clear" onclick="clearFilters()">مسح الكل</button>
+    <aside>
+      <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()">
+        <span>🔍 الفلاتر</span>
+        <span id="toggleIcon">▼</span>
+      </button>
+      <div class="filters-panel" id="filtersPanel">
+        <div class="fp-head">
+          <span>🔍 فلترة النتائج</span>
+          <button class="fp-clear" onclick="clearFilters()">مسح الكل</button>
+        </div>
+        <div class="fp-body" id="fpBody"></div>
       </div>
-      <div class="fp-body" id="fpBody">
-        <!-- injected by JS -->
+    </aside>
+
+    <div class="results-area">
+      <div id="stateBox" class="state-box">
+        <div class="spinner"></div>
+        <div class="state-title">جاري التحميل...</div>
+      </div>
+
+      <div id="resultsWrap" class="hidden">
+        <div class="results-bar">
+          <div class="results-count" id="countLabel">—</div>
+          <div class="sort-bar">
+            <span>ترتيب:</span>
+            <select id="sortSel" onchange="applySort()">
+              <option value="age_asc">العمر: الأصغر أولاً</option>
+              <option value="age_desc">العمر: الأكبر أولاً</option>
+              <option value="quran_desc">الأكثر حفظاً للقرآن</option>
+            </select>
+          </div>
+        </div>
+        <div class="cards-grid" id="cardsGrid"></div>
+        <div class="pagination" id="pgBar"></div>
       </div>
     </div>
-  </aside>
 
-  <!-- RESULTS -->
-  <div class="results-area" id="resultsArea">
-    <div id="stateBox" class="state-box">
-      <div class="spinner"></div>
-      <div class="state-title">جاري التحميل...</div>
-    </div>
+  </div>
+</div>
 
-    <div id="resultsWrap" class="hidden">
-      <div class="results-bar">
-        <div class="results-count" id="countLabel">—</div>
-        <div class="sort-bar">
-          <span>ترتيب:</span>
-          <select id="sortSel" onchange="applySort()">
-            <option value="age_asc">العمر: الأصغر أولاً</option>
-            <option value="age_desc">العمر: الأكبر أولاً</option>
-            <option value="quran_desc">الأكثر حفظاً للقرآن</option>
-          </select>
+<!-- ═══ REQUESTS TAB ═══ -->
+<div id="requestsContent" class="hidden">
+  <div class="req-page">
+
+    <!-- Stats summary -->
+    <div class="req-stats">
+      <div class="stat-card active-stat" id="statReceived" onclick="switchReqTab('received')">
+        <div class="stat-icon">📥</div>
+        <div>
+          <div class="stat-num" id="receivedCount">—</div>
+          <div class="stat-lbl">طلبات مُستلمة</div>
         </div>
       </div>
-
-      <div class="cards-grid" id="cardsGrid"></div>
-      <div class="pagination" id="pgBar"></div>
+      <div class="stat-card" id="statSent" onclick="switchReqTab('sent')">
+        <div class="stat-icon">📤</div>
+        <div>
+          <div class="stat-num" id="sentCount">—</div>
+          <div class="stat-lbl">طلبات مُرسلة</div>
+        </div>
+      </div>
     </div>
-  </div>
 
+    <!-- Sub-tabs -->
+    <div class="req-subtabs">
+      <button class="rst-btn active" id="rstReceived" onclick="switchReqTab('received')">📥 المُستلمة</button>
+      <button class="rst-btn"        id="rstSent"     onclick="switchReqTab('sent')">📤 المُرسلة</button>
+    </div>
+
+    <!-- Requests list -->
+    <div id="reqListArea">
+      <div class="req-empty">
+        <div class="req-empty-icon">⏳</div>
+        <div class="req-empty-title">جاري تحميل الطلبات...</div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ═══ MODAL ═══ -->
 <div class="overlay" id="overlay" onclick="closeModal(event)">
-  <div class="modal" id="modal">
+  <div class="modal">
     <div class="modal-head">
       <div class="modal-head-info">
         <h2 id="mTitle">—</h2>
-        <p id="mMeta"></p>
+        <p  id="mMeta"></p>
       </div>
       <button class="modal-close" onclick="closeModalDirect()">✕</button>
     </div>
     <div class="modal-body" id="mBody"></div>
+    <div class="modal-foot" id="mFoot"></div>
   </div>
 </div>
+
+<!-- ═══ TOAST ═══ -->
+<div id="toast" class="toast hide"></div>
 
 <script>
 "use strict";
 
-/* ═══════════════════════════════════════════════════════════
-   CONFIG
-═══════════════════════════════════════════════════════════ */
-const API_BASE   = "../api/users";
-const STATUS     = "approved"; // always show approved for users
-const PER_PAGE   = 10;         // assumed from server
+/* ═══════════════════════════════════════
+   AUTH GUARD
+═══════════════════════════════════════ */
+const loggedUser = JSON.parse(localStorage.getItem('user'));
+if (!loggedUser) window.location.href = "login.html";
 
-/* ═══════════════════════════════════════════════════════════
+function getToken() {
+  return loggedUser?.authToken || loggedUser?.token || localStorage.getItem('token') || '';
+}
+const AUTH_HEADERS = {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + getToken()
+};
+
+/* ═══════════════════════════════════════
+   GENDER LOGIC
+   Server returns OPPOSITE gender of the logged-in user.
+   If logged-in user is Male  → they browse Female profiles.
+   If logged-in user is Female→ they browse Male profiles.
+═══════════════════════════════════════ */
+const loggedProfileModel = loggedUser?.profileModel || '';          // 'Male' | 'Female'
+const viewingGender      = loggedProfileModel === 'Male' ? 'female' : 'male';  // what we're looking at
+
+/* ═══════════════════════════════════════
    STATE
-═══════════════════════════════════════════════════════════ */
-let gender      = "male";   // "male" | "female"
-let allData     = [];       // current page raw data
-let displayed   = [];       // after client-side filter+sort
+═══════════════════════════════════════ */
+const PER_PAGE = 10;
+let allData     = [];
+let displayed   = [];
 let currentPage = 1;
 let totalPages  = 1;
 let filtersOpen = false;
+let activeTab   = 'browse';
+let activeReqTab= 'received';
+const baseURL = '..';
 
-/* ═══════════════════════════════════════════════════════════
+let requestsData = { sent: [], received: [] };
+let sentUserIds  = new Set();   // _id of users we already sent a request to
+let reqsLoaded   = false;
+
+/* ═══════════════════════════════════════
    BOOT
-═══════════════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 buildFilters();
 loadPage(1);
+loadRequests();
 
-
-// check if not log in go to log in 
-// get user from localstorage
-const user =JSON.parse(localStorage.getItem ('user') )
-if(!user){
-    window.location.href="login.html";
-    console.log(localStorage.getItem ('user'));
-    
+/* ═══════════════════════════════════════
+   MAIN TAB SWITCH
+═══════════════════════════════════════ */
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('browseContent').classList.toggle('hidden', tab !== 'browse');
+  document.getElementById('requestsContent').classList.toggle('hidden', tab !== 'requests');
+  document.getElementById('tabBrowseBtn').classList.toggle('active', tab === 'browse');
+  document.getElementById('tabRequestsBtn').classList.toggle('active', tab === 'requests');
+  if (tab === 'requests' && reqsLoaded) renderRequestsList();
 }
 
-function logout(){
-    localStorage.removeItem('user')
-    window.location.href="login.html"
+/* ═══════════════════════════════════════
+   REQ SUB-TAB SWITCH
+═══════════════════════════════════════ */
+function switchReqTab(tab) {
+  activeReqTab = tab;
+  document.getElementById('rstReceived').classList.toggle('active', tab === 'received');
+  document.getElementById('rstSent').classList.toggle('active', tab === 'sent');
+  document.getElementById('statReceived').classList.toggle('active-stat', tab === 'received');
+  document.getElementById('statSent').classList.toggle('active-stat', tab === 'sent');
+  renderRequestsList();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   GENDER
-═══════════════════════════════════════════════════════════ */
-function setGender(g) {
-  gender = g;
-  document.body.classList.toggle("female", g === "female");
-  document.getElementById("gsMale").classList.toggle("active",   g === "male");
-  document.getElementById("gsFemale").classList.toggle("active", g === "female");
-  buildFilters();
-  loadPage(1);
-}
-
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    MOBILE FILTER TOGGLE
-═══════════════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 function toggleFilters() {
   filtersOpen = !filtersOpen;
-  document.getElementById("filtersPanel").classList.toggle("open", filtersOpen);
-  document.getElementById("toggleIcon").textContent = filtersOpen ? "▲" : "▼";
+  document.getElementById('filtersPanel').classList.toggle('open', filtersOpen);
+  document.getElementById('toggleIcon').textContent = filtersOpen ? '▲' : '▼';
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FILTERS BUILD
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   LOGOUT
+═══════════════════════════════════════ */
+function logout() {
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
+/* ═══════════════════════════════════════
+   BUILD FILTERS
+   Filters match the profiles being viewed, i.e. the opposite gender.
+═══════════════════════════════════════ */
 function buildFilters() {
-  const fp = document.getElementById("fpBody");
+  const fp = document.getElementById('fpBody');
 
   const commonTop = `
     <div class="fg">
@@ -760,10 +1019,8 @@ function buildFilters() {
       <label>المؤهل الدراسي</label>
       <select id="fEdu" onchange="applyFilters()">
         <option value="">الكل</option>
-        <option>بدون مؤهل</option>
-        <option>متوسط</option>
-        <option>فوق المتوسط</option>
-        <option>جامعي</option>
+        <option>بدون مؤهل</option><option>متوسط</option>
+        <option>فوق المتوسط</option><option>جامعي</option>
         <option>دراسات عليا</option>
       </select>
     </div>
@@ -775,13 +1032,13 @@ function buildFilters() {
       <label>الحالة الاجتماعية</label>
       <select id="fMarital" onchange="applyFilters()">
         <option value="">الكل</option>
-        ${gender === "male"
+        ${viewingGender === 'male'
           ? `<option>عزب</option><option>مطلق</option><option>أرمل</option><option>أعزب سبق له عقد أو كتب كتاب</option>`
           : `<option>عذراء</option><option>مطلقة</option><option>أرملة</option>`}
       </select>
     </div>
     <div class="fg">
-      <label>المغترب</label>
+      <label>مغترب</label>
       <select id="fExpat" onchange="applyFilters()">
         <option value="">الكل</option>
         <option>نعم</option><option>لا</option>
@@ -817,10 +1074,8 @@ function buildFilters() {
       <label>نوع الحجاب</label>
       <select id="fHijab" onchange="applyFilters()">
         <option value="">الكل</option>
-        <option>نقاب أسود كامل</option>
-        <option>منتقبة فقط</option>
-        <option>محجبة مختمرة</option>
-        <option>محجبة</option>
+        <option>نقاب أسود كامل</option><option>منتقبة فقط</option>
+        <option>محجبة مختمرة</option><option>محجبة</option>
       </select>
     </div>
     <div class="fg">
@@ -833,186 +1088,337 @@ function buildFilters() {
     </div>`;
 
   fp.innerHTML = commonTop
-    + (gender === "male" ? maleExtra : femaleExtra)
+    + (viewingGender === 'male' ? maleExtra : femaleExtra)
     + `<div class="fp-divider"></div>
        <button class="btn-search" onclick="applyFilters()">🔍 بحث</button>`;
 }
 
 function clearFilters() {
-  document.querySelectorAll("#fpBody input, #fpBody select").forEach(el => el.value = "");
+  document.querySelectorAll('#fpBody input, #fpBody select').forEach(el => el.value = '');
   applyFilters();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   API — LOAD PAGE
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   API — LOAD BROWSE PAGE
+   GET /api/users/approved?page=N
+   Server returns opposite gender based on auth token.
+═══════════════════════════════════════ */
 async function loadPage(page) {
   currentPage = page;
-  showState("loading");
+  showBrowseState('loading');
 
   try {
-    const res = await fetch(`${API_BASE}/${STATUS}/${page}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + (localStorage.getItem("token") || "")
-      }
-    });
+    const res = await fetch(`${baseURL}/api/users/approved/${page}`, { headers: AUTH_HEADERS });
+    if (res.status === 401) { logout(); return; }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
 
-    const raw = json.users || json.males || json.females || [];
-
-    // Filter by profileModel for current gender view
-    const key = gender === "male" ? "Male" : "Female";
-    allData = raw
-      .filter(u => u.profileModel === key)
-      .map(flatten);
+    const raw  = json.users || json.males || json.females || json.data || [];
+    allData    = raw.map(flatten);
 
     const total = json.numberOfUsers || json.total || raw.length;
     totalPages  = Math.max(1, Math.ceil(total / PER_PAGE));
 
     applyFilters();
-    showState("data");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    showBrowseState('data');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     console.error(err);
-    showState("error", err.message);
+    showBrowseState('error', err.message);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FLATTEN USER OBJECT
-═══════════════════════════════════════════════════════════ */
-function flatten(u) {
-  const p = u.profileRef || {};
-  return {
-    _id: u._id,
-    profileModel: u.profileModel,
-    // basic
-    birthDate:   p.basicInfo?.birthDate,
-    nationality: (p.basicInfo?.nationality || "").trim(),
-    weight:      p.basicInfo?.weight,
-    height:      p.basicInfo?.height,
-    skinColor:   p.basicInfo?.skinColor,
-    description: p.basicInfo?.description,
-    // edu & work
-    education:       p.educationAndWork?.education,
-    universityMajor: p.educationAndWork?.universityMajor,
-    isWorking:       p.educationAndWork?.isWorking,
-    job:             p.educationAndWork?.job,
-    jobDescription:  p.educationAndWork?.jobDescription,
-    acceptLeaveWork: p.educationAndWork?.acceptLeaveWorkIfHusbandAsks,
-    // residence
-    city:       (p.residence?.city || "").trim(),
-    expatriate: p.residence?.expatriate,
-    maritalHome: p.residence?.maritalHome,
-    maritalHomeDesc: p.residence?.maritalHomeDescription,
-    // family
-    fatherJob:        p.familyInfo?.fatherJob,
-    motherJob:        p.familyInfo?.motherJob,
-    siblingsInfo:     p.familyInfo?.siblingsInfo,
-    parentsSeparated: p.familyInfo?.parentsSeparated,
-    familyDesc:       p.familyInfo?.familyDescription,
-    // marital
-    maritalStatus:  p.maritalInfo?.maritalStatus,
-    marriageType:   p.maritalInfo?.marriageType,
-    haveChildren:   p.maritalInfo?.haveChildren,
-    acceptPolygamy: p.maritalInfo?.acceptPolygamy || p.maritalInfo?.polygamy,
-    wantChildren:   p.maritalInfo?.wantChildren,
-    // religion
-    prayFiveTimes:   p.religionAndHealth?.prayFiveTimes,
-    prayInMosque:    p.religionAndHealth?.prayInMosque,
-    quranMemorization: p.religionAndHealth?.quranMemorization ?? 0,
-    hasIllness:      p.religionAndHealth?.hasDisabilityOrIllness,
-    smoker:          p.religionAndHealth?.smoker,
-    bearded:         p.religionAndHealth?.bearded,
-    // female
-    hijab:              p.hijab,
-    groomMinAge:        p.groomRequirements?.minAge,
-    groomMaxAge:        p.groomRequirements?.maxAge,
-    groomMaritalStatus: p.groomRequirements?.acceptedMaritalStatus,
-    groomPolygamy:      p.groomRequirements?.acceptPolygamy,
-    groomEducation:     p.groomRequirements?.education,
-    groomNationality:   p.groomRequirements?.nationality,
-    groomMaritalHome:   p.groomRequirements?.maritalHome,
-    groomBeard:         p.groomRequirements?.requiresBeard,
-    groomPrayer:        p.groomRequirements?.requiresPrayer,
-    groomNonSmoker:     p.groomRequirements?.requiresNonSmoker,
-    groomReligion:      p.groomRequirements?.religionLevel,
-    groomDesc:          p.groomRequirements?.description,
-    // male
-    brideMinAge:    p.brideRequirements?.minAge,
-    brideMaxAge:    p.brideRequirements?.maxAge,
-    brideEducation: p.brideRequirements?.education,
-    brideWork:      p.brideRequirements?.work,
-    brideHijab:     p.brideRequirements?.hijab || [],
-    brideDesc:      p.brideRequirements?.description,
-  };
+/* ═══════════════════════════════════════
+   API — LOAD REQUESTS
+   GET /api/requests
+   Expected response: { sent: [...], received: [...] }
+   or: { requestsSent: [...], requestsReceived: [...] }
+═══════════════════════════════════════ */
+async function loadRequests() {
+  try {
+    const res = await fetch(`${baseURL}/api/requests`, { headers: AUTH_HEADERS });
+    if (res.status === 401) { logout(); return; }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    console.log("requests : ",json);
+//     {
+//     "success": true,
+//     "data": [
+//         {
+//             "_id": "6aa3f99a2e2e768c3a5c8e6f",
+//             "to": {
+//                 "_id": "6aa112d6ac8fbc31545d0802",
+//                 "profileModel": "Female",
+//                 "profileRef": {
+//                     "basicInfo": {
+//                         "birthDate": "2002-10-08T00:00:00.000Z",
+//                         "nationality": "مصرية",
+//                         "weight": 75,
+//                         "height": 170,
+//                         "skinColor": "ابيض",
+//                         "description": "وصف مختصر"
+//                     },
+//                     "educationAndWork": {
+//                         "education": "جامعي",
+//                         "universityMajor": "هندسة ",
+//                         "isWorking": false,
+//                         "jobDescription": "",
+//                         "acceptLeaveWorkIfHusbandAsks": "حسب الاتفاق"
+//                     },
+//                     "residence": {
+//                         "city": "أسيوط",
+//                         "currentPlaceOfResidence": "ديروط",
+//                         "expatriate": "لا"
+//                     },
+//                     "familyInfo": {
+//                         "fatherJob": "على المعاش",
+//                         "motherJob": "ربنة منزل",
+//                         "siblingsInfo": "any thing",
+//                         "parentsSeparated": false,
+//                         "familyDescription": "any thing"
+//                     },
+//                     "maritalInfo": {
+//                         "maritalStatus": "عذراء",
+//                         "marriageType": "على حسب الاتفاق",
+//                         "haveChildren": "0",
+//                         "acceptPolygamy": "حسب الاتفاق",
+//                         "wantChildren": "نعم"
+//                     },
+//                     "religionAndHealth": {
+//                         "prayFiveTimes": true,
+//                         "quranMemorization": 30,
+//                         "hasDisabilityOrIllness": "لا"
+//                     },
+//                     "groomRequirements": {
+//                         "minAge": 27,
+//                         "maxAge": 32,
+//                         "acceptedMaritalStatus": [
+//                             "أعزب"
+//                         ],
+//                         "acceptPolygamy": "لا",
+//                         "education": [
+//                             "جامعي"
+//                         ],
+//                         "nationality": "مصرى",
+//                         "maritalHome": "حسب الاتفاق",
+//                         "requiresBeard": "نعم",
+//                         "requiresPrayer": "نعم",
+//                         "requiresNonSmoker": "نعم",
+//                         "religionLevel": [
+//                             "ملتزم جداً",
+//                             "ملتزم",
+//                             "متوسط الالتزام"
+//                         ],
+//                         "description": "وصف"
+//                     },
+//                     "contactInfo": {
+//                         "about": "any thing",
+//                         "additionalNotes": ""
+//                     },
+//                     "_id": "6aa11434ac8fbc31545d0814",
+//                     "hijab": "نقاب أسود كامل",
+//                     "public": false,
+//                     "deleted": false,
+//                     "requestsSent": [],
+//                     "requestsReceived": [],
+//                     "createdAt": "2026-09-09T08:09:24.862Z",
+//                     "updatedAt": "2026-09-09T08:09:24.862Z",
+//                     "__v": 0
+//                 }
+//             },
+//             "status": "pending",
+//             "createdAt": "2026-09-11T12:52:42.088Z",
+//             "updatedAt": "2026-09-11T12:52:42.088Z",
+//             "__v": 0
+//         }
+//     ]
+// }
+
+    requestsData = {
+      sent:     json.data.filter(r => r.to ),
+      received: json.data.filter(r => r.from )
+    };
+
+    console.log(requestsData.sent);
+    console.log(requestsData.received);
+    
+
+    // Track which user IDs already have a sent request
+    sentUserIds = new Set(
+      requestsData.sent.map(r => String(r.to?._id || r.to)).filter(Boolean)
+    );
+
+    reqsLoaded = true;
+    updateReqBadge();
+    updateReqStats();
+
+    // Refresh card buttons if browse data already loaded
+    if (allData.length) renderResults();
+
+    // Refresh list if on requests tab
+    if (activeTab === 'requests') renderRequestsList();
+
+  } catch (err) {
+    console.error('Requests load failed:', err);
+    reqsLoaded = true;
+    if (activeTab === 'requests') {
+      document.getElementById('reqListArea').innerHTML = `
+        <div class="req-empty">
+          <div class="req-empty-icon">⚠️</div>
+          <div class="req-empty-title">تعذر تحميل الطلبات</div>
+          <div class="req-empty-sub">تحقق من الاتصال وحاول مجدداً</div>
+          <button class="btn-search" style="margin:0 auto;max-width:200px" onclick="loadRequests()">إعادة المحاولة</button>
+        </div>`;
+    }
+  }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FILTERS APPLY (client-side on current page data)
-═══════════════════════════════════════════════════════════ */
-function applyFilters() {
-  const gv = id => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+function updateReqBadge() {
+  const pending = requestsData.received.filter(r => r.status === 'pending').length;
+  const badge   = document.getElementById('reqBadge');
+  badge.textContent = pending;
+  badge.classList.toggle('hidden', pending === 0);
+}
 
-  const ageMin  = parseInt(gv("fAgeMin"))  || 0;
-  const ageMax  = parseInt(gv("fAgeMax"))  || 999;
-  const nat     = gv("fNat");
-  const edu     = gv("fEdu");
-  const city    = gv("fCity").toLowerCase();
-  const marital = gv("fMarital");
-  const expat   = gv("fExpat");
-  const quranMin= parseInt(gv("fQuran")) || 0;
-  // male
-  const bearded = gv("fBearded");
-  const smoker  = gv("fSmoker");
-  // female
-  const hijab   = gv("fHijab");
-  const working = gv("fWorking");
+function updateReqStats() {
+  document.getElementById('receivedCount').textContent = requestsData.received.length;
+  document.getElementById('sentCount').textContent     = requestsData.sent.length;
+}
+
+/* ═══════════════════════════════════════
+   API — SEND REQUEST
+   POST /api/requests/send  { to: userId }
+═══════════════════════════════════════ */
+async function sendRequest(userId, btnEl) {
+  if (!userId) return;
+  const orig = btnEl.innerHTML;
+  btnEl.disabled = true;
+  btnEl.innerHTML = '<span style="opacity:.6">جاري الإرسال...</span>';
+
+  try {
+    const res = await fetch(`../api/requests/send`, {
+      method: 'POST',
+      headers: AUTH_HEADERS,
+      body: JSON.stringify({ toUserId: userId })
+    });
+    const json = await res.json();
+
+    if (res.ok) {
+      sentUserIds.add(String(userId));
+      btnEl.innerHTML = '✔ تم الإرسال';
+      btnEl.classList.add('sent');
+      btnEl.disabled = true;
+      showToast('تم إرسال طلب الزواج بنجاح ✔', 'success');
+      loadRequests();
+    } else {
+      console.log(json);
+      console.log("response error");
+      
+      btnEl.innerHTML = orig;
+      btnEl.disabled  = false;
+      showToast(json.message || 'حدث خطأ في الإرسال', 'error');
+      
+    }
+  } catch(err) {
+    btnEl.innerHTML = orig;
+    btnEl.disabled  = false;
+    showToast('حدث خطأ في الاتصال', 'error');
+    console.log(err);
+    
+  }
+}
+
+/* ═══════════════════════════════════════
+   API — UPDATE REQUEST STATUS
+   POST /api/requests/updateStatus  { requestId, status }
+═══════════════════════════════════════ */
+async function updateRequestStatus(requestId, status, cardEl) {
+  const btns = cardEl.querySelectorAll('button');
+  btns.forEach(b => { b.disabled = true; });
+
+  try {
+    const res = await fetch(`../api/requests/updateStatus`, {
+      method: 'PATCH',
+      headers: AUTH_HEADERS,
+      body: JSON.stringify({ requestId, status })
+    });
+    const json = await res.json();
+
+    if (res.ok) {
+      const msg  = status === 'accepted' ? '✔ تم قبول الطلب' : '✖ تم رفض الطلب';
+      showToast(msg, status === 'accepted' ? 'success' : 'error');
+      loadRequests();
+    } else {
+      showToast(json.message || 'حدث خطأ', 'error');
+      btns.forEach(b => { b.disabled = false; });
+    }
+  } catch {
+    showToast('حدث خطأ في الاتصال', 'error');
+    btns.forEach(b => { b.disabled = false; });
+  }
+}
+
+/* ═══════════════════════════════════════
+   FILTERS (client-side on current page data)
+═══════════════════════════════════════ */
+function applyFilters() {
+  const gv = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+  const ageMin  = parseInt(gv('fAgeMin'))  || 0;
+  const ageMax  = parseInt(gv('fAgeMax'))  || 999;
+  const nat     = gv('fNat');
+  const edu     = gv('fEdu');
+  const city    = gv('fCity').toLowerCase();
+  const marital = gv('fMarital');
+  const expat   = gv('fExpat');
+  const quranMin= parseInt(gv('fQuran')) || 0;
+  const bearded = gv('fBearded');
+  const smoker  = gv('fSmoker');
+  const hijab   = gv('fHijab');
+  const working = gv('fWorking');
 
   displayed = allData.filter(d => {
     const age = calcAge(d.birthDate);
-    if (age !== null && (age < ageMin || age > ageMax)) return false;
-    if (nat     && d.nationality !== nat)                return false;
-    if (edu     && d.education   !== edu)                return false;
-    if (city    && !(d.city||"").toLowerCase().includes(city)) return false;
-    if (marital && d.maritalStatus !== marital)          return false;
-    if (expat   && d.expatriate !== expat)               return false;
-    if (quranMin && (d.quranMemorization || 0) < quranMin) return false;
-    if (bearded && String(d.bearded) !== bearded)        return false;
-    if (smoker  && String(d.smoker)  !== smoker)         return false;
-    if (hijab   && d.hijab !== hijab)                    return false;
-    if (working && String(d.isWorking) !== working)      return false;
+    if (age !== null && (age < ageMin || age > ageMax))          return false;
+    if (nat     && d.nationality !== nat)                         return false;
+    if (edu     && d.education   !== edu)                         return false;
+    if (city    && !(d.city||'').toLowerCase().includes(city))    return false;
+    if (marital && d.maritalStatus !== marital)                   return false;
+    if (expat   && d.expatriate !== expat)                        return false;
+    if (quranMin && (d.quranMemorization||0) < quranMin)          return false;
+    if (bearded && String(d.bearded) !== bearded)                 return false;
+    if (smoker  && String(d.smoker)  !== smoker)                  return false;
+    if (hijab   && d.hijab !== hijab)                             return false;
+    if (working && String(d.isWorking) !== working)               return false;
     return true;
   });
 
   applySort();
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    SORT
-═══════════════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 function applySort() {
-  const s = document.getElementById("sortSel")?.value || "age_asc";
+  const s = document.getElementById('sortSel')?.value || 'age_asc';
   displayed.sort((a, b) => {
     const aa = calcAge(a.birthDate) ?? 99;
     const ba = calcAge(b.birthDate) ?? 99;
-    if (s === "age_asc")    return aa - ba;
-    if (s === "age_desc")   return ba - aa;
-    if (s === "quran_desc") return (b.quranMemorization||0) - (a.quranMemorization||0);
+    if (s === 'age_asc')    return aa - ba;
+    if (s === 'age_desc')   return ba - aa;
+    if (s === 'quran_desc') return (b.quranMemorization||0) - (a.quranMemorization||0);
     return 0;
   });
   renderResults();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RENDER RESULTS
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   RENDER BROWSE RESULTS
+═══════════════════════════════════════ */
 function renderResults() {
-  const grid = document.getElementById("cardsGrid");
-  const lbl  = document.getElementById("countLabel");
-  lbl.innerHTML = `عرض <strong>${displayed.length}</strong> نتيجة في هذه الصفحة`;
+  const grid = document.getElementById('cardsGrid');
+  document.getElementById('countLabel').innerHTML =
+    `عرض <strong>${displayed.length}</strong> نتيجة في هذه الصفحة`;
 
   if (!displayed.length) {
     grid.innerHTML = `
@@ -1022,34 +1428,36 @@ function renderResults() {
         <div class="state-sub">حاول تغيير معايير البحث</div>
       </div>`;
   } else {
-    grid.innerHTML = displayed.map((d, i) => buildCard(d, i)).join("");
+    grid.innerHTML = displayed.map((d, i) => buildCard(d, i)).join('');
   }
-
   renderPagination();
 }
 
 function buildCard(d, i) {
-  const age = calcAge(d.birthDate);
-  const num = (currentPage - 1) * PER_PAGE + i + 1;
-  const isMale = gender === "male";
+  const age        = calcAge(d.birthDate);
+  const num        = (currentPage - 1) * PER_PAGE + i + 1;
+  const isMaleProf = viewingGender === 'male';
+  const alreadySent= sentUserIds.has(String(d._id));
 
-  const badges = isMale
-    ? `${d.bearded === true ? '<span class="card-badge">ملتحٍ ✔</span>' : ''}
+  const badges = isMaleProf
+    ? `${d.bearded === true  ? '<span class="card-badge">ملتحٍ ✔</span>' : ''}
        ${d.smoker  === false ? '<span class="card-badge">غير مدخن</span>' : ''}`
-    : `${d.hijab ? `<span class="card-badge">${d.hijab}</span>` : ''}
-       ${d.isWorking === true ? '<span class="card-badge">تعمل</span>' : '<span class="card-badge">لا تعمل</span>'}`;
+    : `${d.hijab     ? `<span class="card-badge">${d.hijab}</span>` : ''}
+       ${d.isWorking === true ? '<span class="card-badge">تعمل</span>' : ''}`;
 
-  const extra1Key = isMale ? "الوظيفة"     : "الحجاب";
-  const extra1Val = isMale ? (d.job||"—")  : (d.hijab||"—");
-  const extra2Key = isMale ? "التعدد"      : "تقبل التعدد";
-  const extra2Val = isMale ? (d.acceptPolygamy||"—") : (d.acceptPolygamy||"—");
+  const extra1Key = isMaleProf ? 'الوظيفة'    : 'الحجاب';
+  const extra1Val = isMaleProf ? (d.job||'—') : (d.hijab||'—');
+
+  const sendBtn = alreadySent
+    ? `<button class="btn-send-req sent" disabled>✔ تم الإرسال</button>`
+    : `<button class="btn-send-req" onclick="event.stopPropagation();sendRequest('${d._id}',this)">💌 إرسال طلب</button>`;
 
   return `
   <div class="card" onclick="openModal('${d._id}')">
     <div class="card-top">
-      <div class="card-id">${isMale ? "🧔" : "👩"} طلب #${num}</div>
-      <div class="card-age">${age !== null ? age : "—"}<span>سنة</span></div>
-      <div class="card-city">📍 ${d.city || "—"} · ${d.nationality || "—"}</div>
+      <div class="card-id">${isMaleProf ? '🧔' : '👩'} ملف #${num}</div>
+      <div class="card-age">${age !== null ? age : '—'}<span>سنة</span></div>
+      <div class="card-city">📍 ${d.city||'—'} · ${d.nationality||'—'}</div>
       <div class="card-badge-wrap">${badges}</div>
     </div>
     <div class="card-body">
@@ -1059,7 +1467,7 @@ function buildCard(d, i) {
       </div>
       <div class="card-row">
         <span class="card-row-key">المؤهل</span>
-        <span class="card-row-val">${d.education||"—"}</span>
+        <span class="card-row-val">${d.education||'—'}</span>
       </div>
       <div class="card-row">
         <span class="card-row-key">${extra1Key}</span>
@@ -1070,27 +1478,136 @@ function buildCard(d, i) {
         <span class="card-row-val">${quranTxt(d.quranMemorization)}</span>
       </div>
       <div class="card-row">
-        <span class="card-row-key">${extra2Key}</span>
-        <span class="card-row-val">${extra2Val}</span>
+        <span class="card-row-key">التعدد</span>
+        <span class="card-row-val">${d.acceptPolygamy||'—'}</span>
       </div>
     </div>
     <div class="card-foot">
-      <button class="btn-details" onclick="event.stopPropagation();openModal('${d._id}')">
-        عرض التفاصيل ←
-      </button>
+      ${sendBtn}
+      <button class="btn-details" onclick="event.stopPropagation();openModal('${d._id}')">التفاصيل ←</button>
     </div>
   </div>`;
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
+   RENDER REQUESTS
+═══════════════════════════════════════ */
+function renderRequestsList() {
+  const area = document.getElementById('reqListArea');
+  const list = activeReqTab === 'received' ? requestsData.received : requestsData.sent;
+
+  if (!reqsLoaded) {
+    area.innerHTML = `<div class="req-empty"><div class="spinner" style="margin:0 auto 12px"></div><div class="req-empty-title">جاري التحميل...</div></div>`;
+    return;
+  }
+
+  if (!list.length) {
+    const msgs = {
+      received: { icon: '📭', title: 'لا توجد طلبات مُستلمة', sub: 'ستظهر هنا الطلبات الواردة إليك.' },
+      sent:     { icon: '📤', title: 'لم تُرسل أي طلبات بعد',  sub: 'تصفح الملفات وأرسل طلب الزواج.' }
+    };
+    const e = msgs[activeReqTab];
+    area.innerHTML = `
+      <div class="req-empty">
+        <div class="req-empty-icon">${e.icon}</div>
+        <div class="req-empty-title">${e.title}</div>
+        <div class="req-empty-sub">${e.sub}</div>
+        ${activeReqTab === 'sent'
+          ? `<button class="btn-search" style="margin:0 auto;max-width:220px" onclick="switchTab('browse')">🔍 تصفح الملفات</button>`
+          : ''}
+      </div>`;
+    return;
+  }
+
+  area.innerHTML = `<div class="req-list">${list.map((r, i) => buildReqCard(r, i)).join('')}</div>`;
+}
+
+function buildReqCard(req, idx) {
+  const isReceived = activeReqTab === 'received';
+  const other      = isReceived ? req.from : req.to;
+
+  // Extract profile data defensively
+  const pRef    = other?.profileRef || {};
+  const basic   = pRef.basicInfo        || {};
+  const edu     = pRef.educationAndWork || {};
+  const res     = pRef.residence        || {};
+  const mar     = pRef.maritalInfo      || {};
+
+  const age         = calcAge(basic.birthDate);
+  const city        = (res.city        || '').trim();
+  const nationality = (basic.nationality || '').trim();
+  const education   = edu.education    || '';
+  const marStatus   = mar.maritalStatus|| '';
+  const icon        = (other?.profileModel === 'Male') ? '🧔' : '👩';
+
+  const dateStr = req.createdAt
+    ? new Date(req.createdAt).toLocaleDateString('ar-EG', { year:'numeric', month:'short', day:'numeric' })
+    : '—';
+
+  const statusLbl   = { pending:'قيد الانتظار', accepted:'مقبول', rejected:'مرفوض' };
+  const statusClass = { pending:'status-pending', accepted:'status-accepted', rejected:'status-rejected' };
+
+  const tags = [
+    age         ? `<span class="req-tag">🎂 ${age} سنة</span>`    : '',
+    city        ? `<span class="req-tag">📍 ${city}</span>`        : '',
+    nationality ? `<span class="req-tag">🌍 ${nationality}</span>` : '',
+    education   ? `<span class="req-tag">🎓 ${education}</span>`   : '',
+    marStatus   ? `<span class="req-tag">💍 ${marStatus}</span>`   : ''
+  ].filter(Boolean).join('');
+
+  const actionBtns = isReceived && req.status === 'pending'
+    ? `<button class="btn-accept" onclick="updateRequestStatus('${req._id}','accepted',this.closest('.req-card'))">✔ قبول</button>
+       <button class="btn-reject" onclick="updateRequestStatus('${req._id}','rejected',this.closest('.req-card'))">✖ رفض</button>`
+    : '';
+
+  const viewBtn = other?._id
+    ? `<button class="btn-details" onclick="jumpToProfile('${other._id}')">عرض الملف ←</button>`
+    : '';
+
+  return `
+  <div class="req-card">
+    <div class="req-card-head">
+      <div class="req-card-info">
+        <h3>${icon} طلب زواج ${isReceived ? 'مُستلم' : 'مُرسل'} #${idx + 1}</h3>
+        <div class="req-card-meta">رقم الطلب: ${String(req._id).slice(-8).toUpperCase()}</div>
+      </div>
+      <div class="req-card-right">
+        <span class="status-badge ${statusClass[req.status] || 'status-pending'}">
+          ${statusLbl[req.status] || req.status}
+        </span>
+        <span class="req-date">📅 ${dateStr}</span>
+      </div>
+    </div>
+    ${tags ? `<div class="req-card-tags">${tags}</div>` : ''}
+    <div class="req-card-foot">
+      <div class="req-actions">${actionBtns}</div>
+      ${viewBtn}
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════
+   JUMP TO PROFILE (from request card)
+═══════════════════════════════════════ */
+function jumpToProfile(userId) {
+  const d = allData.find(x => String(x._id) === String(userId));
+  if (d) {
+    switchTab('browse');
+    setTimeout(() => openModal(d._id), 80);
+  } else {
+    showToast('الملف ليس في الصفحة الحالية، تصفح القائمة للعثور عليه', 'error');
+    switchTab('browse');
+  }
+}
+
+/* ═══════════════════════════════════════
    PAGINATION
-═══════════════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 function renderPagination() {
-  const bar = document.getElementById("pgBar");
-  if (totalPages <= 1) { bar.innerHTML = ""; return; }
+  const bar = document.getElementById('pgBar');
+  if (totalPages <= 1) { bar.innerHTML = ''; return; }
 
-  let h = `<button class="pg" onclick="loadPage(${currentPage-1})" ${currentPage===1?"disabled":""}>→</button>`;
-
+  let h = `<button class="pg" onclick="loadPage(${currentPage-1})" ${currentPage===1?'disabled':''}>→</button>`;
   const s = Math.max(1, currentPage - 2);
   const e = Math.min(totalPages, currentPage + 2);
 
@@ -1099,47 +1616,44 @@ function renderPagination() {
     if (s > 2) h += `<span class="pg-dots">…</span>`;
   }
   for (let p = s; p <= e; p++)
-    h += `<button class="pg ${p===currentPage?"active":""}" onclick="loadPage(${p})">${p}</button>`;
+    h += `<button class="pg ${p===currentPage?'active':''}" onclick="loadPage(${p})">${p}</button>`;
   if (e < totalPages) {
     if (e < totalPages - 1) h += `<span class="pg-dots">…</span>`;
     h += `<button class="pg" onclick="loadPage(${totalPages})">${totalPages}</button>`;
   }
-
-  h += `<button class="pg" onclick="loadPage(${currentPage+1})" ${currentPage===totalPages?"disabled":""}>←</button>`;
+  h += `<button class="pg" onclick="loadPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>←</button>`;
   bar.innerHTML = h;
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    MODAL
-═══════════════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 function openModal(id) {
-  const d = allData.find(x => x._id === id);
+  const d = allData.find(x => String(x._id) === String(id));
   if (!d) return;
 
-  const age   = calcAge(d.birthDate);
-  const isMale = gender === "male";
-  const icon  = isMale ? "🧔" : "👩";
-  const idx   = allData.indexOf(d) + 1 + (currentPage-1)*PER_PAGE;
+  const age        = calcAge(d.birthDate);
+  const isMaleProf = viewingGender === 'male';
+  const icon       = isMaleProf ? '🧔' : '👩';
+  const idx        = allData.indexOf(d) + 1 + (currentPage - 1) * PER_PAGE;
+  const alreadySent= sentUserIds.has(String(d._id));
 
-  document.getElementById("mTitle").textContent = `${icon} طلب #${idx}`;
-  document.getElementById("mMeta").innerHTML = `
-    <span>📍 ${d.nationality||"—"}</span>
-    <span>🎂 ${age!==null?age+" سنة":"—"}</span>
-    <span>🏙 ${d.city||"—"}</span>`;
+  document.getElementById('mTitle').textContent = `${icon} ملف #${idx}`;
+  document.getElementById('mMeta').innerHTML = `
+    <span>📍 ${d.nationality||'—'}</span>
+    <span>🎂 ${age !== null ? age + ' سنة' : '—'}</span>
+    <span>🏙 ${d.city||'—'}</span>`;
 
-  // ── sections ──
   let html = `
     <div class="msec">
       <div class="msec-title">👤 البيانات الأساسية</div>
       <div class="mfields">
-        <div class="mf"><div class="mf-k">العمر</div><div class="mf-v">${age!==null?age+" سنة":"—"}</div></div>
+        <div class="mf"><div class="mf-k">العمر</div><div class="mf-v">${age !== null ? age + ' سنة' : '—'}</div></div>
         <div class="mf"><div class="mf-k">الجنسية</div><div class="mf-v">${sv(d.nationality)}</div></div>
         <div class="mf"><div class="mf-k">لون البشرة</div><div class="mf-v">${sv(d.skinColor)}</div></div>
-        <div class="mf"><div class="mf-k">الوزن / الطول</div><div class="mf-v">${d.weight?d.weight+" كجم":""} ${d.height?d.height+" سم":""}</div></div>
-        ${isMale?"":
-          `<div class="mf"><div class="mf-k">الحجاب</div><div class="mf-v">${sv(d.hijab)}</div></div>`}
-        ${d.description?
-          `<div class="mf full"><div class="mf-k">نبذة شخصية</div><div class="mf-v">${d.description}</div></div>`:""}
+        <div class="mf"><div class="mf-k">الوزن / الطول</div><div class="mf-v">${d.weight?d.weight+' كجم':''} ${d.height?d.height+' سم':''}</div></div>
+        ${!isMaleProf ? `<div class="mf"><div class="mf-k">الحجاب</div><div class="mf-v">${sv(d.hijab)}</div></div>` : ''}
+        ${d.description ? `<div class="mf full"><div class="mf-k">نبذة شخصية</div><div class="mf-v">${d.description}</div></div>` : ''}
       </div>
     </div>
 
@@ -1148,13 +1662,11 @@ function openModal(id) {
       <div class="mfields">
         <div class="mf"><div class="mf-k">المؤهل</div><div class="mf-v">${sv(d.education)}</div></div>
         <div class="mf"><div class="mf-k">التخصص</div><div class="mf-v">${sv(d.universityMajor)}</div></div>
-        ${isMale?
-          `<div class="mf"><div class="mf-k">الوظيفة</div><div class="mf-v">${sv(d.job)}</div></div>`
-          :
-          `<div class="mf"><div class="mf-k">تعمل</div><div class="mf-v">${boolTxt(d.isWorking)}</div></div>
-           <div class="mf"><div class="mf-k">قبول ترك العمل</div><div class="mf-v">${sv(d.acceptLeaveWork)}</div></div>`}
-        ${d.jobDescription?
-          `<div class="mf full"><div class="mf-k">وصف العمل</div><div class="mf-v">${d.jobDescription}</div></div>`:""}
+        ${isMaleProf
+          ? `<div class="mf"><div class="mf-k">الوظيفة</div><div class="mf-v">${sv(d.job)}</div></div>`
+          : `<div class="mf"><div class="mf-k">تعمل</div><div class="mf-v">${boolTxt(d.isWorking)}</div></div>
+             <div class="mf"><div class="mf-k">قبول ترك العمل</div><div class="mf-v">${sv(d.acceptLeaveWork)}</div></div>`}
+        ${d.jobDescription ? `<div class="mf full"><div class="mf-k">وصف العمل</div><div class="mf-v">${d.jobDescription}</div></div>` : ''}
       </div>
     </div>
 
@@ -1163,8 +1675,8 @@ function openModal(id) {
       <div class="mfields">
         <div class="mf"><div class="mf-k">المدينة</div><div class="mf-v">${sv(d.city)}</div></div>
         <div class="mf"><div class="mf-k">مغترب</div><div class="mf-v">${sv(d.expatriate)}</div></div>
-        ${isMale?`<div class="mf"><div class="mf-k">السكن الزوجي</div><div class="mf-v">${sv(d.maritalHome)}</div></div>`:""}
-        ${d.maritalHomeDesc?`<div class="mf full"><div class="mf-k">وصف السكن</div><div class="mf-v">${d.maritalHomeDesc}</div></div>`:""}
+        ${isMaleProf ? `<div class="mf"><div class="mf-k">السكن الزوجي</div><div class="mf-v">${sv(d.maritalHome)}</div></div>` : ''}
+        ${d.maritalHomeDesc ? `<div class="mf full"><div class="mf-k">وصف السكن</div><div class="mf-v">${d.maritalHomeDesc}</div></div>` : ''}
       </div>
     </div>
 
@@ -1174,7 +1686,7 @@ function openModal(id) {
         <div class="mf"><div class="mf-k">مهنة الوالد</div><div class="mf-v">${sv(d.fatherJob)}</div></div>
         <div class="mf"><div class="mf-k">مهنة الوالدة</div><div class="mf-v">${sv(d.motherJob)}</div></div>
         <div class="mf"><div class="mf-k">الوالدان منفصلان</div><div class="mf-v">${boolTxt(d.parentsSeparated)}</div></div>
-        ${d.siblingsInfo?`<div class="mf full"><div class="mf-k">الإخوة والأخوات</div><div class="mf-v">${d.siblingsInfo}</div></div>`:""}
+        ${d.siblingsInfo ? `<div class="mf full"><div class="mf-k">الإخوة والأخوات</div><div class="mf-v">${d.siblingsInfo}</div></div>` : ''}
       </div>
     </div>
 
@@ -1183,7 +1695,7 @@ function openModal(id) {
       <div class="mfields">
         <div class="mf"><div class="mf-k">الحالة</div><div class="mf-v">${sv(d.maritalStatus)}</div></div>
         <div class="mf"><div class="mf-k">نوع الزواج</div><div class="mf-v">${sv(d.marriageType)}</div></div>
-        <div class="mf"><div class="mf-k">عدد الأولاد</div><div class="mf-v">${d.haveChildren||"0"}</div></div>
+        <div class="mf"><div class="mf-k">عدد الأولاد</div><div class="mf-v">${d.haveChildren||'0'}</div></div>
         <div class="mf"><div class="mf-k">التعدد</div><div class="mf-v">${sv(d.acceptPolygamy)}</div></div>
         <div class="mf"><div class="mf-k">يريد الإنجاب</div><div class="mf-v">${sv(d.wantChildren)}</div></div>
       </div>
@@ -1193,39 +1705,39 @@ function openModal(id) {
       <div class="msec-title">🕌 الدين والصحة</div>
       <div class="mfields">
         <div class="mf"><div class="mf-k">الصلوات الخمس</div><div class="mf-v">${boolTxt(d.prayFiveTimes)}</div></div>
-        ${isMale?`
+        ${isMaleProf ? `
         <div class="mf"><div class="mf-k">الصلاة في المسجد</div><div class="mf-v">${sv(d.prayInMosque)}</div></div>
         <div class="mf"><div class="mf-k">ملتحٍ</div><div class="mf-v">${boolTxt(d.bearded)}</div></div>
-        <div class="mf"><div class="mf-k">مدخن</div><div class="mf-v">${boolTxt(d.smoker)}</div></div>`:""}
+        <div class="mf"><div class="mf-k">مدخن</div><div class="mf-v">${boolTxt(d.smoker)}</div></div>` : ''}
         <div class="mf"><div class="mf-k">حفظ القرآن</div><div class="mf-v">${quranTxt(d.quranMemorization)}</div></div>
         <div class="mf"><div class="mf-k">أمراض / إعاقات</div><div class="mf-v">${sv(d.hasIllness)}</div></div>
       </div>
     </div>`;
 
   // Partner requirements
-  if (isMale) {
-    const hijabTags = (d.brideHijab||[]).map(h=>`<span class="tag">${h}</span>`).join("");
+  if (isMaleProf) {
+    const hijabTags = (d.brideHijab||[]).map(h => `<span class="tag">${h}</span>`).join('');
     html += `
     <div class="msec">
       <div class="msec-title">🌸 مواصفات الزوجة المطلوبة</div>
       <div class="mfields">
-        <div class="mf"><div class="mf-k">نطاق العمر</div><div class="mf-v">${d.brideMinAge||"—"} — ${d.brideMaxAge||"—"} سنة</div></div>
+        <div class="mf"><div class="mf-k">نطاق العمر</div><div class="mf-v">${d.brideMinAge||'—'} — ${d.brideMaxAge||'—'} سنة</div></div>
         <div class="mf"><div class="mf-k">المؤهل</div><div class="mf-v">${sv(d.brideEducation)}</div></div>
         <div class="mf"><div class="mf-k">العمل</div><div class="mf-v">${sv(d.brideWork)}</div></div>
         <div class="mf full"><div class="mf-k">الحجاب المقبول</div>
           <div class="mf-v"><div class="tags-wrap">${hijabTags||"<span class='nd'>—</span>"}</div></div></div>
-        ${d.brideDesc?`<div class="mf full"><div class="mf-k">ملاحظات إضافية</div><div class="mf-v">${d.brideDesc}</div></div>`:""}
+        ${d.brideDesc ? `<div class="mf full"><div class="mf-k">ملاحظات</div><div class="mf-v">${d.brideDesc}</div></div>` : ''}
       </div>
     </div>`;
   } else {
-    const mTags  = (d.groomMaritalStatus||[]).map(h=>`<span class="tag">${h}</span>`).join("");
-    const eTags  = (d.groomEducation||[]).map(h=>`<span class="tag">${h}</span>`).join("");
-    const rTags  = (d.groomReligion||[]).map(h=>`<span class="tag">${h}</span>`).join("");
+    const mTags = (d.groomMaritalStatus||[]).map(h => `<span class="tag">${h}</span>`).join('');
+    const eTags = (d.groomEducation||[]).map(h => `<span class="tag">${h}</span>`).join('');
+    const rTags = (d.groomReligion||[]).map(h => `<span class="tag">${h}</span>`).join('');
     html += `
     <div class="msec">
       <div class="msec-title">💎 مواصفات الزوج المطلوب</div>
       <div class="mfields">
-        <div class="mf"><div class="mf-k">نطاق العمر</div><div class="mf-v">${d.groomMinAge||"—"} — ${d.groomMaxAge||"—"} سنة</div></div>
+        <div class="mf"><div class="mf-k">نطاق العمر</div><div class="mf-v">${d.groomMinAge||'—'} — ${d.groomMaxAge||'—'} سنة</div></div>
         <div class="mf"><div class="mf-k">الجنسية</div><div class="mf-v">${sv(d.groomNationality)}</div></div>
         <div class="mf"><div class="mf-k">السكن الزوجي</div><div class="mf-v">${sv(d.groomMaritalHome)}</div></div>
         <div class="mf"><div class="mf-k">قبول التعدد</div><div class="mf-v">${sv(d.groomPolygamy)}</div></div>
@@ -1238,46 +1750,129 @@ function openModal(id) {
           <div class="mf-v"><div class="tags-wrap">${eTags||"<span class='nd'>—</span>"}</div></div></div>
         <div class="mf full"><div class="mf-k">المستوى الديني</div>
           <div class="mf-v"><div class="tags-wrap">${rTags||"<span class='nd'>—</span>"}</div></div></div>
-        ${d.groomDesc?`<div class="mf full"><div class="mf-k">ملاحظات إضافية</div><div class="mf-v">${d.groomDesc}</div></div>`:""}
+        ${d.groomDesc ? `<div class="mf full"><div class="mf-k">ملاحظات</div><div class="mf-v">${d.groomDesc}</div></div>` : ''}
       </div>
     </div>`;
   }
 
-  document.getElementById("mBody").innerHTML = html;
-  document.getElementById("overlay").classList.add("open");
-  document.body.style.overflow = "hidden";
+  document.getElementById('mBody').innerHTML = html;
+
+  // Modal footer — send request button
+  document.getElementById('mFoot').innerHTML = alreadySent
+    ? `<button class="btn-modal-send sent" disabled>✔ تم إرسال طلب الزواج بالفعل</button>`
+    : `<button class="btn-modal-send" onclick="sendRequest('${d._id}', this)">💌 إرسال طلب زواج</button>`;
+
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-function closeModal(e) { if (e.target === document.getElementById("overlay")) closeModalDirect(); }
+function closeModal(e) { if (e.target === document.getElementById('overlay')) closeModalDirect(); }
 function closeModalDirect() {
-  document.getElementById("overlay").classList.remove("open");
-  document.body.style.overflow = "";
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeModalDirect(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
 
-/* ═══════════════════════════════════════════════════════════
-   PAGE STATE
-═══════════════════════════════════════════════════════════ */
-function showState(s, msg) {
-  const box  = document.getElementById("stateBox");
-  const wrap = document.getElementById("resultsWrap");
-  if (s === "loading") {
+/* ═══════════════════════════════════════
+   BROWSE PAGE STATE
+═══════════════════════════════════════ */
+function showBrowseState(s, msg) {
+  const box  = document.getElementById('stateBox');
+  const wrap = document.getElementById('resultsWrap');
+  if (s === 'loading') {
     box.innerHTML = `<div class="spinner"></div><div class="state-title">جاري التحميل...</div>`;
-    box.classList.remove("hidden"); wrap.classList.add("hidden");
-  } else if (s === "error") {
-    box.innerHTML = `<div class="state-icon">⚠️</div>
+    box.classList.remove('hidden');
+    wrap.classList.add('hidden');
+  } else if (s === 'error') {
+    box.innerHTML = `
+      <div class="state-icon">⚠️</div>
       <div class="state-title">حدث خطأ</div>
-      <div class="state-sub">${msg||""}</div>
+      <div class="state-sub">${msg||''}</div>
       <button class="btn-search" style="max-width:200px;margin-top:10px" onclick="loadPage(${currentPage})">إعادة المحاولة</button>`;
-    box.classList.remove("hidden"); wrap.classList.add("hidden");
+    box.classList.remove('hidden');
+    wrap.classList.add('hidden');
   } else {
-    box.classList.add("hidden"); wrap.classList.remove("hidden");
+    box.classList.add('hidden');
+    wrap.classList.remove('hidden');
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+let _toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = `toast ${type}`;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { el.classList.add('hide'); }, 3200);
+}
+
+/* ═══════════════════════════════════════
+   FLATTEN USER OBJECT
+═══════════════════════════════════════ */
+function flatten(u) {
+  const p = u.profileRef || {};
+  return {
+    _id:             u._id,
+    profileModel:    u.profileModel,
+    birthDate:       p.basicInfo?.birthDate,
+    nationality:     (p.basicInfo?.nationality || '').trim(),
+    weight:          p.basicInfo?.weight,
+    height:          p.basicInfo?.height,
+    skinColor:       p.basicInfo?.skinColor,
+    description:     p.basicInfo?.description,
+    education:       p.educationAndWork?.education,
+    universityMajor: p.educationAndWork?.universityMajor,
+    isWorking:       p.educationAndWork?.isWorking,
+    job:             p.educationAndWork?.job,
+    jobDescription:  p.educationAndWork?.jobDescription,
+    acceptLeaveWork: p.educationAndWork?.acceptLeaveWorkIfHusbandAsks,
+    city:            (p.residence?.city || '').trim(),
+    expatriate:      p.residence?.expatriate,
+    maritalHome:     p.residence?.maritalHome,
+    maritalHomeDesc: p.residence?.maritalHomeDescription,
+    fatherJob:        p.familyInfo?.fatherJob,
+    motherJob:        p.familyInfo?.motherJob,
+    siblingsInfo:     p.familyInfo?.siblingsInfo,
+    parentsSeparated: p.familyInfo?.parentsSeparated,
+    maritalStatus:    p.maritalInfo?.maritalStatus,
+    marriageType:     p.maritalInfo?.marriageType,
+    haveChildren:     p.maritalInfo?.haveChildren,
+    acceptPolygamy:   p.maritalInfo?.acceptPolygamy || p.maritalInfo?.polygamy,
+    wantChildren:     p.maritalInfo?.wantChildren,
+    prayFiveTimes:    p.religionAndHealth?.prayFiveTimes,
+    prayInMosque:     p.religionAndHealth?.prayInMosque,
+    quranMemorization:p.religionAndHealth?.quranMemorization ?? 0,
+    hasIllness:       p.religionAndHealth?.hasDisabilityOrIllness,
+    smoker:           p.religionAndHealth?.smoker,
+    bearded:          p.religionAndHealth?.bearded,
+    hijab:            p.hijab,
+    groomMinAge:        p.groomRequirements?.minAge,
+    groomMaxAge:        p.groomRequirements?.maxAge,
+    groomMaritalStatus: p.groomRequirements?.acceptedMaritalStatus,
+    groomPolygamy:      p.groomRequirements?.acceptPolygamy,
+    groomEducation:     p.groomRequirements?.education,
+    groomNationality:   p.groomRequirements?.nationality,
+    groomMaritalHome:   p.groomRequirements?.maritalHome,
+    groomBeard:         p.groomRequirements?.requiresBeard,
+    groomPrayer:        p.groomRequirements?.requiresPrayer,
+    groomNonSmoker:     p.groomRequirements?.requiresNonSmoker,
+    groomReligion:      p.groomRequirements?.religionLevel,
+    groomDesc:          p.groomRequirements?.description,
+    brideMinAge:    p.brideRequirements?.minAge,
+    brideMaxAge:    p.brideRequirements?.maxAge,
+    brideEducation: p.brideRequirements?.education,
+    brideWork:      p.brideRequirements?.work,
+    brideHijab:     p.brideRequirements?.hijab || [],
+    brideDesc:      p.brideRequirements?.description,
+  };
+}
+
+/* ═══════════════════════════════════════
    HELPERS
-═══════════════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 function calcAge(bd) {
   if (!bd) return null;
   const d = new Date(bd), n = new Date();
@@ -1286,33 +1881,27 @@ function calcAge(bd) {
      (n.getMonth() === d.getMonth() && n.getDate() < d.getDate())) a--;
   return a;
 }
-
 function sv(v) {
-  return (v == null || v === "")
-    ? `<span class="nd">—</span>`
-    : v;
+  return (v == null || v === '') ? `<span class="nd">—</span>` : v;
 }
-
 function boolTxt(v) {
-  if (v === true  || v === "true")  return `<span class="tick">✔ نعم</span>`;
-  if (v === false || v === "false") return `<span class="cross">✖ لا</span>`;
+  if (v === true  || v === 'true')  return `<span class="tick">✔ نعم</span>`;
+  if (v === false || v === 'false') return `<span class="cross">✖ لا</span>`;
   return `<span class="nd">—</span>`;
 }
-
 function quranTxt(n) {
-  if (!n || n === 0) return "لا يحفظ";
-  if (n === 30)      return "30 جزءاً ⭐";
+  if (!n || n === 0) return 'لا يحفظ';
+  if (n === 30)      return '30 جزءاً ⭐';
   return `${n} جزء`;
 }
-
 function maritalBadge(s) {
   const m = {
-    "عزب":"badge-green","عذراء":"badge-green",
-    "مطلق":"badge-gold","مطلقة":"badge-gold",
-    "أرمل":"badge-purple","أرملة":"badge-purple",
-    "أعزب سبق له عقد أو كتب كتاب":"badge-blue"
+    'عزب':'badge-green','عذراء':'badge-green',
+    'مطلق':'badge-gold','مطلقة':'badge-gold',
+    'أرمل':'badge-purple','أرملة':'badge-purple',
+    'أعزب سبق له عقد أو كتب كتاب':'badge-blue'
   };
-  return s ? `<span class="badge ${m[s]||'badge-gray'}">${s}</span>` : "—";
+  return s ? `<span class="badge ${m[s]||'badge-gray'}">${s}</span>` : '—';
 }
 </script>
 </body>

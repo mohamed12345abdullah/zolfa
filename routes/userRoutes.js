@@ -13,6 +13,7 @@ const checkRole = require('../middlewares/checkRole');
 router.use(auth);
 router.post('/view', controller.viewUser);
 router.get('/views', controller.getViews);
+router.get('/approved/:page', controller.getApprovedUsers);
 router.get('/:status/:page', controller.showAllUsers);
 router.delete('/:id', controller.deleteUser);
 router.get('/:id', controller.getUserById);
@@ -27,6 +28,7 @@ router.post('/assign-admin',checkRole('manager'), controller.assignAdmin);
 // status update api : /api/users/:id/status
 // get user by id api : /api/users/:id
 // assign admin api : /api/users/assign-admin 
+// get approved users api : /api/users/approved
 
 
 const uploadFile = upload(['application/pdf', 'image/jpeg', 'image/png', 'image/jpg']);
