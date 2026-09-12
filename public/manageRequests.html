@@ -441,7 +441,7 @@
 
     /* Side drawer */
     .modal-drawer {
-      width: min(520px, 100vw);
+      width: min(680px, 100vw);
       height: 100dvh;
       background: var(--c-surface);
       box-shadow: var(--shadow-modal);
@@ -707,6 +707,161 @@
     @keyframes toastIn  { to { opacity:1; transform: translateY(0); } }
     @keyframes toastOut { to { opacity:0; transform: translateY(8px); } }
 
+    /* ─── Two-Person Card Layout ─────────────────────────────────── */
+    .card-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px;
+      margin: 4px 0;
+    }
+    .card-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--c-border);
+    }
+    .card-divider-arrow {
+      font-size: 0.75rem;
+      color: var(--c-text-3);
+      background: var(--c-surface-2);
+      border: 1px solid var(--c-border);
+      border-radius: 20px;
+      padding: 2px 10px;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    /* Person block inside the card (from / to) */
+    .person-block {
+      padding: 14px 20px 10px;
+    }
+    .person-block + .person-block {
+      border-top: 1px dashed var(--c-border);
+    }
+    .person-role-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--c-text-3);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .person-role-label.is-from { color: #5c7fa0; }
+    .person-role-label.is-to   { color: #7a5c9e; }
+    .person-role-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* Drawer person panel (side by side in drawer) */
+    .drawer-persons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 460px) {
+      .drawer-persons { grid-template-columns: 1fr; }
+    }
+    .drawer-person-panel {
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .drawer-person-header {
+      padding: 10px 14px;
+      background: var(--c-surface-2);
+      border-bottom: 1px solid var(--c-border);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .drawer-person-header.is-from { color: #5c7fa0; background: #eef4fb; border-color: #c5d8ee; }
+    .drawer-person-header.is-to   { color: #7a5c9e; background: #f3eefb; border-color: #d8c5ee; }
+    .drawer-person-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .dp-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--c-surface-2);
+      border: 2px solid var(--c-border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--c-text-3);
+      margin-bottom: 4px;
+    }
+    .dp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .dp-name {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--c-text);
+      line-height: 1.2;
+    }
+    .dp-sub {
+      font-size: 0.775rem;
+      color: var(--c-text-2);
+    }
+    .dp-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .dp-field {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      border-top: 1px solid var(--c-border);
+      padding-top: 6px;
+    }
+    .dp-field-label {
+      font-size: 0.6875rem;
+      color: var(--c-text-3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .dp-field-value {
+      font-size: 0.8125rem;
+      color: var(--c-text);
+      font-weight: 500;
+    }
+    .dp-contact {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--c-border);
+      padding-top: 8px;
+      margin-top: 2px;
+      align-items: center;
+    }
+    .dp-phone {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--c-text);
+      direction: ltr;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     /* ─── Responsive ──────────────────────────────────────────────── */
     @media (max-width: 640px) {
       .page-header { padding: 24px 0 20px; }
@@ -715,6 +870,7 @@
       .status-tabs { width: 100%; justify-content: stretch; }
       .tab-btn { flex: 1; text-align: center; padding: 8px 12px; }
       .modal-drawer { width: 100vw; height: 100dvh; }
+      .drawer-persons { grid-template-columns: 1fr; }
       .card-body { grid-template-columns: 1fr; }
     }
 
@@ -1058,27 +1214,27 @@ function skeletonCardHTML() {
   </div>`;
 }
 
-function requestCardHTML(req) {
-  const other = getOtherUser(req, state.currentUserId);
-  const basic = other?.profileRef?.basicInfo || {};
-  const contact = other?.profileRef?.contactInfo || {};
-  const phone = other?.phone || "";
-  const age = calculateAge(basic.birthDate);
+/** Renders one person block (from OR to) inside the card */
+function personBlockHTML(user, role) {
+  const basic   = user?.profileRef?.basicInfo || {};
+  const contact = user?.profileRef?.contactInfo || {};
+  const phone   = user?.phone || "";
+  const age     = calculateAge(basic.birthDate);
 
   const avatarHTML = basic.photo
-    ? `<div class="card-avatar"><img src="${escHtml(basic.photo)}" alt="Profile photo" loading="lazy" /></div>`
-    : `<div class="card-avatar">${genderEmoji(other?.profileModel)}</div>`;
+    ? `<div class="card-avatar"><img src="${escHtml(basic.photo)}" alt="Profile" loading="lazy" /></div>`
+    : `<div class="card-avatar">${genderEmoji(user?.profileModel)}</div>`;
 
-  const metaChips = [
-    other?.profileModel,
+  const chips = [
+    user?.profileModel,
     age !== null ? `${age} yrs` : null,
     basic.nationality,
   ].filter(hasValue).map(v => `<span class="meta-chip">${escHtml(String(v))}</span>`).join("");
 
   const bodyFields = [
-    { label: "Height", value: basic.height ? `${basic.height} cm` : null },
-    { label: "Weight", value: basic.weight ? `${basic.weight} kg` : null },
-    { label: "Skin color", value: basic.skinColor },
+    { label: "Height",     value: basic.height    ? `${basic.height} cm`   : null },
+    { label: "Weight",     value: basic.weight    ? `${basic.weight} kg`   : null },
+    { label: "Skin color", value: basic.skinColor || null },
   ].filter(f => hasValue(f.value));
 
   const bodyHTML = bodyFields.map(f => `
@@ -1090,37 +1246,67 @@ function requestCardHTML(req) {
   const descHTML = hasValue(basic.description)
     ? `<p class="card-description">${escHtml(basic.description)}</p>` : "";
 
-  // Contact icons
   const waUrl = getWhatsAppUrl(contact.whatsapp);
   const tgUrl = getTelegramUrl(contact.telegram);
   const fbUrl = getFacebookUrl(contact.facebook);
 
   const iconsHTML = [
-    waUrl ? `<button class="icon-btn wa" data-url="${escHtml(waUrl)}" title="Open WhatsApp" aria-label="Open WhatsApp">${svgWA()}</button>` : "",
-    tgUrl ? `<button class="icon-btn tg" data-url="${escHtml(tgUrl)}" title="Open Telegram" aria-label="Open Telegram">${svgTG()}</button>` : "",
-    fbUrl ? `<button class="icon-btn fb" data-url="${escHtml(fbUrl)}" title="Open Facebook" aria-label="Open Facebook">${svgFB()}</button>` : "",
+    waUrl ? `<button class="icon-btn wa" data-url="${escHtml(waUrl)}" title="WhatsApp" aria-label="Open WhatsApp">${svgWA()}</button>` : "",
+    tgUrl ? `<button class="icon-btn tg" data-url="${escHtml(tgUrl)}" title="Telegram" aria-label="Open Telegram">${svgTG()}</button>` : "",
+    fbUrl ? `<button class="icon-btn fb" data-url="${escHtml(fbUrl)}" title="Facebook" aria-label="Open Facebook">${svgFB()}</button>` : "",
   ].join("");
 
-  return `<article class="request-card" data-request-id="${escHtml(req._id)}" tabindex="0" role="listitem" aria-label="Request from ${escHtml(other?.name || 'Unknown')}">
-    <div class="card-header">
+  const roleLabel = role === "from" ? "Sender (From)" : "Receiver (To)";
+  const roleCls   = role === "from" ? "is-from" : "is-to";
+
+  return `<div class="person-block">
+    <div class="person-role-label ${roleCls}">
+      <span class="person-role-dot"></span>${roleLabel}
+    </div>
+    <div class="card-header" style="padding:0 0 10px">
       ${avatarHTML}
       <div class="card-identity">
-        <div class="card-name">${escHtml(other?.name || basic.name || "Unknown")}</div>
-        <div class="card-meta">${metaChips}</div>
-        <div class="card-status-badge">${statusBadgeHTML(req.status)}</div>
+        <div class="card-name">${escHtml(user?.name || basic.name || "Unknown")}</div>
+        <div class="card-meta">${chips}</div>
       </div>
     </div>
-    ${bodyFields.length ? `<div class="card-body">${bodyHTML}</div>` : ""}
+    ${bodyFields.length ? `<div class="card-body" style="padding:0 0 8px">${bodyHTML}</div>` : ""}
     ${descHTML}
-    <div class="card-contact">
+    <div class="card-contact" style="border-top:1px solid var(--c-border);padding:10px 0 0">
       <div class="card-phone">
         ${phone ? `<span class="card-phone-number" dir="ltr">${escHtml(phone)}</span>` : ""}
-        ${phone ? `<button class="btn-copy" data-phone="${escHtml(phone)}" aria-label="Copy phone number">Copy</button>` : ""}
+        ${phone ? `<button class="btn-copy" data-phone="${escHtml(phone)}" aria-label="Copy phone">Copy</button>` : ""}
       </div>
       ${iconsHTML ? `<div class="contact-icons">${iconsHTML}</div>` : ""}
     </div>
+  </div>`;
+}
+
+function requestCardHTML(req) {
+  const fromBlock = personBlockHTML(req.from, "from");
+  const toBlock   = personBlockHTML(req.to,   "to");
+
+  return `<article class="request-card" data-request-id="${escHtml(req._id)}" tabindex="0" role="listitem"
+      aria-label="Request: ${escHtml(req.from?.name || '')} → ${escHtml(req.to?.name || '')}">
+
+    <!-- Status bar at top -->
+    <div style="padding:12px 20px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      ${statusBadgeHTML(req.status)}
+      <span class="card-date">${formatDate(req.createdAt)}</span>
+    </div>
+
+    ${fromBlock}
+
+    <div class="card-divider">
+      <span class="card-divider-line"></span>
+      <span class="card-divider-arrow">→</span>
+      <span class="card-divider-line"></span>
+    </div>
+
+    ${toBlock}
+
     <div class="card-footer">
-      <span class="card-date">Sent: ${formatDate(req.createdAt)}</span>
+      <span class="card-date">Created: ${formatDate(req.createdAt)}</span>
       ${req.updatedAt && req.updatedAt !== req.createdAt
         ? `<span class="card-date">Updated: ${formatDate(req.updatedAt)}</span>` : ""}
     </div>
@@ -1182,6 +1368,10 @@ function openModal(req) {
   renderDrawer();
   document.getElementById("profile-modal").classList.add("open");
   document.body.style.overflow = "hidden";
+  // Update drawer title to show both names
+  const fromName = req.from?.name || "?";
+  const toName   = req.to?.name   || "?";
+  document.getElementById("drawer-title").textContent = `${fromName} → ${toName}`;
   document.getElementById("close-modal").focus();
 }
 
@@ -1221,100 +1411,118 @@ async function handleGetAllInfo() {
   }
 }
 
+/** Mini panel for one user in the drawer overview */
+function drawerPersonPanelHTML(user, role) {
+  const basic   = user?.profileRef?.basicInfo || {};
+  const contact = user?.profileRef?.contactInfo || {};
+  const phone   = user?.phone || "";
+  const age     = calculateAge(basic.birthDate);
+
+  const roleLabel = role === "from" ? "Sender (From)" : "Receiver (To)";
+  const roleCls   = role === "from" ? "is-from" : "is-to";
+
+  const avatarHTML = basic.photo
+    ? `<div class="dp-avatar"><img src="${escHtml(basic.photo)}" alt="Profile" loading="lazy" /></div>`
+    : `<div class="dp-avatar">${genderEmoji(user?.profileModel)}</div>`;
+
+  const chips = [
+    user?.profileModel,
+    age !== null ? `${age} yrs` : null,
+    basic.nationality,
+  ].filter(hasValue).map(v => `<span class="meta-chip">${escHtml(String(v))}</span>`).join("");
+
+  const fields = [
+    { label: "Height",     value: basic.height    ? `${basic.height} cm` : null },
+    { label: "Weight",     value: basic.weight    ? `${basic.weight} kg` : null },
+    { label: "Skin color", value: basic.skinColor || null },
+    { label: "Description",value: basic.description || null },
+  ].filter(f => hasValue(f.value));
+
+  const waUrl = getWhatsAppUrl(contact.whatsapp);
+  const tgUrl = getTelegramUrl(contact.telegram);
+  const fbUrl = getFacebookUrl(contact.facebook);
+  const iconsHTML = [
+    waUrl ? `<button class="icon-btn wa" data-url="${escHtml(waUrl)}" aria-label="WhatsApp" title="WhatsApp">${svgWA()}</button>` : "",
+    tgUrl ? `<button class="icon-btn tg" data-url="${escHtml(tgUrl)}" aria-label="Telegram" title="Telegram">${svgTG()}</button>` : "",
+    fbUrl ? `<button class="icon-btn fb" data-url="${escHtml(fbUrl)}" aria-label="Facebook" title="Facebook">${svgFB()}</button>` : "",
+  ].join("");
+
+  return `<div class="drawer-person-panel">
+    <div class="drawer-person-header ${roleCls}">
+      <span class="person-role-dot"></span>${roleLabel}
+    </div>
+    <div class="drawer-person-body">
+      ${avatarHTML}
+      <div class="dp-name">${escHtml(user?.name || basic.name || "Unknown")}</div>
+      ${user?.email ? `<div class="dp-sub">${escHtml(user.email)}</div>` : ""}
+      <div class="dp-chips">${chips}</div>
+      ${fields.map(f => `<div class="dp-field">
+        <span class="dp-field-label">${f.label}</span>
+        <span class="dp-field-value">${escHtml(String(f.value))}</span>
+      </div>`).join("")}
+      ${phone || iconsHTML ? `<div class="dp-contact">
+        ${phone ? `<span class="dp-phone" dir="ltr">${escHtml(phone)}</span>
+          <button class="btn-copy" data-phone="${escHtml(phone)}" style="flex-shrink:0" aria-label="Copy phone">Copy</button>` : ""}
+        ${iconsHTML ? `<div class="contact-icons" style="margin-left:auto">${iconsHTML}</div>` : ""}
+      </div>` : ""}
+    </div>
+  </div>`;
+}
+
 function renderDrawer() {
   const body = document.getElementById("drawer-body");
   if (!state.openRequest) { body.innerHTML = ""; return; }
 
   const req = state.openRequest;
-  const other = getOtherUser(req, state.currentUserId);
-  const basic = other?.profileRef?.basicInfo || {};
-  const contact = other?.profileRef?.contactInfo || {};
-  const phone = other?.phone || "";
-  const age = calculateAge(basic.birthDate);
+  let html  = "";
 
-  let html = "";
-
-  // ── Profile Hero
-  const avatarImg = basic.photo
-    ? `<div class="profile-avatar"><img src="${escHtml(basic.photo)}" alt="Profile" /></div>`
-    : `<div class="profile-avatar" aria-hidden="true">${genderEmoji(other?.profileModel)}</div>`;
-
-  html += `<div class="profile-hero">
-    ${avatarImg}
-    <div class="profile-info">
-      <div class="profile-name">${escHtml(other?.name || basic.name || "Unknown")}</div>
-      <div class="profile-sub">${escHtml(other?.email || "")}</div>
-      <div class="profile-badges">
-        ${statusBadgeHTML(req.status)}
-        ${other?.profileModel ? `<span class="meta-chip">${escHtml(other.profileModel)}</span>` : ""}
-      </div>
-    </div>
+  // ── Status + dates header
+  html += `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    ${statusBadgeHTML(req.status)}
+    <span class="card-date">Created: ${formatDate(req.createdAt)}</span>
   </div>`;
 
-  // ── Basic Info Section
-  const basicFields = [
-    { label: "Full name",    value: basic.name },
-    { label: "Birth date",   value: formatBirthDate(basic.birthDate) },
-    { label: "Age",          value: age !== null ? `${age} years` : null },
-    { label: "Nationality",  value: basic.nationality },
-    { label: "Height",       value: basic.height ? `${basic.height} cm` : null },
-    { label: "Weight",       value: basic.weight ? `${basic.weight} kg` : null },
-    { label: "Skin color",   value: basic.skinColor },
-    { label: "Description",  value: basic.description },
-  ].filter(f => hasValue(f.value));
+  // ── Both profiles side by side
+  html += `<div class="drawer-persons">
+    ${drawerPersonPanelHTML(req.from, "from")}
+    ${drawerPersonPanelHTML(req.to,   "to")}
+  </div>`;
 
-  html += sectionCard("Basic Information", basicFields.map(fieldRow).join(""));
-
-  // ── User Account Info
-  const userFields = [
-    { label: "Account name",  value: other?.name },
-    { label: "Email",         value: other?.email },
-    { label: "Phone",         value: null, custom: phone ? phoneRowHTML(phone) : null },
-    { label: "Profile type",  value: other?.profileModel },
-  ].filter(f => hasValue(f.value) || f.custom);
-
-  const userRowsHTML = userFields.map(f => f.custom || fieldRow(f)).join("");
-  html += sectionCard("Account Information", userRowsHTML);
-
-  // ── Contact Information
-  html += sectionCard("Contact Information", contactSectionHTML(contact, phone));
-
-  // ── Request Information
+  // ── Full request info
   const reqFields = [
-    { label: "Request ID",  value: req._id },
-    { label: "Status",      value: null, custom: `<div class="field-row"><span class="field-label">Status</span><span class="field-value">${statusBadgeHTML(req.status)}</span></div>` },
-    { label: "Created",     value: formatDate(req.createdAt) },
-    { label: "Updated",     value: formatDate(req.updatedAt) },
+    { label: "Request ID", value: req._id },
+    { label: "Status",     value: null, custom: `<div class="field-row"><span class="field-label">Status</span><span class="field-value">${statusBadgeHTML(req.status)}</span></div>` },
+    { label: "Created",    value: formatDate(req.createdAt) },
+    { label: "Updated",    value: formatDate(req.updatedAt) },
   ];
   html += sectionCard("Request Information",
     reqFields.map(f => f.custom || fieldRow(f)).join("")
   );
 
-  // ── Get All Information / full profile
+  // ── Get All Information (fetches full profile for the OTHER user)
+  const other = getOtherUser(req, state.currentUserId);
   if (!state.fullProfile) {
     html += `<button class="get-all-btn" id="get-all-btn" ${state.fullProfileLoading ? "disabled" : ""}>
       ${state.fullProfileLoading
         ? `<span class="spinner"></span> Loading full profile…`
-        : `🔍 Get All Information`}
+        : `🔍 Get Full Profile — ${escHtml(other?.name || "Other user")}`}
     </button>`;
     if (state.fullProfileError) {
       html += `<div class="full-profile-error">
-        <span>⚠️ Failed to load complete profile: ${escHtml(state.fullProfileError)}</span>
+        <span>⚠️ ${escHtml(state.fullProfileError)}</span>
         <button class="btn-primary" style="padding:6px 14px;font-size:.8rem" id="retry-all-btn">Retry</button>
       </div>`;
     }
   } else {
-    // Full profile loaded — render all sections
     html += fullProfileHTML(state.fullProfile);
   }
 
   body.innerHTML = html;
 
-  // Bind get-all button
+  // Bind buttons
   body.querySelector("#get-all-btn")?.addEventListener("click", handleGetAllInfo);
   body.querySelector("#retry-all-btn")?.addEventListener("click", handleGetAllInfo);
 
-  // Bind copy buttons inside drawer
   body.querySelectorAll(".btn-copy[data-phone]").forEach(btn => {
     btn.addEventListener("click", async () => {
       await copyToClipboard(btn.dataset.phone);
@@ -1325,8 +1533,7 @@ function renderDrawer() {
     });
   });
 
-  // Bind contact open buttons inside drawer
-  body.querySelectorAll(".btn-contact[data-url]").forEach(btn => {
+  body.querySelectorAll(".btn-contact[data-url], .icon-btn[data-url]").forEach(btn => {
     btn.addEventListener("click", () => openSafe(btn.dataset.url));
   });
 }
@@ -1633,4 +1840,4 @@ function escHtml(str) {
 fetchRequests();
 </script>
 </body>
-</html>     
+</html>

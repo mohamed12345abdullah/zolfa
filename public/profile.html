@@ -777,6 +777,38 @@ body {
 }
 
 .hidden { display: none !important; }
+
+/* style this section */
+.id-section{
+  color: rgb(238, 232, 232)  ;
+  background-color: #111827;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+ 
+}
+.id-section button,.btn-copy  {
+  background-color: #29a31e;
+  color: white;
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  border: #111827 bold 2px;
+
+}
+.id-section button:hover{
+  background-color: #1e8a52;
+  cursor: pointer;
+  transform: scale(1.05);
+  transition: all 0.3s;
+}
+.id-section .card-id  {
+  font-size:large;
+}
 </style>
 </head>
 <body>
@@ -786,7 +818,9 @@ body {
   <div class="header-inner">
     <button class="btn-logout" onclick="logout()">تسجيل خروج</button>
 
-    <div class="header-logo">بحث عن شريك الحياة <span>منصة الزواج</span></div>
+    <div class="user-id">
+
+    </div>
 
     <div class="main-tabs">
       <button class="mt-btn active" id="tabBrowseBtn" onclick="switchTab('browse')">🔍 البحث</button>
@@ -812,7 +846,8 @@ body {
           <span>🔍 فلترة النتائج</span>
           <button class="fp-clear" onclick="clearFilters()">مسح الكل</button>
         </div>
-        <div class="fp-body" id="fpBody"></div>
+        <div class="fp-body" id="fpBody">
+        </div>
       </div>
     </aside>
 
@@ -1106,8 +1141,24 @@ function clearFilters() {
 async function loadPage(page) {
   currentPage = page;
   showBrowseState('loading');
+  // add the user id to can copy
+  const user = localStorage.getItem('user');
+
+  if (user) {
+    const userId = JSON.parse(user)._id;
+    document.querySelector('.user-id').innerHTML=`
+      <span> 
+        <strong>معرف المستخدم:</strong>
+        <span class="user-id-value">${userId}</span>
+        <button class="btn-copy" onclick="copyId('${userId}')">نسخ</button>
+      </span>
+    `
+
+  }
+
 
   try {
+    
     const res = await fetch(`${baseURL}/api/users/approved/${page}`, { headers: AUTH_HEADERS });
     if (res.status === 401) { logout(); return; }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1625,6 +1676,11 @@ function renderPagination() {
   bar.innerHTML = h;
 }
 
+function copyId(id) {
+  navigator.clipboard.writeText(id);
+  showToast('تم نسخ المعرف', 'success');
+}
+
 /* ═══════════════════════════════════════
    MODAL
 ═══════════════════════════════════════ */
@@ -1646,6 +1702,10 @@ function openModal(id) {
 
   let html = `
     <div class="msec">
+      <div class="id-section mf">
+        <div class="card-id mf-k"> ملف #${d._id}</div>
+        <button class="copy-btn " onclick="copyId('${d._id}')">نسخ</button>
+      </div>
       <div class="msec-title">👤 البيانات الأساسية</div>
       <div class="mfields">
         <div class="mf"><div class="mf-k">العمر</div><div class="mf-v">${age !== null ? age + ' سنة' : '—'}</div></div>
