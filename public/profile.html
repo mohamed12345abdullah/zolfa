@@ -777,7 +777,14 @@ body {
 }
 
 .hidden { display: none !important; }
+.telegram-contact-btn {
+  margin-top: 8px;
+  background: #229ED9;
+}
 
+.telegram-contact-btn:hover {
+  background: #168AC0;
+}
 /* style this section */
 .id-section{
   color: rgb(238, 232, 232)  ;
@@ -809,6 +816,9 @@ body {
 .id-section .card-id  {
   font-size:large;
 }
+
+
+
 </style>
 </head>
 <body>
@@ -1681,6 +1691,40 @@ function copyId(id) {
   showToast('تم نسخ المعرف', 'success');
 }
 
+
+
+
+function contactAdminOnTelegram(targetCode) {
+  const requesterCode = loggedUser?._id;
+
+  if (!targetCode || !requesterCode) {
+    showToast('تعذر إنشاء طلب التواصل', 'error');
+    return;
+  }
+
+  const adminUsername = 'ZulfaTeamBot'; // ← غيّرها إلى Username التليجرام الخاص بالأدمن
+
+  const message = `
+💍 زُلفى | طلب تواصل
+
+━━━━━━━━━━━━━━
+
+🔹 كود الاستمارة المطلوبة:
+${targetCode}
+
+🔹 كود مقدم الطلب:
+${requesterCode}
+
+━━━━━━━━━━━━━━
+
+يرجى مراجعة الطلب واتخاذ الإجراء المناسب.
+`;
+
+  const telegramUrl =
+    `https://t.me/${adminUsername}?text=${encodeURIComponent(message)}`;
+
+  window.open(telegramUrl, '_blank');
+}
 /* ═══════════════════════════════════════
    MODAL
 ═══════════════════════════════════════ */
@@ -1818,10 +1862,27 @@ function openModal(id) {
   document.getElementById('mBody').innerHTML = html;
 
   // Modal footer — send request button
-  document.getElementById('mFoot').innerHTML = alreadySent
-    ? `<button class="btn-modal-send sent" disabled>✔ تم إرسال طلب الزواج بالفعل</button>`
-    : `<button class="btn-modal-send" onclick="sendRequest('${d._id}', this)">💌 إرسال طلب زواج</button>`;
+document.getElementById('mFoot').innerHTML = `
+  ${
+    alreadySent
+      ? `<button class="btn-modal-send sent" disabled>
+           ✔ تم إرسال طلب الزواج بالفعل
+         </button>`
+      : `<button
+           class="btn-modal-send"
+           onclick="sendRequest('${d._id}', this)"
+         >
+           💌 إرسال طلب زواج
+         </button>`
+  }
 
+  <button
+    class="btn-modal-send telegram-contact-btn"
+    onclick="contactAdminOnTelegram('${d._id}')"
+  >
+    💬 طلب التواصل
+  </button>
+`;
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
