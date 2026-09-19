@@ -2,11 +2,23 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- viewport-fit=cover lets us use env(safe-area-inset-*) on notched phones -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a5c38">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>بحث عن شريك الحياة</title>
 <style>
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Identity is unchanged (green primary, rose / gold secondary).
+   Refinements: deeper green for gradients, a brass "gold-soft" used
+   only as a thin rule, warmer neutrals, tinted shadows, one radius scale.
+═══════════════════════════════════════════════════════════════ */
 :root {
   --green:      #1a5c38;
+  --green-deep: #124428;
   --green-mid:  #236b43;
   --green-lt:   #d4ede1;
   --green-pale: #f0f8f4;
@@ -16,6 +28,7 @@
   --rose-pale:  #fdf2f8;
   --gold:       #b8832a;
   --gold-lt:    #fdf3e0;
+  --gold-soft:  #d9ac52;
   --red:        #c0392b;
   --red-lt:     #fdecea;
   --blue:       #1e4fa3;
@@ -25,9 +38,10 @@
   --gray:       #6b7280;
   --gray-lt:    #f3f4f6;
 
-  --bg:         #f4f6f5;
+  --bg:         #f2f5f3;
   --surface:    #ffffff;
-  --border:     #e2e8e5;
+  --surface-2:  #f8faf9;
+  --border:     #e3e9e6;
   --border-2:   #c8d5d0;
   --text:       #111827;
   --text-mid:   #374151;
@@ -38,33 +52,76 @@
   --accent-lt:   var(--green-lt);
   --accent-pale: var(--green-pale);
 
+  /* Radius scale: controls 10 · cards 18 · sheets 22 · pills 999 */
   --radius:    10px;
-  --radius-lg: 16px;
-  --shadow:    0 1px 4px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,.13);
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+
+  --shadow:    0 1px 2px rgba(16,42,28,.06), 0 6px 18px rgba(16,42,28,.06);
+  --shadow-lg: 0 2px 4px rgba(16,42,28,.06), 0 14px 36px rgba(16,42,28,.14);
+  --ring:      0 0 0 3px rgba(26,92,56,.16);
+
+  /* Eight-point star tile (khatam) — the one decorative motif, used only on
+     the card top, the modal header and the filter header at very low opacity. */
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M11 11h22v22H11zM22 6.44l15.56 15.56L22 37.56 6.44 22z' fill='none' stroke='white' stroke-opacity='.11' stroke-width='1'/%3E%3C/svg%3E");
+  --brand-grad: linear-gradient(140deg, var(--green-deep) 0%, var(--green-mid) 100%);
+
+  /* ── Fluid layout tokens (desktop values are the original ones) ── */
+  --page-pad:    clamp(12px, 3.2vw, 20px);
+  --header-pad:  clamp(12px, 3vw, 24px);
+  --header-h:    62px;
+  --bottom-nav-h: 0px;                       /* becomes a tab bar on phones */
+  --toast-gap:   24px;
+  --tap:         44px;
+
+  /* ── Safe areas (notches / home indicator). 0px when not applicable ── */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; scroll-behavior: smooth; }
+html {
+  font-size: 15px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 body {
-  font-family: 'Segoe UI', 'Noto Sans Arabic', Arial, sans-serif;
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Segoe UI', Tahoma, Arial, sans-serif;
+  line-height: 1.55;
   background: var(--bg);
   color: var(--text);
   direction: rtl;
   min-height: 100vh;
+  min-height: 100dvh;
+  /* Safety net only: the layout below is built not to overflow.
+     `clip` (unlike `hidden`) does not break the sticky header. */
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
+::selection { background: var(--green-lt); color: var(--green-deep); }
+button, input, select { font-family: inherit; touch-action: manipulation; }
+button:focus-visible,
+input:focus-visible,
+select:focus-visible { outline: 3px solid rgba(26,92,56,.35); outline-offset: 2px; }
+.header button:focus-visible,
+.card-top :focus-visible { outline-color: rgba(255,255,255,.75); }
 
 /* ═══════════════════════════════════
    HEADER
 ═══════════════════════════════════ */
 .header {
-  background: var(--accent);
+  background: linear-gradient(180deg, #1d6440 0%, var(--green) 100%);
   color: #fff;
-  padding: 0 24px;
+  padding: var(--safe-top) max(var(--header-pad), var(--safe-right)) 0 max(var(--header-pad), var(--safe-left));
   position: sticky;
   top: 0;
   z-index: 200;
-  box-shadow: 0 2px 12px rgba(0,0,0,.15);
+  /* thin brass rule under the header + soft drop shadow */
+  box-shadow: 0 1px 0 rgba(217,172,82,.6), 0 6px 20px rgba(9,32,20,.18);
 }
 .header-inner {
   max-width: 1200px;
@@ -72,41 +129,74 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 62px;
-  gap: 16px;
+  height: var(--header-h);
+  gap: 12px;
 }
 .header-logo {
   font-size: 1.05rem;
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
 }
 .header-logo span { opacity: .7; font-weight: 400; font-size: .85rem; margin-right: 8px; }
 
-/* Main tab navigation */
+/* User ID: a quiet chip that truncates instead of widening the header */
+.user-id {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+.user-id-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  background: rgba(0,0,0,.16);
+  border-radius: 12px;
+  padding: 4px 12px 4px 4px;
+  font-size: .82rem;
+}
+.user-id-box strong { flex-shrink: 0; white-space: nowrap; font-weight: 500; opacity: .8; }
+.user-id-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .78rem;
+  letter-spacing: .01em;
+}
+
+/* Main tabs: segmented control */
 .main-tabs {
   display: flex;
-  background: rgba(255,255,255,.12);
-  border-radius: 9px;
-  overflow: hidden;
-  border: 1.5px solid rgba(255,255,255,.2);
+  gap: 2px;
+  padding: 3px;
+  background: rgba(0,0,0,.18);
+  border-radius: 12px;
   flex-shrink: 0;
 }
 .mt-btn {
   padding: 7px 18px;
-  font-size: .82rem;
-  font-weight: 700;
-  color: rgba(255,255,255,.65);
+  font-size: .84rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.78);
   background: transparent;
   border: none;
+  border-radius: 9px;
   cursor: pointer;
   font-family: inherit;
-  transition: background .18s, color .18s;
+  transition: background .18s, color .18s, box-shadow .18s;
   white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.mt-btn.active { background: rgba(255,255,255,.22); color: #fff; }
+.mt-btn:hover:not(.active) { color: #fff; background: rgba(255,255,255,.1); }
+.mt-btn.active { background: #fff; color: var(--green); box-shadow: 0 1px 4px rgba(0,0,0,.2); }
 
 .tab-badge {
   background: #e53e3e;
@@ -114,25 +204,44 @@ body {
   border-radius: 10px;
   font-size: .64rem;
   padding: 1px 6px;
-  font-weight: 800;
+  font-weight: 700;
   min-width: 18px;
   text-align: center;
 }
 
 .btn-logout {
   padding: 7px 15px;
-  border-radius: 7px;
-  border: 1.5px solid rgba(255,255,255,.3);
+  border-radius: 10px;
+  border: 1.5px solid rgba(255,255,255,.32);
   background: transparent;
-  color: rgba(255,255,255,.8);
+  color: rgba(255,255,255,.88);
   font-size: .78rem;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
   transition: all .18s;
   white-space: nowrap;
+  flex-shrink: 0;
 }
-.btn-logout:hover { background: rgba(255,255,255,.15); color: #fff; }
+.btn-logout:hover { background: rgba(255,255,255,.14); color: #fff; }
+
+/* Copy button in the header chip */
+.btn-copy {
+  height: 28px;
+  min-width: 60px;
+  padding: 0 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(255,255,255,.3);
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-family: inherit;
+  font-size: .76rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.btn-copy:hover { background: rgba(255,255,255,.28); }
 
 /* ═══════════════════════════════════
    BROWSE LAYOUT
@@ -140,10 +249,10 @@ body {
 .page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 20px 60px;
+  padding: 26px var(--page-pad) 60px;
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 22px;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
 }
 
@@ -156,68 +265,80 @@ body {
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   position: sticky;
-  top: 82px;
+  top: calc(var(--header-h) + var(--safe-top) + 20px);
   overflow: hidden;
+  /* Short desktop windows: fields scroll, header + search button stay visible */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--header-h) - var(--safe-top) - 40px);
 }
 .fp-head {
-  background: var(--accent);
+  background: var(--pattern), var(--brand-grad);
   color: #fff;
   padding: 14px 18px;
-  font-size: .88rem;
-  font-weight: 700;
+  font-size: .9rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .fp-clear {
-  font-size: .73rem;
+  font-size: .74rem;
   font-weight: 600;
-  background: rgba(255,255,255,.2);
-  border: none;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.25);
   color: #fff;
-  padding: 4px 10px;
-  border-radius: 5px;
+  padding: 4px 11px;
+  border-radius: 999px;
   cursor: pointer;
   font-family: inherit;
   transition: background .15s;
 }
-.fp-clear:hover { background: rgba(255,255,255,.35); }
-.fp-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.fp-clear:hover { background: rgba(255,255,255,.3); }
+.fp-head-actions { display: flex; align-items: center; gap: 8px; }
+.fp-close { display: none; }
+.fp-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+.fp-head, .fp-foot { flex-shrink: 0; }
 
-.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .fg label {
-  font-size: .72rem;
-  font-weight: 700;
-  color: var(--text-muted);
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--text-mid);
 }
 .fg input,
 .fg select {
   width: 100%;
-  padding: 9px 11px;
+  min-width: 0;
+  padding: 9px 12px;
   border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: .82rem;
+  border-radius: var(--radius);
+  font-size: .84rem;
   font-family: inherit;
   color: var(--text);
-  background: var(--surface);
+  background: var(--surface-2);
   direction: rtl;
   appearance: none;
   -webkit-appearance: none;
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
 }
+.fg input::placeholder { color: #9aa4a0; }
 .fg select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%236b7280'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: left 10px center;
-  padding-left: 30px;
+  background-position: left 12px center;
+  padding-left: 32px;
 }
+.fg input:hover,
+.fg select:hover { border-color: var(--border-2); }
 .fg input:focus,
 .fg select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(26,92,56,.1);
+  background-color: var(--surface);
+  box-shadow: var(--ring);
 }
-.fg-range { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.fg-range { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .fg-range input { text-align: center; }
 .fp-divider { height: 1px; background: var(--border); margin: 0 -16px; }
 
@@ -227,41 +348,57 @@ body {
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: .9rem;
-  font-weight: 700;
+  border-radius: var(--radius);
+  font-size: .92rem;
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background .18s, transform .1s;
+  box-shadow: 0 4px 12px rgba(26,92,56,.24);
+  transition: background .18s, transform .1s, box-shadow .18s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
 }
-.btn-search:hover { background: var(--accent-mid); }
+.btn-search:hover { background: var(--accent-mid); box-shadow: 0 6px 16px rgba(26,92,56,.3); }
 .btn-search:active { transform: scale(.98); }
+.fp-foot { border-top: 1px solid var(--border); padding: 16px; }
+.btn-count { display: none; font-weight: 500; opacity: .9; }
+.filters-backdrop { display: none; }
 
+/* Opens the filter bottom sheet (phones/tablets); lives inside the results toolbar */
 .filter-toggle {
   display: none;
-  width: 100%;
   padding: 10px 16px;
-  background: var(--accent);
+  background: var(--brand-grad);
   color: #fff;
   border: none;
   border-radius: var(--radius);
-  font-size: .88rem;
-  font-weight: 700;
+  font-size: .9rem;
+  font-weight: 600;
   font-family: inherit;
+  white-space: nowrap;
   cursor: pointer;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(26,92,56,.22);
+}
+.filter-count {
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 /* ═══════════════════════════════════
    RESULTS AREA
 ═══════════════════════════════════ */
-.results-area { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.results-area { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .results-bar {
   display: flex;
   align-items: center;
@@ -269,8 +406,9 @@ body {
   flex-wrap: wrap;
   gap: 10px;
 }
-.results-count { font-size: .85rem; color: var(--text-muted); }
-.results-count strong { color: var(--accent); font-size: 1.05rem; font-weight: 800; }
+#resultsWrap { display: flex; flex-direction: column; gap: 16px; }   /* .hidden still wins (display:none !important) */
+.results-count { font-size: .86rem; color: var(--text-muted); }
+.results-count strong { color: var(--accent); font-size: 1.1rem; font-weight: 700; }
 .sort-bar {
   display: flex;
   align-items: center;
@@ -279,30 +417,35 @@ body {
   color: var(--text-muted);
 }
 .sort-bar select {
-  padding: 6px 28px 6px 10px;
+  padding: 7px 14px 7px 32px;
   border: 1.5px solid var(--border);
-  border-radius: 7px;
+  border-radius: 999px;
   font-size: .8rem;
   font-family: inherit;
+  font-weight: 500;
   color: var(--text-mid);
   background: var(--surface);
   appearance: none;
   -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%236b7280'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: left 8px center;
+  background-position: left 12px center;
   cursor: pointer;
   direction: rtl;
+  max-width: 100%;
+  transition: border-color .15s, box-shadow .15s;
 }
-.sort-bar select:focus { outline: none; border-color: var(--accent); }
+.sort-bar select:hover { border-color: var(--border-2); }
+.sort-bar select:focus { outline: none; border-color: var(--accent); box-shadow: var(--ring); }
 
 /* ═══════════════════════════════════
    CARDS GRID
 ═══════════════════════════════════ */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
-  gap: 14px;
+  /* min(100%, 255px) keeps a single column from ever overflowing tiny containers */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 255px), 1fr));
+  gap: 16px;
 }
 .card {
   background: var(--surface);
@@ -311,32 +454,48 @@ body {
   box-shadow: var(--shadow);
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow .2s, transform .18s;
+  transition: box-shadow .2s, transform .18s, border-color .2s;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
-.card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+@media (hover: hover) {
+  .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: var(--green-lt); }
+}
 .card-top {
-  background: linear-gradient(140deg, var(--accent) 0%, var(--accent-mid) 100%);
-  padding: 16px 18px 14px;
+  background: var(--pattern), var(--brand-grad);
+  padding: 16px 18px 16px;
   color: #fff;
   position: relative;
+  border-bottom: 3px solid var(--gold-soft);   /* brass rule */
 }
-.card-id    { font-size: .7rem; opacity: .65; margin-bottom: 5px; font-weight: 600; }
-.card-age   { font-size: 1.5rem; font-weight: 900; line-height: 1; }
-.card-age span { font-size: .8rem; font-weight: 500; opacity: .8; margin-right: 3px; }
-.card-city  { font-size: .76rem; opacity: .75; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+.card-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.14);
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.card-age   { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.01em; }
+.card-age span { font-size: .8rem; font-weight: 500; opacity: .8; margin-right: 4px; letter-spacing: 0; }
+/* max-width keeps long city names from running under the badges (top-left) */
+.card-city  { font-size: .78rem; opacity: .88; margin-top: 6px; display: flex; align-items: center; gap: 4px; max-width: calc(100% - 92px); overflow-wrap: anywhere; }
 .card-badge-wrap { position: absolute; left: 14px; top: 14px; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-.card-badge { font-size: .66rem; font-weight: 700; padding: 3px 8px; border-radius: 12px; background: rgba(255,255,255,.22); color: #fff; white-space: nowrap; }
+.card-badge { font-size: .68rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.28); color: #fff; white-space: nowrap; }
 
-.card-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; }
+.card-body { padding: 8px 16px; flex: 1; display: flex; flex-direction: column; }
 .card-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: .79rem;
+  padding: 9px 0;
+  border-bottom: 1px solid #eef2f0;
+  font-size: .8rem;
   gap: 8px;
 }
 .card-row:last-child { border-bottom: none; }
@@ -344,59 +503,63 @@ body {
 .card-row-val { color: var(--text); font-weight: 600; text-align: left; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .card-foot {
-  padding: 10px 14px;
-  background: var(--accent-pale);
-  border-top: 1px solid var(--accent-lt);
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
 .btn-details {
-  font-size: .76rem;
-  font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 7px;
+  font-size: .78rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius);
   background: var(--accent);
   color: #fff;
   border: none;
   cursor: pointer;
   font-family: inherit;
-  transition: background .15s;
+  box-shadow: 0 2px 6px rgba(26,92,56,.22);
+  transition: background .15s, box-shadow .15s, transform .1s;
   white-space: nowrap;
 }
-.btn-details:hover { background: var(--accent-mid); }
+.btn-details:hover { background: var(--accent-mid); box-shadow: 0 4px 10px rgba(26,92,56,.28); }
+.btn-details:active { transform: scale(.97); }
 
 /* Send Request button (on cards) */
 .btn-send-req {
-  font-size: .76rem;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 7px;
-  background: transparent;
+  font-size: .78rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
   color: var(--accent);
-  border: 1.5px solid var(--accent);
+  border: 1.5px solid rgba(26,92,56,.35);
   cursor: pointer;
   font-family: inherit;
   transition: all .15s;
   white-space: nowrap;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
 }
-.btn-send-req:hover:not(:disabled) { background: var(--accent); color: #fff; }
+.btn-send-req:hover:not(:disabled) { background: var(--accent); color: #fff; border-color: var(--accent); }
 .btn-send-req.sent {
-  border-color: var(--green);
+  border-color: transparent;
   color: var(--green);
   background: var(--green-lt);
   cursor: default;
 }
-.btn-send-req:disabled { opacity: .65; cursor: not-allowed; }
+.btn-send-req:disabled { opacity: .7; cursor: not-allowed; }
+.btn-send-req.sent:disabled { opacity: 1; }
 
 /* ═══════════════════════════════════
    BADGES
 ═══════════════════════════════════ */
-.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: .69rem; font-weight: 700; white-space: nowrap; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: .7rem; font-weight: 600; white-space: nowrap; }
 .badge-green  { background: var(--green-lt);  color: var(--green);  }
 .badge-rose   { background: var(--rose-lt);   color: var(--rose);   }
 .badge-gold   { background: var(--gold-lt);   color: var(--gold);   }
@@ -408,19 +571,19 @@ body {
 /* ═══════════════════════════════════
    PAGINATION
 ═══════════════════════════════════ */
-.pagination { display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; padding-top: 6px; }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; padding-top: 8px; }
 .pg {
-  min-width: 36px; height: 36px; padding: 0 10px;
-  border-radius: 8px; border: 1.5px solid var(--border);
+  min-width: 38px; height: 38px; padding: 0 10px;
+  border-radius: var(--radius); border: 1.5px solid var(--border);
   background: var(--surface); color: var(--text-mid);
-  font-size: .82rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  font-size: .84rem; font-weight: 600; cursor: pointer; font-family: inherit;
   display: flex; align-items: center; justify-content: center;
   transition: all .15s;
 }
-.pg:hover:not(:disabled):not(.active) { border-color: var(--accent); color: var(--accent); }
-.pg.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pg:hover:not(:disabled):not(.active) { border-color: var(--accent); color: var(--accent); background: var(--accent-pale); }
+.pg.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 3px 8px rgba(26,92,56,.28); }
 .pg:disabled { opacity: .35; cursor: not-allowed; }
-.pg-dots { color: var(--text-muted); font-size: .85rem; padding: 0 4px; line-height: 36px; }
+.pg-dots { color: var(--text-muted); font-size: .85rem; padding: 0 4px; line-height: 38px; }
 
 /* ═══════════════════════════════════
    STATES
@@ -430,9 +593,16 @@ body {
   justify-content: center; padding: 80px 20px; color: var(--text-muted);
   gap: 14px; text-align: center;
 }
-.state-icon  { font-size: 3rem; }
-.state-title { font-size: 1rem; font-weight: 700; color: var(--text-mid); }
-.state-sub   { font-size: .83rem; }
+.state-icon, .req-empty-icon {
+  width: 76px; height: 76px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--green-pale);
+  border: 1px solid var(--green-lt);
+  font-size: 2.1rem;
+}
+.state-title { font-size: 1rem; font-weight: 600; color: var(--text-mid); }
+.state-sub   { font-size: .84rem; overflow-wrap: anywhere; }
 .spinner {
   width: 40px; height: 40px;
   border: 3px solid var(--accent-lt);
@@ -448,40 +618,48 @@ body {
 .req-page {
   max-width: 860px;
   margin: 0 auto;
-  padding: 24px 20px 60px;
+  padding: 26px var(--page-pad) 60px;
 }
 
 .req-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 .stat-card {
   background: var(--surface);
   border-radius: var(--radius-lg);
   border: 1.5px solid var(--border);
   box-shadow: var(--shadow);
-  padding: 18px 20px;
+  padding: 16px 18px;
   display: flex;
   align-items: center;
   gap: 14px;
   cursor: pointer;
   transition: box-shadow .18s, border-color .18s, background .18s;
+  min-width: 0;
 }
 .stat-card:hover { box-shadow: var(--shadow-lg); border-color: var(--border-2); }
-.stat-card.active-stat { border-color: var(--accent); background: var(--accent-pale); }
-.stat-icon { font-size: 2rem; flex-shrink: 0; }
-.stat-num  { font-size: 1.9rem; font-weight: 900; color: var(--accent); line-height: 1; }
-.stat-lbl  { font-size: .78rem; color: var(--text-muted); margin-top: 3px; }
+.stat-card.active-stat { border-color: var(--accent); background: var(--accent-pale); box-shadow: 0 0 0 3px rgba(26,92,56,.08), var(--shadow); }
+.stat-icon {
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  border-radius: 14px;
+  background: var(--green-lt);
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+.stat-num  { font-size: 1.8rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.stat-lbl  { font-size: .78rem; color: var(--text-muted); margin-top: 4px; }
 
-/* Sub-tabs */
+/* Sub-tabs: segmented control */
 .req-subtabs {
   display: flex;
   gap: 3px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 14px;
   padding: 4px;
   margin-bottom: 16px;
   box-shadow: var(--shadow);
@@ -490,10 +668,10 @@ body {
   flex: 1;
   padding: 9px 12px;
   border: none;
-  border-radius: 7px;
+  border-radius: 10px;
   background: transparent;
-  font-size: .84rem;
-  font-weight: 700;
+  font-size: .85rem;
+  font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
   font-family: inherit;
@@ -503,19 +681,33 @@ body {
   justify-content: center;
   gap: 6px;
 }
-.rst-btn.active { background: var(--accent); color: #fff; }
+.rst-btn:hover:not(.active) { background: var(--surface-2); color: var(--text-mid); }
+.rst-btn.active { background: var(--accent); color: #fff; box-shadow: 0 3px 8px rgba(26,92,56,.24); }
 
 /* Request list */
 .req-list { display: flex; flex-direction: column; gap: 12px; }
 
+/* The coloured start edge encodes the request status (see .st-* below) */
 .req-card {
   background: var(--surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   overflow: hidden;
+  position: relative;
   transition: box-shadow .18s;
 }
+.req-card::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+  background: var(--edge, var(--border-2));
+}
+.req-card.st-pending  { --edge: var(--gold-soft); }
+.req-card.st-accepted { --edge: var(--green-mid); }
+.req-card.st-rejected { --edge: var(--red); }
 .req-card:hover { box-shadow: var(--shadow-lg); }
 
 .req-card-head {
@@ -523,11 +715,11 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   padding: 14px 18px 12px;
-  border-bottom: 1px solid var(--border);
   gap: 12px;
 }
-.req-card-info h3 { font-size: .93rem; font-weight: 800; color: var(--text); margin-bottom: 5px; }
-.req-card-meta    { font-size: .76rem; color: var(--text-muted); }
+.req-card-info { min-width: 0; }
+.req-card-info h3 { font-size: .96rem; font-weight: 700; color: var(--text); margin-bottom: 4px; overflow-wrap: anywhere; }
+.req-card-meta    { font-size: .76rem; color: var(--text-muted); overflow-wrap: anywhere; }
 
 .req-card-right {
   display: flex;
@@ -536,25 +728,26 @@ body {
   gap: 6px;
   flex-shrink: 0;
 }
-.req-date { font-size: .7rem; color: var(--text-muted); white-space: nowrap; }
+.req-date { font-size: .72rem; color: var(--text-muted); white-space: nowrap; }
 
 .req-card-tags {
-  padding: 10px 18px;
+  padding: 0 18px 14px;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  border-bottom: 1px solid var(--border);
 }
 .req-tag {
-  background: var(--bg);
+  background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 3px 10px;
-  font-size: .74rem;
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: .75rem;
   color: var(--text-mid);
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .req-card-foot {
@@ -562,20 +755,37 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  background: var(--bg);
+  background: var(--surface-2);
   border-top: 1px solid var(--border);
   gap: 10px;
   flex-wrap: wrap;
 }
 .req-actions { display: flex; gap: 8px; align-items: center; }
+.req-actions:empty { display: none; }
+.req-card-foot > .btn-details {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1.5px solid rgba(26,92,56,.35);
+  box-shadow: none;
+}
+.req-card-foot > .btn-details:hover { background: var(--accent-pale); border-color: var(--accent); box-shadow: none; }
 
 /* Status badges */
 .status-badge {
   font-size: .73rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: 999px;
   white-space: nowrap;
+}
+.status-badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-inline-end: 6px;
+  vertical-align: middle;
 }
 .status-pending  { background: var(--gold-lt);  color: var(--gold);  }
 .status-accepted { background: var(--green-lt); color: var(--green); }
@@ -584,36 +794,40 @@ body {
 /* Accept / Reject buttons */
 .btn-accept {
   padding: 7px 16px;
-  border-radius: 7px;
+  border-radius: var(--radius);
   border: none;
   background: var(--green);
   color: #fff;
-  font-size: .79rem;
-  font-weight: 700;
+  font-size: .8rem;
+  font-weight: 600;
   cursor: pointer;
   font-family: inherit;
-  transition: background .15s;
+  box-shadow: 0 2px 6px rgba(26,92,56,.22);
+  transition: background .15s, transform .1s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   white-space: nowrap;
 }
-.btn-accept:hover:not(:disabled) { background: #165030; }
+.btn-accept:hover:not(:disabled) { background: var(--green-deep); }
+.btn-accept:active:not(:disabled) { transform: scale(.97); }
 .btn-accept:disabled { opacity: .5; cursor: not-allowed; }
 
 .btn-reject {
   padding: 7px 16px;
-  border-radius: 7px;
+  border-radius: var(--radius);
   border: 1.5px solid var(--border);
   background: var(--surface);
   color: var(--red);
-  font-size: .79rem;
-  font-weight: 700;
+  font-size: .8rem;
+  font-weight: 600;
   cursor: pointer;
   font-family: inherit;
   transition: all .15s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   white-space: nowrap;
 }
@@ -624,188 +838,195 @@ body {
   text-align: center;
   padding: 70px 20px;
   color: var(--text-muted);
+  display: flex; flex-direction: column; align-items: center;
 }
-.req-empty-icon  { font-size: 3rem; margin-bottom: 12px; }
-.req-empty-title { font-size: .95rem; font-weight: 700; color: var(--text-mid); margin-bottom: 6px; }
-.req-empty-sub   { font-size: .82rem; margin-bottom: 18px; }
+.req-empty-icon  { margin-bottom: 14px; }
+.req-empty-title { font-size: .98rem; font-weight: 600; color: var(--text-mid); margin-bottom: 6px; }
+.req-empty-sub   { font-size: .83rem; margin-bottom: 18px; overflow-wrap: anywhere; }
 
 /* ═══════════════════════════════════
    MODAL
+   Flex column: header + footer stay pinned, only the body scrolls.
 ═══════════════════════════════════ */
 .overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.55);
+  background: rgba(8,26,17,.58);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   z-index: 400;
   align-items: flex-start;
   justify-content: center;
-  padding: 20px;
+  padding: max(20px, var(--safe-top)) max(20px, var(--safe-right)) max(20px, var(--safe-bottom)) max(20px, var(--safe-left));
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .overlay.open { display: flex; }
 .modal {
   background: var(--surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   width: 100%; max-width: 680px;
   margin: auto;
-  box-shadow: 0 24px 64px rgba(0,0,0,.25);
+  box-shadow: 0 24px 64px rgba(0,0,0,.28);
   animation: mIn .2s ease;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px - var(--safe-top) - var(--safe-bottom));
 }
 @keyframes mIn { from { opacity:0; transform: translateY(14px) scale(.97); } }
+@keyframes sheetIn { from { opacity:0; transform: translateY(40px); } }
 .modal-head {
-  background: linear-gradient(140deg, var(--accent) 0%, var(--accent-mid) 100%);
+  background: var(--pattern), var(--brand-grad);
+  border-bottom: 3px solid var(--gold-soft);
   padding: 22px 24px;
   color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
 }
-.modal-head-info h2 { font-size: 1.15rem; font-weight: 800; }
-.modal-head-info p  { font-size: .78rem; opacity: .75; margin-top: 5px; display: flex; gap: 12px; flex-wrap: wrap; }
+.modal-head-info { min-width: 0; }
+.modal-head-info h2 { font-size: 1.2rem; font-weight: 700; overflow-wrap: anywhere; }
+.modal-head-info p  { font-size: .8rem; opacity: .85; margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap; }
 .modal-close {
-  background: rgba(255,255,255,.18); border: none; color: #fff;
-  width: 32px; height: 32px; border-radius: 50%;
-  font-size: 1rem; cursor: pointer;
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.22); color: #fff;
+  width: 34px; height: 34px; border-radius: 50%;
+  font-size: .95rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; transition: background .15s;
 }
 .modal-close:hover { background: rgba(255,255,255,.32); }
 .modal-body {
   padding: 20px 24px;
-  max-height: calc(90vh - 190px);
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-2) transparent;
 }
 .modal-foot {
   padding: 14px 24px 18px;
   border-top: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--surface);
+  flex-shrink: 0;
 }
 .btn-modal-send {
   width: 100%;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
   background: var(--accent);
   color: #fff;
-  font-size: .9rem;
-  font-weight: 700;
+  font-size: .92rem;
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background .15s;
+  box-shadow: 0 4px 12px rgba(26,92,56,.24);
+  transition: background .15s, transform .1s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 .btn-modal-send:hover:not(:disabled) { background: var(--accent-mid); }
+.btn-modal-send:active:not(:disabled) { transform: scale(.98); }
 .btn-modal-send.sent {
   background: var(--green-lt);
   color: var(--green);
+  box-shadow: none;
   cursor: default;
 }
 .btn-modal-send:disabled { cursor: default; }
 
-.msec { margin-bottom: 20px; }
+.msec { margin-bottom: 22px; }
+/* Section title: brass bar at the start edge instead of an underline */
 .msec-title {
-  font-size: .75rem; font-weight: 800;
+  font-size: .82rem; font-weight: 700;
   color: var(--accent);
-  border-bottom: 2px solid var(--accent-lt);
-  padding-bottom: 7px; margin-bottom: 12px;
+  border-inline-start: 3px solid var(--gold-soft);
+  padding-inline-start: 10px;
+  line-height: 1.2;
+  margin-bottom: 12px;
   display: flex; align-items: center; gap: 6px;
 }
-.mfields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.mf { display: flex; flex-direction: column; gap: 2px; }
+.mfields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mf { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .mf.full { grid-column: 1 / -1; }
-.mf-k { font-size: .68rem; font-weight: 700; color: var(--text-muted); }
-.mf-v { font-size: .83rem; font-weight: 500; color: var(--text); background: var(--bg); border-radius: 6px; padding: 6px 10px; min-height: 32px; word-break: break-word; }
-.tick  { color: var(--green); font-weight: 800; }
-.cross { color: var(--red);   font-weight: 800; }
+.mf-k { font-size: .7rem; font-weight: 600; color: var(--text-muted); }
+.mf-v { font-size: .84rem; font-weight: 500; color: var(--text); background: var(--surface-2); border: 1px solid #edf2ef; border-radius: var(--radius); padding: 7px 12px; min-height: 34px; overflow-wrap: anywhere; word-break: break-word; }
+.tick  { color: var(--green); font-weight: 700; }
+.cross { color: var(--red);   font-weight: 700; }
 .nd    { color: var(--text-muted); font-style: italic; }
-.tags-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
-.tag { font-size: .71rem; padding: 3px 9px; border-radius: 11px; background: var(--accent-lt); color: var(--accent); font-weight: 600; }
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+.tag { font-size: .72rem; padding: 3px 10px; border-radius: 999px; background: var(--accent-lt); color: var(--accent); font-weight: 600; }
 
 /* ═══════════════════════════════════
    TOAST
+   width:max-content stops the left:50% trick from wrapping text at 50vw.
 ═══════════════════════════════════ */
 .toast {
   position: fixed;
-  bottom: 24px;
+  bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + var(--toast-gap));
   left: 50%;
   transform: translateX(-50%);
   background: #1e293b;
   color: #fff;
-  padding: 10px 22px;
-  border-radius: 10px;
-  font-size: .84rem;
+  padding: 11px 22px;
+  border-radius: 12px;
+  font-size: .85rem;
   font-weight: 600;
   z-index: 1000;
-  box-shadow: 0 4px 20px rgba(0,0,0,.3);
-  max-width: 90vw;
+  box-shadow: 0 8px 28px rgba(0,0,0,.3);
+  width: max-content;
+  max-width: calc(100vw - 24px);
   text-align: center;
+  overflow-wrap: anywhere;
   transition: opacity .3s, transform .3s;
 }
 .toast.success { background: var(--green); }
 .toast.error   { background: var(--red); }
 .toast.hide    { opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(10px); }
 
-/* ═══════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════ */
-@media (max-width: 860px) {
-  .page { grid-template-columns: 1fr; }
-  .filter-toggle { display: flex; }
-  .filters-panel { position: static; display: none; }
-  .filters-panel.open { display: block; }
-}
-@media (max-width: 600px) {
-  .req-stats { gap: 10px; }
-  .stat-num  { font-size: 1.4rem; }
-  .req-page  { padding: 16px 14px 50px; }
-  .mfields   { grid-template-columns: 1fr; }
-  .mf.full   { grid-column: 1; }
-  .modal-body { padding: 14px 16px; }
-  .modal-head { padding: 16px; }
-  .modal-head-info h2 { font-size: 1rem; }
-  .modal-foot { padding: 12px 16px 16px; }
-}
-@media (max-width: 500px) {
-  .header-logo span { display: none; }
-  .page { padding: 16px 14px 50px; }
-  .cards-grid { grid-template-columns: 1fr; }
-  .main-tabs .mt-btn { padding: 6px 12px; font-size: .76rem; }
-}
-
 .hidden { display: none !important; }
 .telegram-contact-btn {
   margin-top: 8px;
   background: #229ED9;
+  box-shadow: 0 4px 12px rgba(34,158,217,.28);
 }
 
-.telegram-contact-btn:hover {
+.telegram-contact-btn:hover:not(:disabled) {
   background: #168AC0;
 }
-/* style this section */
+/* Profile-code block in the modal */
 .id-section{
   color: rgb(238, 232, 232)  ;
   background-color: #111827;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 14px;
   display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
   text-align: center;
+  gap: 8px;
   margin-bottom: 20px;
- 
 }
-.id-section button,.btn-copy  {
+.id-section button {
   background-color: #29a31e;
   color: white;
   width: 100px;
   height: 30px;
   border-radius: 10px;
-  border: #111827 bold 2px;
-
+  border: 2px solid #111827;
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 .id-section button:hover{
   background-color: #1e8a52;
@@ -814,12 +1035,324 @@ body {
   transition: all 0.3s;
 }
 .id-section .card-id  {
-  font-size:large;
+  font-size: .95rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: #e5ece8;
+  background: none;
+  padding: 0;
+  margin: 0;
+  letter-spacing: .01em;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   The base rules above are already fluid (clamp / minmax / min-width:0),
+   so the breakpoints below only change structure:
 
+     ≤ 860px  tablets & large phones : filters open as a bottom sheet
+     ≤ 640px  phones                 : compact header, bottom tab bar, sticky
+                                       filter/sort toolbar, 2-column compact
+                                       cards, bottom-sheet modal
+     ≤ 480px  small phones           : label-free user ID, condensed pagination
+     ≤ 420px                         : result count hidden to give sort room
+     ≤ 359px  very small (320px)     : one-column modal fields, smaller base font
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding-top: 12px;
+  }
 
+  /* <aside> only wraps the filter panel, which is now a fixed bottom sheet,
+     so it must not take a grid row of its own. */
+  aside { display: contents; }
+
+  .filter-toggle { display: flex; min-height: var(--tap); }
+
+  /* Dimmed backdrop behind the sheet (tap to close) */
+  .filters-backdrop {
+    display: block;
+    position: fixed; inset: 0;
+    background: rgba(8,26,17,.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    z-index: 340;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s, visibility 0s .2s;
+  }
+  .filters-backdrop.open { opacity: 1; visibility: visible; transition: opacity .2s; }
+  body.sheet-open { overflow: hidden; }
+
+  /* Filters → bottom sheet: pinned header, scrolling fields, pinned action bar */
+  .filters-panel {
+    position: fixed;
+    left: 0; right: 0; bottom: 0; top: auto;
+    max-width: 640px;            /* centred card-width sheet on tablets */
+    margin-inline: auto;
+    z-index: 350;
+    display: flex;
+    flex-direction: column;
+    max-height: 88vh;
+    max-height: calc(100dvh - var(--safe-top) - 24px);
+    border: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -12px 40px rgba(0,0,0,.25);
+    transform: translateY(105%);
+    visibility: hidden;
+    transition: transform .28s cubic-bezier(.2,.8,.2,1), visibility 0s .28s;
+  }
+  .filters-panel.open {
+    transform: none;
+    visibility: visible;
+    transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  }
+  .fp-head { flex-shrink: 0; padding: 12px 16px; }
+  .fp-clear { min-height: 34px; padding: 4px 14px; font-size: .78rem; }
+  .fp-close {
+    display: grid; place-items: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.16);
+    color: #fff;
+    font-size: .95rem;
+    cursor: pointer;
+  }
+  .fp-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    gap: 12px;
+    padding: 14px;
+  }
+  .fp-body > .fg-wide,
+  .fp-body > .fp-divider { grid-column: 1 / -1; }
+  .fp-divider { margin: 0 -14px; }
+  .fp-foot {
+    flex-shrink: 0;
+    padding: 12px 14px calc(12px + var(--safe-bottom));
+    background: var(--surface);
+    box-shadow: 0 -6px 16px rgba(0,0,0,.05);
+  }
+  .btn-count { display: inline; }
+
+  /* 16px prevents iOS from zooming the page when an input is focused */
+  .fg input, .fg select { font-size: 16px; min-height: 44px; }
+  .fg label { font-size: .8rem; }
+  .btn-search { min-height: 48px; }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --header-h: 54px;
+    --bottom-nav-h: 58px;
+    --toast-gap: 14px;
+  }
+  body { padding-bottom: calc(var(--bottom-nav-h) + var(--safe-bottom)); }
+  /* The tab bar sits under the overlay while a modal is open, so free the toast position */
+  body.modal-open { --bottom-nav-h: 0px; }
+
+  /* ── Header: logout + user ID on one compact row ── */
+  .header-inner { gap: 8px; }
+  .btn-logout { padding: 0 12px; min-height: 40px; font-size: .8rem; }
+  .user-id { justify-content: flex-start; }
+  .user-id-box { gap: 6px; padding: 3px 10px 3px 3px; }
+  .btn-copy { min-height: 36px; height: 36px; min-width: 56px; }
+
+  /* ── Main tabs become a bottom tab bar (thumb-friendly) ── */
+  .main-tabs {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-radius: 0;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+    box-shadow: 0 -2px 14px rgba(0,0,0,.08);
+  }
+  .mt-btn {
+    min-height: var(--bottom-nav-h);
+    justify-content: center;
+    font-size: .92rem;
+    color: var(--text-muted);
+    border-radius: 0;
+  }
+  .mt-btn:hover:not(.active) { background: transparent; color: var(--text-muted); }
+  .mt-btn.active {
+    color: var(--accent);
+    background: var(--accent-pale);
+    box-shadow: inset 0 3px 0 var(--accent);
+  }
+
+  /* ── Browse ── */
+  .page { padding: 10px var(--page-pad) 20px; }
+  #resultsWrap { gap: 12px; }
+
+  /* Filter + sort live in ONE compact toolbar that stays under the header
+     while scrolling, so both are always one thumb-tap away. */
+  .results-bar {
+    position: sticky;
+    top: calc(var(--header-h) + var(--safe-top));
+    z-index: 60;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin: 0 calc(-1 * var(--page-pad));
+    padding: 8px var(--page-pad);
+    background: rgba(242,245,243,.94);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-toggle { flex-shrink: 0; padding: 0 16px; border-radius: 12px; font-size: .9rem; }
+  .results-count { flex: 0 0 auto; font-size: .78rem; white-space: nowrap; }
+  .cl-long { display: none; }
+  .sort-bar { flex: 1 1 0; min-width: 0; }
+  .sort-bar > span { display: none; }
+  .sort-bar select { width: 100%; min-height: 44px; font-size: 16px; border-radius: 12px; padding: 0 12px 0 32px; }
+
+  /* Compact cards: attributes in a 2-column grid so ~2.5 cards fit per screen */
+  .cards-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .card-top { padding: 12px 14px; }
+  .card-id { margin-bottom: 6px; }
+  .card-age { font-size: 1.6rem; }
+  .card-city { margin-top: 4px; }
+  .card-badge-wrap { left: 12px; top: 12px; }
+  .card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+    padding: 2px 14px 4px;
+  }
+  .card-row {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 9px 0;
+    font-size: .82rem;
+  }
+  .card-row:last-child {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-row-key { font-size: .75rem; }
+  .card-row-val { max-width: 100%; text-align: start; font-size: .9rem; }
+  .card-foot { padding: 10px 12px; gap: 8px; }
+  .card-foot .btn-send-req,
+  .card-foot .btn-details { flex: 1 1 0; min-height: 44px; font-size: .84rem; }
+
+  .pg { min-width: 38px; height: 42px; padding: 0 8px; }
+  .pagination { gap: 4px; }
+  .state-box { padding: 48px 16px; }
+
+  /* ── Requests ── */
+  .req-page { padding: 12px var(--page-pad) 20px; }
+  .req-stats { gap: 10px; margin-bottom: 12px; }
+  .stat-card { padding: 12px; gap: 10px; }
+  .stat-card:active { transform: scale(.98); }
+  .stat-icon { width: 38px; height: 38px; font-size: 1.15rem; border-radius: 12px; }
+  .stat-num  { font-size: 1.5rem; }
+  .stat-lbl  { font-size: .76rem; }
+  /* The two stat cards already act as the received/sent tabs — drop the duplicate row */
+  .req-subtabs { display: none; }
+  .req-list { gap: 10px; }
+
+  .req-card-head { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px 14px 10px; }
+  .req-card-right { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+  .req-card-tags { padding: 0 14px 12px; }
+  .req-tag { font-size: .78rem; }
+  .req-card-foot { flex-direction: column; align-items: stretch; padding: 12px 14px; gap: 8px; }
+  .req-actions { width: 100%; }
+  .req-actions button { flex: 1 1 0; min-height: 46px; font-size: .88rem; }
+  .req-card-foot > .btn-details { min-height: 46px; font-size: .88rem; }
+  .req-empty { padding: 48px 16px; }
+
+  /* ── Modal → bottom sheet ── */
+  .overlay { padding: 0; align-items: flex-end; }
+  .modal {
+    max-width: 100%;
+    margin: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 94vh;
+    max-height: calc(100dvh - var(--safe-top) - 12px);
+    animation: sheetIn .25s ease;
+  }
+  .modal-head { padding: 14px 16px; }
+  .modal-head-info h2 { font-size: 1.05rem; }
+  .modal-close { width: 40px; height: 40px; }
+  .modal-body { padding: 14px 16px; }
+  .msec { margin-bottom: 18px; }
+  .mf-v { font-size: .88rem; }
+  /* Both actions side by side (they wrap onto two rows on very narrow screens) */
+  .modal-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px calc(12px + var(--safe-bottom));
+  }
+  .btn-modal-send { flex: 1 1 150px; width: auto; min-height: 48px; padding: 10px; font-size: .92rem; }
+  .telegram-contact-btn { margin-top: 0; }
+  /* Profile code: one compact row instead of a tall dark block */
+  .id-section {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: start;
+    gap: 10px;
+    padding: 8px 8px 8px 10px;
+    margin-bottom: 14px;
+  }
+  .id-section .card-id {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: .8rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .id-section button { width: auto; min-width: 64px; min-height: 38px; padding: 0 12px; flex-shrink: 0; }
+
+  /* ── Toast ── */
+  .toast { padding: 10px 16px; font-size: .84rem; }
+}
+
+@media (max-width: 480px) {
+  /* Drop the label so the ID itself has room */
+  .user-id-box strong { display: none; }
+  /* Condensed pagination: hide the outer neighbours and the dots */
+  .pg-far, .pg-dots { display: none; }
+}
+
+@media (max-width: 420px) {
+  /* Give the sort control the room it needs */
+  .results-count { display: none; }
+}
+
+@media (max-width: 359px) {
+  html { font-size: 14px; }
+  .mfields { grid-template-columns: 1fr; }
+  .mf.full { grid-column: 1; }
+  .stat-card { gap: 8px; padding: 10px; }
+  .filter-toggle { padding: 0 12px; }
+  .card-foot .btn-send-req,
+  .card-foot .btn-details { padding-left: 6px; padding-right: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
 </style>
+
 </head>
 <body>
 
@@ -847,16 +1380,19 @@ body {
   <div class="page">
 
     <aside>
-      <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()">
-        <span>🔍 الفلاتر</span>
-        <span id="toggleIcon">▼</span>
-      </button>
-      <div class="filters-panel" id="filtersPanel">
+      <!-- Inline sidebar on desktop; bottom sheet on phones/tablets -->
+      <div class="filters-panel" id="filtersPanel" role="dialog" aria-label="فلترة النتائج">
         <div class="fp-head">
           <span>🔍 فلترة النتائج</span>
-          <button class="fp-clear" onclick="clearFilters()">مسح الكل</button>
+          <div class="fp-head-actions">
+            <button class="fp-clear" onclick="clearFilters()">مسح الكل</button>
+            <button class="fp-close" onclick="toggleFilters()" aria-label="إغلاق">✕</button>
+          </div>
         </div>
         <div class="fp-body" id="fpBody">
+        </div>
+        <div class="fp-foot">
+          <button class="btn-search" onclick="applyFilters(); closeFiltersPanel()">🔍 بحث <span class="btn-count" id="btnCount"></span></button>
         </div>
       </div>
     </aside>
@@ -869,10 +1405,14 @@ body {
 
       <div id="resultsWrap" class="hidden">
         <div class="results-bar">
+          <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()" aria-expanded="false" aria-controls="filtersPanel">
+            <span>🔍 الفلاتر</span>
+            <span class="filter-count hidden" id="filterCount">0</span>
+          </button>
           <div class="results-count" id="countLabel">—</div>
           <div class="sort-bar">
             <span>ترتيب:</span>
-            <select id="sortSel" onchange="applySort()">
+            <select id="sortSel" onchange="applySort()" aria-label="ترتيب النتائج">
               <option value="age_asc">العمر: الأصغر أولاً</option>
               <option value="age_desc">العمر: الأكبر أولاً</option>
               <option value="quran_desc">الأكثر حفظاً للقرآن</option>
@@ -926,6 +1466,9 @@ body {
   </div>
 </div>
 
+<!-- ═══ FILTERS BACKDROP (phones) ═══ -->
+<div class="filters-backdrop" id="filtersBackdrop" onclick="toggleFilters()"></div>
+
 <!-- ═══ MODAL ═══ -->
 <div class="overlay" id="overlay" onclick="closeModal(event)">
   <div class="modal">
@@ -934,7 +1477,7 @@ body {
         <h2 id="mTitle">—</h2>
         <p  id="mMeta"></p>
       </div>
-      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      <button class="modal-close" onclick="closeModalDirect()" aria-label="إغلاق">✕</button>
     </div>
     <div class="modal-body" id="mBody"></div>
     <div class="modal-foot" id="mFoot"></div>
@@ -947,19 +1490,254 @@ body {
 <script>
 "use strict";
 
-/* ═══════════════════════════════════════
-   AUTH GUARD
-═══════════════════════════════════════ */
-const loggedUser = JSON.parse(localStorage.getItem('user'));
-if (!loggedUser) window.location.href = "login.html";
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════════ */
+const LOGIN_PAGE = 'login.html';
+const baseURL    = '..';
 
-function getToken() {
-  return loggedUser?.authToken || loggedUser?.token || localStorage.getItem('token') || '';
-}
-const AUTH_HEADERS = {
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer ' + getToken()
+/* User-facing (Arabic) messages. Technical details go to console.error only. */
+const API_MESSAGES = {
+  network:         'حدث خطأ في الاتصال، تحقق من الإنترنت وحاول مجدداً',
+  auth:            'انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى',
+  forbidden:       'ليس لديك صلاحية لتنفيذ هذا الإجراء',
+  notFound:        'العنصر المطلوب غير موجود',
+  rateLimit:       'محاولات كثيرة، يرجى الانتظار قليلاً ثم المحاولة مرة أخرى',
+  server:          'حدث خطأ في الخادم، يرجى المحاولة لاحقاً',
+  invalidResponse: 'استجابة غير متوقعة من الخادم',
+  generic:         'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى'
 };
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH & API LAYER
+   Storage format is unchanged: localStorage 'user' (object holding
+   authToken / token) with 'token' as an optional fallback key.
+═══════════════════════════════════════════════════════════════ */
+
+/* Guard so several parallel 401s cause exactly ONE logout + ONE redirect. */
+let isRedirectingToLogin = false;
+
+/** Error type thrown by apiFetch(). `kind` is one of:
+ *  'auth' | 'network' | 'forbidden' | 'notFound' | 'rateLimit' | 'server' | 'client' | 'invalid-response' */
+class ApiError extends Error {
+  constructor(kind, userMessage, { status = 0, data = null, cause = null } = {}) {
+    super(userMessage);
+    this.name        = 'ApiError';
+    this.kind        = kind;
+    this.userMessage = userMessage;
+    this.status      = status;
+    this.data        = data;
+    this.cause       = cause;
+  }
+}
+
+/** True when the error only means "we are already leaving for the login page" —
+ *  callers must stay silent (no toast, no error state). */
+function isAuthAbort(err) {
+  return err instanceof ApiError && err.kind === 'auth';
+}
+
+/** Friendly Arabic message for any thrown value. */
+function errorText(err) {
+  return err instanceof ApiError ? err.userMessage : API_MESSAGES.generic;
+}
+
+function getStoredUser() {
+  try {
+    const raw = localStorage.getItem('user');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch (err) {
+    console.error('Stored user could not be read:', err);
+    return null;
+  }
+}
+
+/** Always reads the LATEST token (another tab may have refreshed it). */
+function getToken() {
+  const user = getStoredUser();
+  let fallback = '';
+  try { fallback = localStorage.getItem('token') || ''; } catch (_) { /* storage blocked */ }
+  return user?.authToken || user?.token || fallback || '';
+}
+
+/** Decode a JWT payload. Returns null for anything that is not a decodable JWT. */
+function decodeJwtPayload(token) {
+  try {
+    const parts = String(token).split('.');
+    if (parts.length !== 3) return null;
+    let b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    b64 += '='.repeat((4 - (b64.length % 4)) % 4);
+    const json = decodeURIComponent(
+      atob(b64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+    );
+    const payload = JSON.parse(json);
+    return payload && typeof payload === 'object' ? payload : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+ * Client-side expiry check — an OPTIMISATION ONLY, never a replacement for the server.
+ * Returns true only when the token is a decodable JWT whose `exp` is in the past.
+ * Non-JWT tokens / missing `exp` → false, so the server (401) stays the authority.
+ */
+function isTokenExpired(token = getToken()) {
+  if (!token) return false;
+  const payload = decodeJwtPayload(token);
+  if (!payload || typeof payload.exp !== 'number' || !Number.isFinite(payload.exp)) return false;
+  return Date.now() >= payload.exp * 1000;
+}
+
+function clearAuth() {
+  try {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  } catch (err) {
+    console.error('Could not clear auth storage:', err);
+  }
+}
+
+/** Clear auth once and leave for the login page once, no matter how often it is called. */
+function redirectToLogin() {
+  if (isRedirectingToLogin) return;
+  isRedirectingToLogin = true;
+  clearAuth();
+  window.location.replace(LOGIN_PAGE);
+}
+
+/** Session is usable only if a user is stored and its token is not obviously expired. */
+function ensureAuthenticated() {
+  if (isRedirectingToLogin) return false;
+  if (!getStoredUser() || isTokenExpired()) {
+    redirectToLogin();
+    return false;
+  }
+  return true;
+}
+
+/* A 403 normally means "logged in but not allowed". Only when the backend says the
+   token/session itself is bad do we treat it like a 401. */
+const SESSION_INVALID_RE = new RegExp(
+  '(jwt|token|session|جلسة|الجلسة|التوكن).{0,40}(expired|invalid|malformed|revoked|منتهي|منتهية|انتهت|غير صالح|غير صحيح)' +
+  '|(expired|invalid|malformed|انتهت|منتهي|منتهية|غير صالح).{0,40}(jwt|token|session|جلسة|الجلسة|التوكن)' +
+  '|TokenExpiredError|JsonWebTokenError|invalid_token', 'i'
+);
+
+function indicatesInvalidSession(res, data) {
+  const hints = [];
+  if (data && typeof data === 'object') {
+    ['code', 'error', 'name', 'message', 'msg', 'reason'].forEach(k => {
+      if (typeof data[k] === 'string') hints.push(data[k]);
+    });
+    if (data.error && typeof data.error === 'object') {
+      [data.error.code, data.error.message].forEach(v => { if (typeof v === 'string') hints.push(v); });
+    }
+  }
+  const authHeader = res.headers.get('WWW-Authenticate');
+  if (authHeader) hints.push(authHeader);
+  return SESSION_INVALID_RE.test(hints.join(' | '));
+}
+
+/** Returns true (and starts the logout/redirect) when the response is an auth/session failure. */
+function handleAuthError(res, data) {
+  const sessionBroken =
+    res.status === 401 ||
+    (res.status === 403 && indicatesInvalidSession(res, data));
+  if (!sessionBroken) return false;
+  redirectToLogin();
+  return true;
+}
+
+function serverMessage(data) {
+  const m = data && typeof data === 'object' ? data.message : null;
+  return typeof m === 'string' && m.trim() ? m.trim() : '';
+}
+
+/** Map a non-2xx (non-auth) response to a friendly ApiError. */
+function buildApiError(res, data, fallbackMessage) {
+  const meta = { status: res.status, data };
+  if (res.status === 403) return new ApiError('forbidden', API_MESSAGES.forbidden, meta);
+  if (res.status === 404) return new ApiError('notFound',  API_MESSAGES.notFound,  meta);
+  if (res.status === 429) return new ApiError('rateLimit', API_MESSAGES.rateLimit, meta);
+  if (res.status >= 500)  return new ApiError('server',    API_MESSAGES.server,    meta);
+  // Other 4xx (400, 409, 422…): the backend's own message is intended for the user.
+  return new ApiError('client', serverMessage(data) || fallbackMessage || API_MESSAGES.generic, meta);
+}
+
+/** Read the body once; tolerate empty and non-JSON bodies. */
+async function readBody(res) {
+  let text = '';
+  try { text = await res.text(); } catch (err) { console.error('Could not read response body:', err); }
+  if (!text) return { data: null, isJson: true, raw: '' };
+  try { return { data: JSON.parse(text), isJson: true, raw: text }; }
+  catch (_) { return { data: null, isJson: false, raw: text }; }
+}
+
+/**
+ * Central request helper — use this instead of fetch() for every API call.
+ *  • attaches the latest Bearer token and the default JSON Content-Type
+ *  • skips the call entirely if the JWT is obviously expired
+ *  • 401 (or 403 that says the session is invalid) → clear auth + redirect once
+ *  • other errors → ApiError with a friendly Arabic message
+ * Resolves with the parsed JSON body. Optional `errorMessage` overrides the
+ * fallback text used for generic 4xx errors.
+ */
+async function apiFetch(url, options = {}) {
+  if (isRedirectingToLogin) throw new ApiError('auth', API_MESSAGES.auth);
+
+  const token = getToken();
+  if (token && isTokenExpired(token)) {
+    redirectToLogin();
+    throw new ApiError('auth', API_MESSAGES.auth);
+  }
+
+  const { errorMessage, headers: extraHeaders, ...init } = options;
+  const method  = (init.method || 'GET').toUpperCase();
+  const headers = { 'Content-Type': 'application/json', ...extraHeaders };
+  if (token) headers.Authorization = 'Bearer ' + token;
+
+  let res;
+  try {
+    res = await fetch(url, { ...init, headers });
+  } catch (err) {
+    console.error(`Network error [${method} ${url}]:`, err);
+    throw new ApiError('network', API_MESSAGES.network, { cause: err });
+  }
+
+  const body = await readBody(res);
+
+  // Another in-flight request may already have triggered the redirect.
+  if (isRedirectingToLogin) throw new ApiError('auth', API_MESSAGES.auth, { status: res.status });
+
+  if (res.ok) {
+    if (!body.isJson) {
+      console.error(`Non-JSON success response [${method} ${url}]:`, body.raw.slice(0, 300));
+      if (method === 'GET') throw new ApiError('invalid-response', API_MESSAGES.invalidResponse, { status: res.status });
+    }
+    return body.data;
+  }
+
+  console.error(`API error ${res.status} [${method} ${url}]:`, body.isJson ? body.data : body.raw.slice(0, 300));
+
+  if (handleAuthError(res, body.data)) {
+    throw new ApiError('auth', API_MESSAGES.auth, { status: res.status, data: body.data });
+  }
+  throw buildApiError(res, body.data, errorMessage);
+}
+
+/* Keep this tab in sync with the auth state */
+window.addEventListener('pageshow', e => { if (e.persisted) ensureAuthenticated(); }); // back/forward cache
+window.addEventListener('storage', e => {                                             // logout in another tab
+  if (e.key === null || e.key === 'user' || e.key === 'token') ensureAuthenticated();
+});
+
+/* ═══════════════════════════════════════
+   AUTH GUARD (runs before anything else)
+═══════════════════════════════════════ */
+const loggedUser = getStoredUser();
 
 /* ═══════════════════════════════════════
    GENDER LOGIC
@@ -981,7 +1759,6 @@ let totalPages  = 1;
 let filtersOpen = false;
 let activeTab   = 'browse';
 let activeReqTab= 'received';
-const baseURL = '..';
 
 let requestsData = { sent: [], received: [] };
 let sentUserIds  = new Set();   // _id of users we already sent a request to
@@ -990,14 +1767,18 @@ let reqsLoaded   = false;
 /* ═══════════════════════════════════════
    BOOT
 ═══════════════════════════════════════ */
-buildFilters();
-loadPage(1);
-loadRequests();
+if (ensureAuthenticated()) {
+  renderUserId();
+  buildFilters();
+  loadPage(1);
+  loadRequests();
+}
 
 /* ═══════════════════════════════════════
    MAIN TAB SWITCH
 ═══════════════════════════════════════ */
 function switchTab(tab) {
+  if (tab !== activeTab) window.scrollTo({ top: 0, behavior: 'instant' });
   activeTab = tab;
   document.getElementById('browseContent').classList.toggle('hidden', tab !== 'browse');
   document.getElementById('requestsContent').classList.toggle('hidden', tab !== 'requests');
@@ -1024,15 +1805,50 @@ function switchReqTab(tab) {
 function toggleFilters() {
   filtersOpen = !filtersOpen;
   document.getElementById('filtersPanel').classList.toggle('open', filtersOpen);
-  document.getElementById('toggleIcon').textContent = filtersOpen ? '▲' : '▼';
+  document.getElementById('filtersBackdrop').classList.toggle('open', filtersOpen);
+  document.body.classList.toggle('sheet-open', filtersOpen);   // locks page scroll behind the sheet (phones only, via CSS)
+  document.getElementById('filterToggle').setAttribute('aria-expanded', String(filtersOpen));
+}
+
+/* After pressing "بحث" on a phone: close the sheet and show the results.
+   (filtersOpen is only ever true when the mobile toggle button is visible.) */
+function closeFiltersPanel() {
+  if (!filtersOpen) return;
+  toggleFilters();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* Small counter on the mobile filter button */
+function updateFilterBadge() {
+  const badge = document.getElementById('filterCount');
+  if (!badge) return;
+  const n = Array.from(document.querySelectorAll('#fpBody input, #fpBody select'))
+    .filter(el => el.value.trim() !== '').length;
+  badge.textContent = n;
+  badge.classList.toggle('hidden', n === 0);
 }
 
 /* ═══════════════════════════════════════
    LOGOUT
 ═══════════════════════════════════════ */
 function logout() {
-  localStorage.removeItem('user');
-  window.location.href = 'login.html';
+  redirectToLogin();
+}
+
+/* ═══════════════════════════════════════
+   HEADER — USER ID
+═══════════════════════════════════════ */
+function renderUserId() {
+  const userId = loggedUser?._id;
+  const holder = document.querySelector('.user-id');
+  if (!userId || !holder) return;
+  holder.innerHTML = `
+    <span class="user-id-box">
+      <strong>معرف المستخدم:</strong>
+      <span class="user-id-value" title="${esc(userId)}">${esc(userId)}</span>
+      <button class="btn-copy" onclick="copyId('${userId}')">نسخ</button>
+    </span>
+  `;
 }
 
 /* ═══════════════════════════════════════
@@ -1043,11 +1859,11 @@ function buildFilters() {
   const fp = document.getElementById('fpBody');
 
   const commonTop = `
-    <div class="fg">
+    <div class="fg fg-wide">
       <label>العمر من — إلى</label>
       <div class="fg-range">
-        <input type="number" id="fAgeMin" placeholder="من" min="18" max="80" onchange="applyFilters()">
-        <input type="number" id="fAgeMax" placeholder="إلى" min="18" max="80" onchange="applyFilters()">
+        <input type="number" id="fAgeMin" placeholder="من" min="18" max="80" inputmode="numeric" onchange="applyFilters()">
+        <input type="number" id="fAgeMax" placeholder="إلى" min="18" max="80" inputmode="numeric" onchange="applyFilters()">
       </div>
     </div>
     <div class="fg">
@@ -1091,7 +1907,7 @@ function buildFilters() {
     </div>
     <div class="fg">
       <label>حفظ القرآن (أجزاء على الأقل)</label>
-      <input type="number" id="fQuran" placeholder="0 — 30" min="0" max="30" onchange="applyFilters()">
+      <input type="number" id="fQuran" placeholder="0 — 30" min="0" max="30" inputmode="numeric" onchange="applyFilters()">
     </div>`;
 
   const maleExtra = `
@@ -1133,9 +1949,7 @@ function buildFilters() {
     </div>`;
 
   fp.innerHTML = commonTop
-    + (viewingGender === 'male' ? maleExtra : femaleExtra)
-    + `<div class="fp-divider"></div>
-       <button class="btn-search" onclick="applyFilters()">🔍 بحث</button>`;
+    + (viewingGender === 'male' ? maleExtra : femaleExtra);
 }
 
 function clearFilters() {
@@ -1145,62 +1959,40 @@ function clearFilters() {
 
 /* ═══════════════════════════════════════
    API — LOAD BROWSE PAGE
-   GET /api/users/approved?page=N
+   GET /api/users/approved/N
    Server returns opposite gender based on auth token.
 ═══════════════════════════════════════ */
 async function loadPage(page) {
   currentPage = page;
   showBrowseState('loading');
-  // add the user id to can copy
-  const user = localStorage.getItem('user');
-
-  if (user) {
-    const userId = JSON.parse(user)._id;
-    document.querySelector('.user-id').innerHTML=`
-      <span> 
-        <strong>معرف المستخدم:</strong>
-        <span class="user-id-value">${userId}</span>
-        <button class="btn-copy" onclick="copyId('${userId}')">نسخ</button>
-      </span>
-    `
-
-  }
-
 
   try {
-    
-    const res = await fetch(`${baseURL}/api/users/approved/${page}`, { headers: AUTH_HEADERS });
-    if (res.status === 401) { logout(); return; }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
+    const json = await apiFetch(`${baseURL}/api/users/approved/${page}`);
 
-    const raw  = json.users || json.males || json.females || json.data || [];
+    const raw  = json?.users || json?.males || json?.females || json?.data || [];
     allData    = raw.map(flatten);
 
-    const total = json.numberOfUsers || json.total || raw.length;
+    const total = json?.numberOfUsers || json?.total || raw.length;
     totalPages  = Math.max(1, Math.ceil(total / PER_PAGE));
 
     applyFilters();
     showBrowseState('data');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
-    console.error(err);
-    showBrowseState('error', err.message);
+    if (isAuthAbort(err)) return;          // redirecting to login — stay silent
+    console.error('Browse load failed:', err);
+    showBrowseState('error', errorText(err));
   }
 }
 
 /* ═══════════════════════════════════════
    API — LOAD REQUESTS
    GET /api/requests
-   Expected response: { sent: [...], received: [...] }
-   or: { requestsSent: [...], requestsReceived: [...] }
+   Expected response: { success, data: [...] } (see sample below)
 ═══════════════════════════════════════ */
 async function loadRequests() {
   try {
-    const res = await fetch(`${baseURL}/api/requests`, { headers: AUTH_HEADERS });
-    if (res.status === 401) { logout(); return; }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
+    const json = await apiFetch(`${baseURL}/api/requests`);
     console.log("requests : ",json);
 //     {
 //     "success": true,
@@ -1295,14 +2087,15 @@ async function loadRequests() {
 //     ]
 // }
 
+    const list = Array.isArray(json?.data) ? json.data : [];
     requestsData = {
-      sent:     json.data.filter(r => r.to ),
-      received: json.data.filter(r => r.from )
+      sent:     list.filter(r => r.to ),
+      received: list.filter(r => r.from )
     };
 
     console.log(requestsData.sent);
     console.log(requestsData.received);
-    
+
 
     // Track which user IDs already have a sent request
     sentUserIds = new Set(
@@ -1320,6 +2113,7 @@ async function loadRequests() {
     if (activeTab === 'requests') renderRequestsList();
 
   } catch (err) {
+    if (isAuthAbort(err)) return;          // redirecting to login — stay silent
     console.error('Requests load failed:', err);
     reqsLoaded = true;
     if (activeTab === 'requests') {
@@ -1327,7 +2121,7 @@ async function loadRequests() {
         <div class="req-empty">
           <div class="req-empty-icon">⚠️</div>
           <div class="req-empty-title">تعذر تحميل الطلبات</div>
-          <div class="req-empty-sub">تحقق من الاتصال وحاول مجدداً</div>
+          <div class="req-empty-sub">${esc(errorText(err))}</div>
           <button class="btn-search" style="margin:0 auto;max-width:200px" onclick="loadRequests()">إعادة المحاولة</button>
         </div>`;
     }
@@ -1348,7 +2142,7 @@ function updateReqStats() {
 
 /* ═══════════════════════════════════════
    API — SEND REQUEST
-   POST /api/requests/send  { to: userId }
+   POST /api/requests/send  { toUserId: userId }
 ═══════════════════════════════════════ */
 async function sendRequest(userId, btnEl) {
   if (!userId) return;
@@ -1357,64 +2151,49 @@ async function sendRequest(userId, btnEl) {
   btnEl.innerHTML = '<span style="opacity:.6">جاري الإرسال...</span>';
 
   try {
-    const res = await fetch(`../api/requests/send`, {
+    await apiFetch(`${baseURL}/api/requests/send`, {
       method: 'POST',
-      headers: AUTH_HEADERS,
-      body: JSON.stringify({ toUserId: userId })
+      body: JSON.stringify({ toUserId: userId }),
+      errorMessage: 'حدث خطأ في الإرسال'
     });
-    const json = await res.json();
 
-    if (res.ok) {
-      sentUserIds.add(String(userId));
-      btnEl.innerHTML = '✔ تم الإرسال';
-      btnEl.classList.add('sent');
-      btnEl.disabled = true;
-      showToast('تم إرسال طلب الزواج بنجاح ✔', 'success');
-      loadRequests();
-    } else {
-      console.log(json);
-      console.log("response error");
-      
-      btnEl.innerHTML = orig;
-      btnEl.disabled  = false;
-      showToast(json.message || 'حدث خطأ في الإرسال', 'error');
-      
-    }
-  } catch(err) {
+    sentUserIds.add(String(userId));
+    btnEl.innerHTML = '✔ تم الإرسال';
+    btnEl.classList.add('sent');
+    btnEl.disabled = true;
+    showToast('تم إرسال طلب الزواج بنجاح ✔', 'success');
+    loadRequests();
+  } catch (err) {
+    if (isAuthAbort(err)) return;          // redirecting to login — stay silent
+    console.error('Send request failed:', err);
     btnEl.innerHTML = orig;
     btnEl.disabled  = false;
-    showToast('حدث خطأ في الاتصال', 'error');
-    console.log(err);
-    
+    showToast(errorText(err), 'error');
   }
 }
 
 /* ═══════════════════════════════════════
    API — UPDATE REQUEST STATUS
-   POST /api/requests/updateStatus  { requestId, status }
+   PATCH /api/requests/updateStatus  { requestId, status }
 ═══════════════════════════════════════ */
 async function updateRequestStatus(requestId, status, cardEl) {
   const btns = cardEl.querySelectorAll('button');
   btns.forEach(b => { b.disabled = true; });
 
   try {
-    const res = await fetch(`../api/requests/updateStatus`, {
+    await apiFetch(`${baseURL}/api/requests/updateStatus`, {
       method: 'PATCH',
-      headers: AUTH_HEADERS,
-      body: JSON.stringify({ requestId, status })
+      body: JSON.stringify({ requestId, status }),
+      errorMessage: 'حدث خطأ'
     });
-    const json = await res.json();
 
-    if (res.ok) {
-      const msg  = status === 'accepted' ? '✔ تم قبول الطلب' : '✖ تم رفض الطلب';
-      showToast(msg, status === 'accepted' ? 'success' : 'error');
-      loadRequests();
-    } else {
-      showToast(json.message || 'حدث خطأ', 'error');
-      btns.forEach(b => { b.disabled = false; });
-    }
-  } catch {
-    showToast('حدث خطأ في الاتصال', 'error');
+    const msg  = status === 'accepted' ? '✔ تم قبول الطلب' : '✖ تم رفض الطلب';
+    showToast(msg, status === 'accepted' ? 'success' : 'error');
+    loadRequests();
+  } catch (err) {
+    if (isAuthAbort(err)) return;          // redirecting to login — stay silent
+    console.error('Update request status failed:', err);
+    showToast(errorText(err), 'error');
     btns.forEach(b => { b.disabled = false; });
   }
 }
@@ -1454,6 +2233,7 @@ function applyFilters() {
     return true;
   });
 
+  updateFilterBadge();
   applySort();
 }
 
@@ -1478,8 +2258,11 @@ function applySort() {
 ═══════════════════════════════════════ */
 function renderResults() {
   const grid = document.getElementById('cardsGrid');
+  // .cl-long parts are hidden on phones so the toolbar stays compact
   document.getElementById('countLabel').innerHTML =
-    `عرض <strong>${displayed.length}</strong> نتيجة في هذه الصفحة`;
+    `<span class="cl-long">عرض </span><strong>${displayed.length}</strong> نتيجة<span class="cl-long"> في هذه الصفحة</span>`;
+  const btnCount = document.getElementById('btnCount');       // count shown on the sheet's action button
+  if (btnCount) btnCount.textContent = `(${displayed.length})`;
 
   if (!displayed.length) {
     grid.innerHTML = `
@@ -1626,7 +2409,7 @@ function buildReqCard(req, idx) {
     : '';
 
   return `
-  <div class="req-card">
+  <div class="req-card st-${['pending','accepted','rejected'].includes(req.status) ? req.status : 'pending'}">
     <div class="req-card-head">
       <div class="req-card-info">
         <h3>${icon} طلب زواج ${isReceived ? 'مُستلم' : 'مُرسل'} #${idx + 1}</h3>
@@ -1663,6 +2446,7 @@ function jumpToProfile(userId) {
 
 /* ═══════════════════════════════════════
    PAGINATION
+   .pg-edge = first/last page, .pg-far = outer neighbours (hidden on small phones)
 ═══════════════════════════════════════ */
 function renderPagination() {
   const bar = document.getElementById('pgBar');
@@ -1673,22 +2457,42 @@ function renderPagination() {
   const e = Math.min(totalPages, currentPage + 2);
 
   if (s > 1) {
-    h += `<button class="pg" onclick="loadPage(1)">1</button>`;
+    h += `<button class="pg pg-edge" onclick="loadPage(1)">1</button>`;
     if (s > 2) h += `<span class="pg-dots">…</span>`;
   }
-  for (let p = s; p <= e; p++)
-    h += `<button class="pg ${p===currentPage?'active':''}" onclick="loadPage(${p})">${p}</button>`;
+  for (let p = s; p <= e; p++) {
+    const far = (Math.abs(p - currentPage) === 2 && p !== 1 && p !== totalPages) ? ' pg-far' : '';
+    h += `<button class="pg ${p===currentPage?'active':''}${far}" onclick="loadPage(${p})">${p}</button>`;
+  }
   if (e < totalPages) {
     if (e < totalPages - 1) h += `<span class="pg-dots">…</span>`;
-    h += `<button class="pg" onclick="loadPage(${totalPages})">${totalPages}</button>`;
+    h += `<button class="pg pg-edge" onclick="loadPage(${totalPages})">${totalPages}</button>`;
   }
   h += `<button class="pg" onclick="loadPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>←</button>`;
   bar.innerHTML = h;
 }
 
-function copyId(id) {
-  navigator.clipboard.writeText(id);
-  showToast('تم نسخ المعرف', 'success');
+/* Copy to clipboard (falls back to execCommand where the Clipboard API is unavailable, e.g. plain http) */
+async function copyId(id) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(id);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = id;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (!ok) throw new Error('execCommand copy failed');
+    }
+    showToast('تم نسخ المعرف', 'success');
+  } catch (err) {
+    console.error('Copy failed:', err);
+    showToast('تعذر نسخ المعرف', 'error');
+  }
 }
 
 
@@ -1859,7 +2663,9 @@ function openModal(id) {
     </div>`;
   }
 
-  document.getElementById('mBody').innerHTML = html;
+  const mBody = document.getElementById('mBody');
+  mBody.innerHTML = html;
+  mBody.scrollTop = 0;   // always open at the top
 
   // Modal footer — send request button
 document.getElementById('mFoot').innerHTML = `
@@ -1884,15 +2690,21 @@ document.getElementById('mFoot').innerHTML = `
   </button>
 `;
   document.getElementById('overlay').classList.add('open');
+  document.body.classList.add('modal-open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeModal(e) { if (e.target === document.getElementById('overlay')) closeModalDirect(); }
 function closeModalDirect() {
   document.getElementById('overlay').classList.remove('open');
+  document.body.classList.remove('modal-open');
   document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('overlay').classList.contains('open')) closeModalDirect();
+  else if (filtersOpen) toggleFilters();
+});
 
 /* ═══════════════════════════════════════
    BROWSE PAGE STATE
@@ -1908,7 +2720,7 @@ function showBrowseState(s, msg) {
     box.innerHTML = `
       <div class="state-icon">⚠️</div>
       <div class="state-title">حدث خطأ</div>
-      <div class="state-sub">${msg||''}</div>
+      <div class="state-sub">${esc(msg||'')}</div>
       <button class="btn-search" style="max-width:200px;margin-top:10px" onclick="loadPage(${currentPage})">إعادة المحاولة</button>`;
     box.classList.remove('hidden');
     wrap.classList.add('hidden');
@@ -1994,6 +2806,12 @@ function flatten(u) {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
+/* Minimal HTML escape — used for values that come from API error messages / IDs */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
 function calcAge(bd) {
   if (!bd) return null;
   const d = new Date(bd), n = new Date();
