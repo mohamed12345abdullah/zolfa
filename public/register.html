@@ -1,70 +1,474 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إنشاء حساب - CodeMinds</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link rel="stylesheet" href="./css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إنشاء حساب - زلفى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     ZOLFA DESIGN SYSTEM — base tokens (same as login.html)
+     ============================================================ */
+  :root{
+    --zf-primary:        #7C2D3F;
+    --zf-primary-dark:   #5E2130;
+    --zf-primary-light:  #A85B6C;
+    --zf-primary-tint:   #F6E9EC;
+    --zf-gold:           #B08D57;
+    --zf-gold-tint:      #F3ECDF;
+
+    --zf-bg:             #FAF7F3;
+    --zf-surface:        #FFFFFF;
+    --zf-border:         #E9E1D8;
+    --zf-border-strong:  #D8CCC0;
+
+    --zf-ink:            #2B2320;
+    --zf-ink-soft:       #6E6259;
+    --zf-ink-faint:      #9C9088;
+
+    --zf-success:        #2F7D5D;
+    --zf-success-tint:   #E8F3EE;
+    --zf-error:          #B3432D;
+    --zf-error-tint:     #FBECE7;
+    --zf-warning:        #B4841E;
+    --zf-warning-tint:   #FBF3E1;
+
+    --zf-radius-sm:  8px;
+    --zf-radius-md:  12px;
+    --zf-radius-lg:  20px;
+    --zf-radius-pill: 999px;
+
+    --zf-shadow-sm: 0 1px 2px rgba(43,35,32,.05);
+    --zf-shadow-md: 0 6px 16px rgba(43,35,32,.06);
+    --zf-shadow-lg: 0 20px 45px rgba(43,35,32,.10);
+
+    --zf-ease: cubic-bezier(.4,0,.2,1);
+    --zf-fast: 160ms;
+    --zf-med:  240ms;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--zf-bg);
+    color:var(--zf-ink);
+    font-family:"Cairo",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+  .container{width:100%;max-width:1120px;margin-inline:auto;padding-inline:24px;}
+
+  a{color:var(--zf-primary);text-decoration:none;transition:color var(--zf-fast) var(--zf-ease);}
+  a:hover{color:var(--zf-primary-dark);text-decoration:underline;}
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid var(--zf-primary-light);
+    outline-offset:2px;
+  }
+
+  /* ---------- Navbar ---------- */
+  .navbar{ background:var(--zf-surface); border-bottom:1px solid var(--zf-border); }
+  .nav-content{ display:flex;align-items:center;justify-content:center; height:72px; }
+  .logo img{height:34px;display:block;}
+  .logo-text{ font-size:22px;font-weight:800;color:var(--zf-primary);letter-spacing:.2px; }
+
+  /* ---------- Layout ---------- */
+  main{
+    min-height:calc(100vh - 72px);
+    display:flex;align-items:center;justify-content:center;
+    padding:40px 20px;
+  }
+
+  /* ---------- Card ---------- */
+  .auth-card{
+    width:100%;
+    max-width:460px;
+    background:var(--zf-surface);
+    border:1px solid var(--zf-border);
+    border-radius:var(--zf-radius-lg);
+    box-shadow:var(--zf-shadow-lg);
+    padding:40px 36px;
+    animation:zf-rise var(--zf-med) var(--zf-ease) both;
+  }
+  @keyframes zf-rise{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .auth-head{text-align:center;margin-bottom:32px;}
+  .auth-title{ margin:0 0 6px; font-size:24px; font-weight:800; color:var(--zf-ink); }
+  .auth-subtitle{ margin:0; font-size:14.5px; color:var(--zf-ink-soft); }
+
+  /* ---------- Form ---------- */
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .form-group{margin-bottom:18px;}
+  .form-group label{
+    display:block; margin-bottom:7px; font-size:14px; font-weight:600; color:var(--zf-ink);
+  }
+  .input-wrap{position:relative;}
+  .form-group input{
+    width:100%;
+    height:48px;
+    padding:0 16px;
+    border:1.5px solid var(--zf-border-strong);
+    border-radius:var(--zf-radius-md);
+    background:var(--zf-surface);
+    color:var(--zf-ink);
+    font-family:inherit;
+    font-size:15px;
+    transition:border-color var(--zf-fast) var(--zf-ease), box-shadow var(--zf-fast) var(--zf-ease);
+  }
+  .form-group input::placeholder{color:var(--zf-ink-faint);}
+  .form-group input:hover{border-color:var(--zf-ink-faint);}
+  .form-group input:focus{
+    outline:none;
+    border-color:var(--zf-primary);
+    box-shadow:0 0 0 3px var(--zf-primary-tint);
+  }
+  .form-group input.is-invalid{ border-color:var(--zf-error); }
+  .form-group input.is-invalid:focus{ box-shadow:0 0 0 3px var(--zf-error-tint); }
+
+  .form-hint{
+    display:block;
+    margin-top:6px;
+    font-size:12.5px;
+    color:var(--zf-ink-faint);
+  }
+  .field-error{
+    display:none;
+    margin-top:6px;
+    font-size:13px;
+    color:var(--zf-error);
+  }
+  .field-error.show{display:block;}
+
+  .password-toggle{
+    position:absolute;
+    inset-inline-start:6px;
+    top:50%;
+    transform:translateY(-50%);
+    width:36px;height:36px;
+    display:flex;align-items:center;justify-content:center;
+    background:transparent;border:none;cursor:pointer;
+    color:var(--zf-ink-faint);
+    border-radius:var(--zf-radius-sm);
+    transition:color var(--zf-fast) var(--zf-ease), background var(--zf-fast) var(--zf-ease);
+  }
+  .password-toggle:hover{color:var(--zf-ink-soft);background:var(--zf-bg);}
+  .form-group.has-toggle input{padding-inline-start:44px;}
+
+  /* ---------- Password strength ---------- */
+  .strength-meter{
+    display:flex;gap:4px;margin-top:8px;
+  }
+  .strength-bar{
+    height:4px;flex:1;border-radius:var(--zf-radius-pill);
+    background:var(--zf-border);
+    transition:background var(--zf-fast) var(--zf-ease);
+  }
+  .strength-bar.weak{background:var(--zf-error);}
+  .strength-bar.medium{background:var(--zf-warning);}
+  .strength-bar.strong{background:var(--zf-success);}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:48px; padding:0 20px;
+    border-radius:var(--zf-radius-md);
+    font-family:inherit; font-size:15.5px; font-weight:700;
+    border:1.5px solid transparent; cursor:pointer;
+    transition:background var(--zf-fast) var(--zf-ease), border-color var(--zf-fast) var(--zf-ease), transform var(--zf-fast) var(--zf-ease), box-shadow var(--zf-fast) var(--zf-ease);
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn.w-100{width:100%;}
+  .btn-primary{ background:var(--zf-primary); color:#fff; box-shadow:var(--zf-shadow-sm); }
+  .btn-primary:hover{background:var(--zf-primary-dark);}
+  .btn-primary:disabled{ background:var(--zf-primary-light); cursor:not-allowed; transform:none; }
+
+  .spinner{
+    width:18px;height:18px;border-radius:50%;
+    border:2.5px solid rgba(255,255,255,.4);
+    border-top-color:#fff;
+    animation:zf-spin .7s linear infinite;
+    display:none;
+  }
+  @keyframes zf-spin{to{transform:rotate(360deg);}}
+  .btn-primary.is-loading .btn-label{visibility:hidden;position:absolute;}
+  .btn-primary.is-loading{position:relative;}
+  .btn-primary.is-loading .spinner{display:inline-block;position:absolute;}
+
+  /* ---------- Alerts ---------- */
+  .alert{
+    display:none; align-items:flex-start; gap:10px;
+    margin-top:20px; padding:12px 14px;
+    border-radius:var(--zf-radius-md);
+    font-size:13.5px; line-height:1.55;
+    animation:zf-fade var(--zf-fast) var(--zf-ease) both;
+  }
+  .alert.show{display:flex;}
+  @keyframes zf-fade{from{opacity:0;} to{opacity:1;}}
+  .alert-success{background:var(--zf-success-tint);color:var(--zf-success);}
+  .alert-error{background:var(--zf-error-tint);color:var(--zf-error);}
+  .alert svg{flex-shrink:0;margin-top:2px;}
+
+  /* ---------- Footer text ---------- */
+  .auth-foot{ text-align:center; margin-top:24px; font-size:14px; color:var(--zf-ink-soft); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:480px){
+    .auth-card{padding:32px 22px;border-radius:var(--zf-radius-md);}
+    .nav-content{height:64px;}
+    .form-row{grid-template-columns:1fr;gap:0;}
+  }
+</style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-content">
-                <div class="logo">
-                    <a href="./index.html">
-                        <img src="./imgs/logo.png" alt="CodeMinds Logo">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <main>
-        <div class="container">
-            <div class="auth-container">
-                <h2 class="text-center mb-4">إنشاء حساب جديد</h2>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="name">الاسم</label>
-                        <input type="text" id="name" name="name" required minlength="3">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">البريد الإلكتروني</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">كلمة المرور</label>
-                        <input type="password" id="password" name="password" required minlength="8">
-                        <small class="form-hint">يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير، حرف صغير، رقم وعلامة خاصة</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">تأكيد كلمة المرور</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="age">العمر</label>
-                        <input type="number" id="age" name="age" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">رقم الهاتف</label>
-                        <input type="tel" id="phone" name="phone" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100" data-original-text="إنشاء حساب">
-                        إنشاء حساب
-                    </button>
-                </form>
-                <p class="text-center mt-3">
-                    لديك حساب بالفعل؟ <a href="./login.html">سجل دخول</a>
-                </p>
-            </div>
-        </div>
-    </main>
+<nav class="navbar">
+  <div class="container">
+    <div class="nav-content">
+      <div class="logo">
+        <a href="./index.html" aria-label="زلفى">
+          <img src="./imgs/logo.png" alt="زلفى" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span class="logo-text" style="display:none;">زلفى</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="./js/config.js"></script>
-    <script src="./js/utils/logger.js"></script>
-    <script src="./js/register.js"></script>
+<main>
+  <div class="auth-card">
+    <div class="auth-head">
+      <h2 class="auth-title">إنشاء حساب جديد</h2>
+      <p class="auth-subtitle">انضم إلى زلفى وابدأ رحلتك بثقة وخصوصية</p>
+    </div>
+
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label for="name">الاسم</label>
+        <input type="text" id="name" name="name" placeholder="اسمك الكامل" autocomplete="name" minlength="3" required>
+        <span class="field-error" id="nameError">الاسم يجب ألا يقل عن 3 أحرف</span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">البريد الإلكتروني</label>
+        <input type="email" id="email" name="email" placeholder="example@email.com" autocomplete="email" required>
+        <span class="field-error" id="emailError">يرجى إدخال بريد إلكتروني صحيح</span>
+      </div>
+
+      <div class="form-group has-toggle">
+        <label for="password">كلمة المرور</label>
+        <div class="input-wrap">
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
+          <button type="button" class="password-toggle" data-target="password" aria-label="إظهار كلمة المرور">
+            <svg class="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="strength-meter" id="strengthMeter">
+          <span class="strength-bar"></span><span class="strength-bar"></span><span class="strength-bar"></span>
+        </div>
+        <small class="form-hint">8 أحرف على الأقل، تشمل حرف كبير وصغير ورقم وعلامة خاصة</small>
+      </div>
+
+      <div class="form-group has-toggle">
+        <label for="confirmPassword">تأكيد كلمة المرور</label>
+        <div class="input-wrap">
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" autocomplete="new-password" required>
+          <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="إظهار كلمة المرور">
+            <svg class="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <span class="field-error" id="confirmError">كلمتا المرور غير متطابقتين</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="age">العمر</label>
+          <input type="number" id="age" name="age" placeholder="25" min="18" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">رقم الهاتف</label>
+          <input type="tel" id="phone" name="phone" placeholder="05xxxxxxxx" autocomplete="tel" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+        <span class="btn-label">إنشاء حساب</span>
+        <span class="spinner"></span>
+      </button>
+    </form>
+
+    <div class="alert alert-success" id="alertSuccess" role="status">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5"/></svg>
+      <span id="alertSuccessText"></span>
+    </div>
+    <div class="alert alert-error" id="alertError" role="alert">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v5M12 16h.01"/></svg>
+      <span id="alertErrorText"></span>
+    </div>
+
+    <p class="auth-foot">لديك حساب بالفعل؟ <a href="./login.html">سجل دخول</a></p>
+  </div>
+</main>
+
+<script>
+function isPasswordStrong(password) {
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumbers = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar;
+}
+
+function passwordScore(password) {
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+  if (/\d/.test(password) && /[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+  return score; // 0-3
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('registerForm');
+  if (!form) return;
+
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirmPassword');
+  const phoneInput = document.getElementById('phone');
+
+  const nameError = document.getElementById('nameError');
+  const emailError = document.getElementById('emailError');
+  const confirmError = document.getElementById('confirmError');
+
+  const submitBtn = document.getElementById('submitBtn');
+  const alertSuccess = document.getElementById('alertSuccess');
+  const alertError = document.getElementById('alertError');
+  const alertSuccessText = document.getElementById('alertSuccessText');
+  const alertErrorText = document.getElementById('alertErrorText');
+
+  // password visibility toggles
+  document.querySelectorAll('.password-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      const icon = btn.querySelector('.eyeIcon');
+      const isPw = target.type === 'password';
+      target.type = isPw ? 'text' : 'password';
+      btn.setAttribute('aria-label', isPw ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+      icon.innerHTML = isPw
+        ? '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-6.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-2.94 3.94M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/>'
+        : '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>';
+    });
+  });
+
+  // password strength meter
+  const strengthBars = document.querySelectorAll('#strengthMeter .strength-bar');
+  passwordInput.addEventListener('input', () => {
+    const score = passwordScore(passwordInput.value);
+    strengthBars.forEach((bar, i) => {
+      bar.className = 'strength-bar';
+      if (passwordInput.value.length === 0) return;
+      if (i < score) bar.classList.add(score === 1 ? 'weak' : score === 2 ? 'medium' : 'strong');
+    });
+  });
+
+  const hideAlerts = () => { alertSuccess.classList.remove('show'); alertError.classList.remove('show'); };
+  const showAlert = (type, message) => {
+    hideAlerts();
+    if (type === 'success') { alertSuccessText.textContent = message; alertSuccess.classList.add('show'); }
+    else { alertErrorText.textContent = message; alertError.classList.add('show'); }
+  };
+
+  const setLoading = (loading) => {
+    submitBtn.disabled = loading;
+    submitBtn.classList.toggle('is-loading', loading);
+  };
+
+  const clearFieldError = (input, errorEl) => {
+    input.classList.remove('is-invalid');
+    errorEl.classList.remove('show');
+  };
+  [nameInput, emailInput, confirmPasswordInput].forEach(input => {
+    input.addEventListener('input', () => {
+      const map = { name: nameError, email: emailError, confirmPassword: confirmError };
+      clearFieldError(input, map[input.id]);
+    });
+  });
+
+  const validate = () => {
+    let valid = true;
+
+    const nameOk = nameInput.value.trim().length >= 3;
+    nameInput.classList.toggle('is-invalid', !nameOk);
+    nameError.classList.toggle('show', !nameOk);
+    if (!nameOk) valid = false;
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+    emailInput.classList.toggle('is-invalid', !emailOk);
+    emailError.classList.toggle('show', !emailOk);
+    if (!emailOk) valid = false;
+
+    const confirmOk = confirmPasswordInput.value === passwordInput.value && confirmPasswordInput.value.length > 0;
+    confirmPasswordInput.classList.toggle('is-invalid', !confirmOk);
+    confirmError.classList.toggle('show', !confirmOk);
+    if (!confirmOk) valid = false;
+
+    return valid;
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAlerts();
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    const phone = phoneInput.value.trim();
+    const name = nameInput.value.trim();
+
+    if (!email || !password || !confirmPassword || !name) {
+      showAlert('error', 'جميع الحقول مطلوبة');
+      return;
+    }
+    if (!validate()) return;
+
+    if (password !== confirmPassword) {
+      showAlert('error', 'كلمة المرور غير متطابقة');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch('../../api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name, phone })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showAlert('success', 'تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك من خلال الرابط المرسل إلى بريدك الإلكتروني');
+        setTimeout(() => { window.location.href = './login.html'; }, 3000);
+      } else {
+        showAlert('error', data.message || 'فشل في التسجيل');
+      }
+    } catch (error) {
+      showAlert('error', 'حدث خطأ في الاتصال بالخادم');
+    } finally {
+      setLoading(false);
+    }
+  });
+});
+</script>
 </body>
 </html>
