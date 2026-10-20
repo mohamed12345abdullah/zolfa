@@ -768,7 +768,7 @@
                     لو المستخدم بالفعل عنده Profile
                 */
 
-                if (user.profileModel) {
+                if (user.profileModel&&user.status=="approved") {
 
                     console.log(
                         "User already has profile:",

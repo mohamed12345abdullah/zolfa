@@ -15,7 +15,7 @@ const sendRequest = asyncHandler(async (req, res) => {
             message: "Unauthorized"
         });
     }
-    if(fromUser.profileModal == "Female") {
+    if(fromUser. profileModel == "Female") {
         return res.status(403).json({
             success: false,
             message: "Your cant send request"

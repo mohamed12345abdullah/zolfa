@@ -1841,7 +1841,7 @@ function logout() {
 ═══════════════════════════════════════ */
 function renderUserId() {
   const userId = loggedUser?._id;
-  if(!loggedUser.profileModel){
+  if(!loggedUser.profileModel  || loggedUser.status!="approved"){
     window.location.href="selectForm.html"
   }
   const holder = document.querySelector('.user-id');
