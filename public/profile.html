@@ -1545,6 +1545,7 @@ function errorText(err) {
 function getStoredUser() {
   try {
     const raw = localStorage.getItem('user');
+
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     return parsed && typeof parsed === 'object' ? parsed : null;
@@ -1840,6 +1841,9 @@ function logout() {
 ═══════════════════════════════════════ */
 function renderUserId() {
   const userId = loggedUser?._id;
+  if(!loggedUser.profileModel){
+    window.location.href="selectForm.html"
+  }
   const holder = document.querySelector('.user-id');
   if (!userId || !holder) return;
   holder.innerHTML = `
@@ -1981,6 +1985,7 @@ async function loadPage(page) {
   } catch (err) {
     if (isAuthAbort(err)) return;          // redirecting to login — stay silent
     console.error('Browse load failed:', err);
+    
     showBrowseState('error', errorText(err));
   }
 }
