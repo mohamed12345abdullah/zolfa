@@ -1,0 +1,340 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f9f6f2">
+    <title>حسابك قيد المراجعة | زلفى</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8b5e5e;
+            --primary-dark: #704747;
+            --background: #f9f6f2;
+            --card: #ffffff;
+            --text: #332c2c;
+            --muted: #827878;
+            --border: #eee5e0;
+            --success: #63816b;
+        }
+
+        body {
+            font-family: "Tahoma", "Arial", sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top right,
+                    #efe3df 0, transparent 35%),
+                var(--background);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .brand-name {
+            color: var(--primary);
+            font-size: 35px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 38px 30px;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(70, 45, 40, 0.07);
+        }
+
+        .icon-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            background: #f5eae7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-wrapper svg {
+            width: 52px;
+            height: 52px;
+            stroke: var(--primary);
+        }
+
+        h1 {
+            font-size: 25px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .description {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 2;
+            margin-bottom: 28px;
+        }
+
+        .status-box {
+            background: #faf7f5;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        .status-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 9px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            background: #d9a34c;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-description {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 30px 0;
+        }
+
+        .step {
+            flex: 1;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .step-icon {
+            width: 34px;
+            height: 34px;
+            margin: 0 auto 9px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0e7e3;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .step.completed .step-icon {
+            background: #e5eee7;
+            color: var(--success);
+        }
+
+        .step.current .step-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .note {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.9;
+            margin-bottom: 23px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.2s;
+            background: var(--primary);
+            color: white;
+        }
+
+        .button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 22px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(217, 163, 76, 0.3);
+            }
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 0 6px rgba(217, 163, 76, 0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .description {
+                font-size: 14px;
+            }
+
+            .brand-name {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <header class="brand">
+            <div class="brand-name">زلفى</div>
+            <div class="brand-subtitle">
+                بداية جديدة نحو شريك الحياة المناسب
+            </div>
+        </header>
+
+        <section class="card">
+
+            <div class="icon-wrapper">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 2"></path>
+                </svg>
+            </div>
+
+            <h1>حسابك قيد المراجعة</h1>
+
+            <p class="description">
+                شكرًا لانضمامك إلى زلفى ❤️
+                <br>
+                تم إرسال بياناتك بنجاح، وهي الآن قيد المراجعة
+                من فريق الإدارة للتأكد من صحتها.
+                <br>
+                بمجرد الموافقة على حسابك، ستتمكن من الدخول
+                والاستفادة من خدمات المنصة.
+            </p>
+
+            <div class="status-box">
+                <div class="status-title">
+                    <span class="status-dot"></span>
+                    <span>في انتظار موافقة الإدارة</span>
+                </div>
+
+                <p class="status-description">
+                    لا تحتاج إلى إعادة التسجيل.
+                    يرجى الانتظار حتى تنتهي مراجعة بياناتك.
+                </p>
+            </div>
+
+            <div class="steps">
+                <div class="step completed">
+                    <div class="step-icon">✓</div>
+                    <div>إرسال البيانات</div>
+                </div>
+
+                <div class="step current">
+                    <div class="step-icon">2</div>
+                    <div>مراجعة البيانات</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <div>تفعيل الحساب</div>
+                </div>
+            </div>
+
+            <p class="note">
+                يمكنك العودة لتسجيل الدخول بعد اعتماد حسابك من الإدارة.
+            </p>
+
+            <button class="button" id="loginButton">
+                العودة إلى تسجيل الدخول
+            </button>
+
+        </section>
+
+        <footer class="footer">
+            © <span id="year"></span> زلفى — جميع الحقوق محفوظة
+        </footer>
+
+    </main>
+
+    <script>
+        // تحديث السنة تلقائيًا
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        // العودة إلى صفحة تسجيل الدخول
+        document.getElementById("loginButton").addEventListener(
+            "click",
+            function () {
+                window.location.href = "/login.html";
+            }
+        );
+    </script>
+</body>
+</html>

@@ -769,48 +769,17 @@
                 */
 
                 if (user.profileModel&&user.status=="approved") {
+                    window.location.href ="./profile.html";
 
-                    console.log(
-                        "User already has profile:",
-                        user.profileModel
-                    );
+                    // console.log(
+                    //     "User already has profile:",
+                    //     user.profileModel
+                    // );
 
-
-                    /*
-                        لو دفع بالفعل
-                        -> profile
-                    */
-
-                    // if (user.paid === true) {
-
-                    //     console.log(
-                    //         "User has paid -> profile"
-                    //     );
-
-                        window.location.href =
-                            "./profile.html";
-
-                    // }
-
-
-                    /*
-                        عنده Profile لكن لم يدفع
-                        -> payment
-                    */
-
-                    // else {
-
-                    //     console.log(
-                    //         "User has profile but has not paid"
-                    //     );
-
-                    //     window.location.href =
-                    //         "./payment.html";
-
-                    // }
+                }else if (user.profileModel&&user.status=="pending" ){
+                    window.location.href ="./wait.html";
 
                 }
-
             } catch (error) {
 
                 console.error(
