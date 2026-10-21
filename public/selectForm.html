@@ -776,7 +776,9 @@
                     //     user.profileModel
                     // );
 
-                }else if (user.profileModel&&user.status=="pending" ){
+                }else {
+                    console.log("status is not pending");
+                    
                     window.location.href ="./wait.html";
 
                 }

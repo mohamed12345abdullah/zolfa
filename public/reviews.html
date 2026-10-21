@@ -682,7 +682,12 @@ if(user.role!='admin' && user.role!='manager'){
 
         }
       });
+
+      if(res.status==401 || res.status==403){
+        window.location.href="./login.html"
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      
       const data = await res.json();
       if (!data.success) throw new Error('API returned failure');
 
@@ -736,6 +741,9 @@ if(user.role!='admin' && user.role!='manager'){
         }
       });
       if (res.status === 404) throw new Error('لا يوجد عضو بهذا الـ ID');
+      if(res.status==401 || res.status==403){
+        window.location.href="./login.html"
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!data.success) throw new Error(data.message || 'فشل البحث');

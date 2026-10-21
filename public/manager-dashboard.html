@@ -208,7 +208,9 @@
         if (!response.ok) {
           throw new Error(data.message || 'Failed to assign admin role.');
         }
-
+      if(response.status==401 || response.status==403){
+        window.location.href="./login.html"
+      }
         showAlert('Admin assigned successfully!', 'success');
         phoneInput.value = '';
 

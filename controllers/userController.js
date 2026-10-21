@@ -86,7 +86,7 @@ const showAllUsers = asyncHandler(async (req, res) => {
         success: true,
         users,
         numberOfUsers: numOfUsers
-    });
+    }); 
 });
 
 
