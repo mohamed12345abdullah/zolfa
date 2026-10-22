@@ -1841,8 +1841,11 @@ function logout() {
 ═══════════════════════════════════════ */
 function renderUserId() {
   const userId = loggedUser?._id;
-  if(!loggedUser.profileModel  || loggedUser.status!="approved"){
+  if(!loggedUser.profileModel ){
     window.location.href="selectForm.html"
+  }
+  else if(loggedUser.status=="pending" &&){
+    window.location.href="wait.html"
   }
   const holder = document.querySelector('.user-id');
   if (!userId || !holder) return;
