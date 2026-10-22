@@ -1844,8 +1844,10 @@ function renderUserId() {
   if(!loggedUser.profileModel ){
     window.location.href="selectForm.html"
   }
-  else if(loggedUser.status=="pending" &&){
+  else if(loggedUser.status=="pending" ){
     window.location.href="wait.html"
+  }else if( loggedUser.status =="rejected" ){
+    window.location.href="reject.html"
   }
   const holder = document.querySelector('.user-id');
   if (!userId || !holder) return;

@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f9f6f2">
+
+    <title>تم رفض الحساب | زُلفى</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8b5e5e;
+            --primary-dark: #704747;
+            --background: #f9f6f2;
+            --card: #ffffff;
+            --text: #332c2c;
+            --muted: #827878;
+            --border: #eee5e0;
+            --danger: #b74b4b;
+            --danger-bg: #faeeee;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    #efe3df 0,
+                    transparent 35%
+                ),
+                var(--background);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .brand-name {
+            color: var(--primary);
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 38px 30px;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(70, 45, 40, 0.07);
+        }
+
+        .icon-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            background: var(--danger-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-wrapper svg {
+            width: 52px;
+            height: 52px;
+            stroke: var(--danger);
+        }
+
+        h1 {
+            font-size: 25px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 2.1;
+            margin-bottom: 25px;
+        }
+
+        .status-box {
+            background: #fcf7f6;
+            border: 1px solid #f0dede;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        .status-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            color: var(--danger);
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
+
+        .status-description {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.9;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            font-family: inherit;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            background: var(--primary);
+            color: white;
+        }
+
+        .button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 22px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .description {
+                font-size: 14px;
+            }
+
+            .brand-name {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <header class="brand">
+            <div class="brand-name">زُلفى</div>
+            <div class="brand-subtitle">
+                منصة تيسير الزواج الشرعي
+            </div>
+        </header>
+
+        <section class="card">
+
+            <div class="icon-wrapper">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M15 9l-6 6"></path>
+                    <path d="M9 9l6 6"></path>
+                </svg>
+            </div>
+
+            <h1>نعتذر، لم تتم الموافقة على حسابك</h1>
+
+            <p class="description">
+                نشكرك على اهتمامك بالانضمام إلى منصة زُلفى.
+                <br>
+                بعد مراجعة البيانات التي قدمتها، نود إبلاغك
+                بأنه لم تتم الموافقة على حسابك.
+                <br>
+                نقدر تفهمك، ونتمنى لك كل التوفيق.
+            </p>
+
+            <div class="status-box">
+                <div class="status-title">
+                    <span>●</span>
+                    <span>حالة الحساب: مرفوض</span>
+                </div>
+
+                <p class="status-description">
+                    لا يمكنك الدخول إلى حسابك أو استخدام خدمات
+                    المنصة في الوقت الحالي.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="button"
+                id="loginButton"
+            >
+                العودة إلى الصفحة الرئيسية
+            </button>
+
+        </section>
+
+        <footer class="footer">
+            © <span id="year"></span> زُلفى — جميع الحقوق محفوظة
+        </footer>
+
+    </main>
+
+    <script>
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        document.getElementById("loginButton")
+            .addEventListener("click", function () {
+                window.location.href = "/";
+            });
+    </script>
+</body>
+</html>
