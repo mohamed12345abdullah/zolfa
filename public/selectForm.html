@@ -754,7 +754,7 @@
 
             window.location.href = "./login.html";
 
-        } else {
+        } else if ( userData.profileModel ) {
 
             try {
 
@@ -768,7 +768,7 @@
                     لو المستخدم بالفعل عنده Profile
                 */
 
-                if (user.profileModel&&user.status=="approved") {
+                if (user.status=="approved") {
                     window.location.href ="./profile.html";
 
                     // console.log(
