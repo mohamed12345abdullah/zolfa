@@ -15,7 +15,7 @@ router.post('/view', controller.viewUser);
 router.get('/views', controller.getViews);
 router.get('/approved/:page', controller.getApprovedUsers);
 router.get('/:status/:page', controller.showAllUsers);
-router.delete('/:id', controller.deleteUser);
+router.delete('/:phone', checkRole('manager'), controller.deleteUser);
 router.get('/:id', controller.getUserById);
 router.put('/:id/paid',checkRole('manager','admin'), controller.updatePaid);
 router.put('/:id/status',checkRole('manager','admin'), controller.updateStatus);

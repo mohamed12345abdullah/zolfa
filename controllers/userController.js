@@ -1,9 +1,13 @@
 const User = require("../models/user");
+const Male = require("../models/male");
+const Female = require("../models/female");
+const Request = require("../models/request");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const auth = require("../middlewares/jwt");
 const Guest = require("../models/guest");
 const  sendEmail  = require("../utils/sendEmail");
+const { pluralize } = require("mongoose");
 
 
 
@@ -139,15 +143,87 @@ const getApprovedUsers = asyncHandler(async (req, res) => {
 
 
 const deleteUser = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { phone } = req.params;
 
+    const user = await User.findOne({phone})
+        .select("profileModel profileRef requestsSent requestsReceived");
 
-    await User.findByIdAndDelete(id);
-    res.status(200).json({
-        success: true,
-        message: 'user deleted successfully'
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: "User not found"
+        });
+    }
+
+    const requestIds = [
+        ...new Set([
+            ...user.requestsSent.map(id => id.toString()),
+            ...user.requestsReceived.map(id => id.toString())
+        ])
+    ];
+
+    // Fetch related requests
+    const requests = await Request.find({
+        _id: { $in: requestIds }
+    }).select("from to");
+
+    // Group requests by other user
+    const updates = new Map();
+
+    for (const request of requests) {
+        const otherUserId =
+            request.from.toString() === user._id.toString()
+                ? request.to.toString()
+                : request.from.toString();
+
+        if (!updates.has(otherUserId)) {
+            updates.set(otherUserId, []);
+        }
+
+        updates.get(otherUserId).push(request._id);
+    }
+
+    // Build bulk operations
+    const operations = Array.from(updates, ([userId, ids]) => ({
+        updateOne: {
+            filter: { _id: userId },
+            update: {
+                $pull: {
+                    requestsSent: { $in: ids },
+                    requestsReceived: { $in: ids }
+                }
+            }
+        }
+    }));
+
+    // Execute cleanup
+    if (operations.length) {
+        await User.bulkWrite(operations);
+    }
+
+    // Delete all related requests
+    await Request.deleteMany({
+        _id: { $in: requestIds }
     });
-})
+
+    // Delete profile
+    if (user.profileRef) {
+        if (user.profileModel === "Male") {
+            await Male.findByIdAndDelete(user.profileRef);
+        } else {
+            await Female.findByIdAndDelete(user.profileRef);
+        }
+    }
+
+    // Delete user
+    await User.findByIdAndDelete(user._id);
+
+    return res.status(200).json({
+        success: true,
+        message: "User deleted successfully"
+    });
+});
+
 
 const getUserById = asyncHandler(async (req, res) => {
     const { id } = req.params;

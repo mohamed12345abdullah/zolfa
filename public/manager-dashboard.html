@@ -22,6 +22,15 @@
       padding: 1rem;
     }
 
+    .container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: auto;
+    }
+
     .card {
       background-color: #1e293b;
       border: 1px solid #334155;
@@ -30,6 +39,10 @@
       width: 100%;
       max-width: 400px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-danger {
+      border-color: rgba(244, 63, 94, 0.4);
     }
 
     .header {
@@ -45,6 +58,10 @@
       font-size: 1.25rem;
       color: #818cf8;
       font-weight: 700;
+    }
+
+    .header-danger h1 {
+      color: #fb7185;
     }
 
     .btn-dashboard {
@@ -74,7 +91,8 @@
       margin-bottom: 0.5rem;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       padding: 0.625rem 0.875rem;
       background-color: #0f172a;
@@ -86,8 +104,14 @@
       transition: border-color 0.2s;
     }
 
-    input[type="text"]:focus {
+    input[type="text"]:focus,
+    input[type="password"]:focus {
       border-color: #6366f1;
+    }
+
+    .card-danger input[type="text"]:focus,
+    .card-danger input[type="password"]:focus {
+      border-color: #f43f5e;
     }
 
     .btn-submit {
@@ -112,6 +136,29 @@
       cursor: not-allowed;
     }
 
+    .btn-danger {
+      width: 100%;
+      padding: 0.625rem;
+      background-color: #dc2626;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-danger:hover {
+      background-color: #ef4444;
+    }
+
+    .btn-danger:disabled {
+      background-color: #334155;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
     .alert {
       margin-top: 1rem;
       padding: 0.75rem;
@@ -131,35 +178,270 @@
       border: 1px solid rgba(244, 63, 94, 0.5);
       color: #fecdd3;
     }
+
+    /* ===================== Confirmation Modal ===================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(2, 6, 23, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background-color: #1e293b;
+      border: 1px solid rgba(244, 63, 94, 0.6);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+      direction: rtl;
+      text-align: right;
+      margin: auto;
+    }
+
+    .modal h2 {
+      font-size: 1.15rem;
+      color: #fb7185;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #334155;
+    }
+
+    .modal p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #e2e8f0;
+      margin-bottom: 0.75rem;
+    }
+
+    .modal ul {
+      list-style: disc;
+      padding-right: 1.25rem;
+      margin-bottom: 1rem;
+      color: #fecdd3;
+      font-size: 0.9rem;
+      line-height: 1.9;
+    }
+
+    .modal .phone-box {
+      direction: ltr;
+      text-align: center;
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+      color: #f8fafc;
+      margin-bottom: 1rem;
+      word-break: break-all;
+    }
+
+    .modal .confirm-instruction {
+      background-color: rgba(136, 19, 55, 0.35);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: #fecdd3;
+    }
+
+    .modal .confirm-phrase {
+      direction: ltr;
+      unicode-bidi: isolate;
+      display: inline-block;
+      background-color: #0f172a;
+      border-radius: 0.35rem;
+      padding: 0.05rem 0.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      user-select: none;
+    }
+
+    .modal input[type="text"] {
+      direction: ltr;
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .modal input[type="text"]:focus {
+      border-color: #f43f5e;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 0.625rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-cancel {
+      background-color: #334155;
+      color: #e2e8f0;
+      border: 1px solid #475569;
+    }
+
+    .btn-cancel:hover {
+      background-color: #475569;
+    }
+
+    .modal-actions .btn-danger {
+      width: auto;
+      border: none;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0.75rem;
+        align-items: flex-start;
+      }
+
+      .card {
+        padding: 1.25rem;
+      }
+
+      .header h1 {
+        font-size: 1.1rem;
+      }
+
+      .modal {
+        padding: 1.25rem;
+      }
+
+      .modal-actions {
+        flex-direction: column-reverse;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <div class="header">
-      <h1>Assign Admin</h1>
-      <a href="/reviews.html" class="btn-dashboard">Dashboard &rarr;</a>
-    </div>
+  <div class="container">
 
-    <form id="assignAdminForm">
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input 
-          type="text" 
-          id="phone" 
-          name="phone" 
-          placeholder="e.g. 01000000000" 
-          required
-        >
+    <!-- Assign Admin Section (unchanged) -->
+    <div class="card">
+      <div class="header">
+        <h1>Assign Admin</h1>
+        <a href="/reviews.html" class="btn-dashboard">Dashboard &rarr;</a>
       </div>
 
-      <button type="submit" id="submitBtn" class="btn-submit">Assign Role</button>
-    </form>
+      <form id="assignAdminForm">
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input 
+            type="text" 
+            id="phone" 
+            name="phone" 
+            placeholder="e.g. 01000000000" 
+            required
+          >
+        </div>
 
-    <div id="alertBox" class="alert"></div>
+        <button type="submit" id="submitBtn" class="btn-submit">Assign Role</button>
+      </form>
+
+      <div id="alertBox" class="alert"></div>
+    </div>
+
+    <!-- Delete User Section -->
+    <div class="card card-danger">
+      <div class="header header-danger">
+        <h1>Delete User</h1>
+      </div>
+
+      <form id="deleteUserForm">
+        <div class="form-group">
+          <label for="deletePhone">Phone Number</label>
+          <input 
+            type="text" 
+            id="deletePhone" 
+            name="deletePhone" 
+            placeholder="Phone number of the user to delete" 
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="managerPassword">Manager Password</label>
+          <input 
+            type="password" 
+            id="managerPassword" 
+            name="managerPassword" 
+            placeholder="Enter your password to confirm" 
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <button type="submit" id="deleteBtn" class="btn-danger">Delete User</button>
+      </form>
+
+      <div id="deleteAlertBox" class="alert"></div>
+    </div>
+
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="confirmOverlay" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h2 id="confirmTitle">⚠️ تأكيد حذف المستخدم</h2>
+
+      <p>أنت على وشك حذف المستخدم صاحب رقم الموبايل التالي:</p>
+      <div class="phone-box" id="confirmPhone"></div>
+
+      <p>لو أكدت الحذف، سيتم تنفيذ العمليات التالية:</p>
+      <ul>
+        <li>سيتم حذف حساب هذا المستخدم <strong>نهائياً</strong> من النظام.</li>
+        <li>لن يستطيع المستخدم تسجيل الدخول مرة أخرى بهذا الحساب.</li>
+        <li><strong>لا يمكن التراجع</strong> عن هذه العملية أو استرجاع الحساب بعد الحذف.</li>
+      </ul>
+
+      <div class="confirm-instruction">
+        لتأكيد حذف هذا المستخدم، اكتب العبارة التالية في الخانة بالأسفل بالظبط:
+        <br>
+        <span class="confirm-phrase" id="confirmPhraseText">Delete This User</span>
+      </div>
+
+      <input
+        type="text"
+        id="confirmPhraseInput"
+        placeholder="Delete This User"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+      >
+
+      <div class="modal-actions">
+        <button type="button" id="confirmCancelBtn" class="btn-cancel">إلغاء</button>
+        <button type="button" id="confirmDeleteBtn" class="btn-danger" disabled>تأكيد الحذف</button>
+      </div>
+    </div>
   </div>
 
   <script>
+    /* ===================== Assign Admin (unchanged) ===================== */
     const form = document.getElementById('assignAdminForm');
     const phoneInput = document.getElementById('phone');
     const submitBtn = document.getElementById('submitBtn');
@@ -219,6 +501,168 @@
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Assign Role';
+      }
+    });
+
+    /* ========================== Delete User ========================== */
+    const CONFIRM_PHRASE = 'Delete This User';
+
+    const deleteForm = document.getElementById('deleteUserForm');
+    const deletePhoneInput = document.getElementById('deletePhone');
+    const managerPasswordInput = document.getElementById('managerPassword');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const deleteAlertBox = document.getElementById('deleteAlertBox');
+
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const confirmPhone = document.getElementById('confirmPhone');
+    const confirmPhraseInput = document.getElementById('confirmPhraseInput');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    let pendingPhone = '';
+
+    function showDeleteAlert(message, type) {
+      deleteAlertBox.textContent = message;
+      deleteAlertBox.className = `alert alert-${type}`;
+      deleteAlertBox.style.display = 'block';
+    }
+
+    function hideDeleteAlert() {
+      deleteAlertBox.style.display = 'none';
+    }
+
+    function openConfirmModal(phone) {
+      pendingPhone = phone;
+      confirmPhone.textContent = phone;
+      confirmPhraseInput.value = '';
+      confirmDeleteBtn.disabled = true;
+      confirmOverlay.classList.add('open');
+      confirmOverlay.setAttribute('aria-hidden', 'false');
+      confirmPhraseInput.focus();
+    }
+
+    function closeConfirmModal() {
+      confirmOverlay.classList.remove('open');
+      confirmOverlay.setAttribute('aria-hidden', 'true');
+      confirmPhraseInput.value = '';
+      confirmDeleteBtn.disabled = true;
+      pendingPhone = '';
+    }
+
+    async function performDelete(phone) {
+      const password = managerPasswordInput.value;
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        showDeleteAlert('No authentication token found in local storage.', 'error');
+        return;
+      }
+
+      deleteBtn.disabled = true;
+      deleteBtn.textContent = 'Deleting...';
+
+      try {
+        const response = await fetch(`../api/users/${encodeURIComponent(phone)}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            password: password
+          })
+        });
+
+        // Unauthorized / forbidden: redirect to login
+        if (response.status === 401 || response.status === 403) {
+          window.location.href = './login.html';
+          return;
+        }
+
+        // Safely parse JSON (the response may be empty or not valid JSON)
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (parseError) {
+          data = null;
+        }
+
+        if (!response.ok) {
+          const backendMessage = data && typeof data.message === 'string' ? data.message : '';
+          throw new Error(backendMessage || 'Failed to delete user.');
+        }
+
+        showDeleteAlert('User deleted successfully.', 'success');
+        deletePhoneInput.value = '';
+
+      } catch (err) {
+        showDeleteAlert(err.message || 'An error occurred while deleting the user.', 'error');
+      } finally {
+        managerPasswordInput.value = '';
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = 'Delete User';
+      }
+    }
+
+    // Step 1: validate the form, then open the confirmation modal
+    deleteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      hideDeleteAlert();
+
+      const phone = deletePhoneInput.value.trim();
+      const password = managerPasswordInput.value;
+
+      // Validation: both fields are required
+      if (!phone || !password) {
+        showDeleteAlert('Both phone number and manager password are required.', 'error');
+        return;
+      }
+
+      if (!localStorage.getItem('token')) {
+        showDeleteAlert('No authentication token found in local storage.', 'error');
+        return;
+      }
+
+      openConfirmModal(phone);
+    });
+
+    // Step 2: enable the confirm button only when the exact phrase is typed
+    confirmPhraseInput.addEventListener('input', () => {
+      confirmDeleteBtn.disabled = confirmPhraseInput.value.trim() !== CONFIRM_PHRASE;
+    });
+
+    // Step 3a: confirm -> close the modal and run the deletion
+    confirmDeleteBtn.addEventListener('click', async () => {
+      if (confirmPhraseInput.value.trim() !== CONFIRM_PHRASE) {
+        return;
+      }
+      const phone = pendingPhone;
+      closeConfirmModal();
+      await performDelete(phone);
+    });
+
+    // Step 3b: cancel -> close the modal, nothing is deleted
+    confirmCancelBtn.addEventListener('click', closeConfirmModal);
+
+    confirmOverlay.addEventListener('click', (e) => {
+      if (e.target === confirmOverlay) {
+        closeConfirmModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && confirmOverlay.classList.contains('open')) {
+        closeConfirmModal();
+      }
+    });
+
+    // Pressing Enter inside the phrase box confirms only if the phrase matches
+    confirmPhraseInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (!confirmDeleteBtn.disabled) {
+          confirmDeleteBtn.click();
+        }
       }
     });
   </script>

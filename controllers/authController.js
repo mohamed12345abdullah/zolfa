@@ -110,10 +110,10 @@ register: asyncHandler(async (req, res) => {
     const verificationUrl = `${process.env.BASE_URL}/api/auth/verify-email/${verificationToken}`;
    
    
-    const emailSent = await sendVerificationEmail(email, name, verificationUrl);
-    if (emailSent instanceof AppError) {
-        throw emailSent;
-    }
+    // const emailSent = await sendVerificationEmail(email, name, verificationUrl);
+    // if (emailSent instanceof AppError) {
+    //     throw emailSent;
+    // }
 
     // إنشاء المستخدم الجديد
     const hashedPassword=bcrypt.hashSync(password, 10); 
