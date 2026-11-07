@@ -115,10 +115,13 @@ const getApprovedUsers = asyncHandler(async (req, res) => {
     }
     const users = await User.find({status:'approved',role:'user',profileModel:gender},{'password':0,'authToken':0}).populate('profileRef')
     .limit(limit)
-    .skip((page-1)*limit);
+    .skip((page-1)*limit)
+    ;
+    const numberOfUsers = await User.countDocuments({status:'approved',role:'user',profileModel:gender});
     res.status(200).json({
         success: true,
-        users
+        users,
+        numberOfUsers
     });
 });
 

@@ -1752,7 +1752,7 @@ const viewingGender      = loggedProfileModel === 'Male' ? 'female' : 'male';  /
 /* ═══════════════════════════════════════
    STATE
 ═══════════════════════════════════════ */
-const PER_PAGE = 10;
+const PER_PAGE =10;
 let allData     = [];
 let displayed   = [];
 let currentPage = 1;
@@ -2460,7 +2460,7 @@ function jumpToProfile(userId) {
 ═══════════════════════════════════════ */
 function renderPagination() {
   const bar = document.getElementById('pgBar');
-  if (totalPages <= 1) { bar.innerHTML = ''; return; }
+  // if (totalPages <= 1) { bar.innerHTML = ''; return; }
 
   let h = `<button class="pg" onclick="loadPage(${currentPage-1})" ${currentPage===1?'disabled':''}>→</button>`;
   const s = Math.max(1, currentPage - 2);
