@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إحصائيات المستخدمين</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --font: "Cairo", system-ui, sans-serif;
+        --primary-500: #3b82f6;
+        --primary-400: #60a5fa;
+        --secondary-500: #14b8a6;
+        --accent-500: #f59e0b;
+        --success-500: #22c55e;
+        --warning-500: #f59e0b;
+        --error-500: #ef4444;
+        --pink-500: #ec4899;
+        --bg: #0b1120;
+        --surface: #111a2e;
+        --surface-2: #17223b;
+        --border: #24324f;
+        --text: #e2e8f0;
+        --text-muted: #94a3b8;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      [data-theme="light"] {
+        --bg: #f1f5f9;
+        --surface: #ffffff;
+        --surface-2: #f8fafc;
+        --border: #e2e8f0;
+        --text: #0f172a;
+        --text-muted: #475569;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+        min-height: 100vh;
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 16px 64px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+
+      h1 { font-size: 1.75rem; line-height: 1.2; font-weight: 700; }
+      h2 { font-size: 1.125rem; line-height: 1.2; font-weight: 700; }
+
+      .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; }
+
+      .theme-toggle {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 8px 16px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .theme-toggle:hover { transform: translateY(-2px); border-color: var(--primary-500); }
+      .theme-toggle:focus-visible, .retry-btn:focus-visible { outline: 2px solid var(--primary-500); outline-offset: 2px; }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: var(--shadow);
+        animation: fadeUp 0.5s ease both;
+      }
+
+      .grid { display: grid; gap: 16px; }
+      .kpis { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 24px; }
+
+      .kpi { display: flex; flex-direction: column; gap: 8px; transition: transform 0.2s ease, border-color 0.2s ease; }
+      .kpi:hover { transform: translateY(-4px); border-color: var(--primary-500); }
+      .kpi-label { color: var(--text-muted); font-size: 0.9rem; }
+      .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+      .kpi-value.accent-blue { color: var(--primary-400); }
+      .kpi-value.accent-green { color: var(--success-500); }
+      .kpi-value.accent-amber { color: var(--warning-500); }
+      .kpi-value.accent-red { color: var(--error-500); }
+      .kpi-value.accent-teal { color: var(--secondary-500); }
+
+      .charts { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 24px; }
+      .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 8px; }
+      .muted { color: var(--text-muted); font-size: 0.9rem; }
+
+      .donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: center; }
+      .donut { position: relative; width: 180px; height: 180px; flex-shrink: 0; }
+      .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+      .donut circle { fill: none; stroke-width: 18; }
+      .donut-track { stroke: var(--surface-2); }
+      .donut-seg { transition: stroke-dasharray 0.9s ease, stroke-dashoffset 0.9s ease; }
+      .donut-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .donut-center strong { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+
+      .legend { display: flex; flex-direction: column; gap: 12px; min-width: 150px; }
+      .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+      .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+      .legend-item span:last-child { margin-inline-start: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+      .bars { display: flex; flex-direction: column; gap: 18px; }
+      .bar-row-head { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 6px; }
+      .bar-row-head span:last-child { font-variant-numeric: tabular-nums; color: var(--text-muted); }
+      .bar-track { height: 12px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+      .bar-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 999px;
+        transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .admins-table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+      th, td { text-align: start; padding: 12px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+      th { color: var(--text-muted); font-weight: 600; font-size: 0.85rem; }
+      tbody tr { transition: background 0.2s ease; }
+      tbody tr:hover { background: var(--surface-2); }
+      td.ltr { direction: ltr; text-align: start; unicode-bidi: plaintext; }
+
+      .badge {
+        display: inline-block;
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--primary-400);
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .state { text-align: center; padding: 64px 16px; }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 16px;
+        border: 4px solid var(--border);
+        border-top-color: var(--primary-500);
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+      }
+      .error-title { color: var(--error-500); font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+      .retry-btn {
+        margin-top: 16px;
+        background: var(--primary-500);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+      .retry-btn:hover { background: var(--primary-400); transform: translateY(-2px); }
+
+      .hidden { display: none !important; }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @media (max-width: 640px) {
+        .container { padding: 24px 12px 48px; }
+        h1 { font-size: 1.5rem; }
+        .kpi-value { font-size: 1.6rem; }
+        .card { padding: 20px; }
+        .donut { width: 160px; height: 160px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation: none !important; transition: none !important; }
+      }
+    </style>
+    <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div>
+          <h1>لوحة الإحصائيات</h1>
+          <p class="subtitle">ملخص حالة المستخدمين والطلبات والمشرفين</p>
+        </div>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">الوضع الفاتح</button>
+      </header>
+
+      <section id="loading" class="state card">
+        <div class="spinner"></div>
+        <p class="muted">جاري تحميل البيانات...</p>
+      </section>
+
+      <section id="error" class="state card hidden">
+        <p class="error-title">تعذر تحميل البيانات</p>
+        <p class="muted">تأكد أن الخادم يعمل على http://localhost:3000 ثم حاول مرة أخرى.</p>
+        <button type="button" class="retry-btn" id="retryBtn">إعادة المحاولة</button>
+      </section>
+
+      <main id="dashboard" class="hidden">
+        <div class="grid kpis">
+          <article class="card kpi">
+            <span class="kpi-label">إجمالي المستخدمين</span>
+            <span class="kpi-value" id="kpiTotal">0</span>
+          </article>
+          <article class="card kpi">
+            <span class="kpi-label">المقبولين</span>
+            <span class="kpi-value accent-green" id="kpiApproved">0</span>
+          </article>
+          <article class="card kpi">
+            <span class="kpi-label">في الانتظار</span>
+            <span class="kpi-value accent-amber" id="kpiPending">0</span>
+          </article>
+          <article class="card kpi">
+            <span class="kpi-label">المرفوضين</span>
+            <span class="kpi-value accent-red" id="kpiRejected">0</span>
+          </article>
+          <article class="card kpi">
+            <span class="kpi-label">عدد الطلبات</span>
+            <span class="kpi-value accent-blue" id="kpiRequests">0</span>
+          </article>
+          <article class="card kpi">
+            <span class="kpi-label">المشرفين</span>
+            <span class="kpi-value accent-teal" id="kpiAdmins">0</span>
+          </article>
+        </div>
+
+        <div class="grid charts">
+          <section class="card">
+            <div class="card-head">
+              <h2>حالة الحسابات</h2>
+              <span class="muted" id="statusTotalLabel"></span>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut" id="statusDonut"></div>
+              <div class="legend" id="statusLegend"></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <h2>توزيع النوع</h2>
+              <span class="muted" id="genderTotalLabel"></span>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut" id="genderDonut"></div>
+              <div class="legend" id="genderLegend"></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <h2>نسب الحالات</h2>
+            </div>
+            <div class="bars" id="statusBars"></div>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <h2>النوع بالأرقام</h2>
+            </div>
+            <div class="bars" id="genderBars"></div>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>المشرفين</h2>
+            <span class="badge" id="adminCountBadge">0</span>
+          </div>
+          <div class="admins-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>البريد الإلكتروني</th>
+                  <th>الهاتف</th>
+                </tr>
+              </thead>
+              <tbody id="adminsBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const API_URL = "../api/stat";
+      const THEME_KEY = "stats-theme";
+      const RING_RADIUS = 66;
+      const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
+      const $ = (id) => document.getElementById(id);
+      const toNumber = (value) => (Number.isFinite(Number(value)) ? Number(value) : 0);
+      const formatNumber = (value) => value.toLocaleString("ar-EG");
+      const percent = (part, total) => (total > 0 ? (part / total) * 100 : 0);
+      const formatPercent = (value) => `${formatNumber(Number(value.toFixed(1)))}%`;
+      
+      function applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        $("themeToggle").textContent = theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن";
+        localStorage.setItem(THEME_KEY, theme);
+      }
+
+      function initTheme() {
+        const saved = localStorage.getItem(THEME_KEY);
+        applyTheme(saved === "light" ? "light" : "dark");
+        $("themeToggle").addEventListener("click", () => {
+          applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+        });
+      }
+
+      function renderDonut(container, segments, centerLabel) {
+        const total = segments.reduce((sum, seg) => sum + seg.value, 0);
+        let offset = 0;
+        const circles = segments
+          .map((seg) => {
+            const length = (percent(seg.value, total) / 100) * RING_CIRCUMFERENCE;
+            const circle = `<circle class="donut-seg" cx="80" cy="80" r="${RING_RADIUS}" style="stroke:${seg.color}"
+              stroke-dasharray="${length} ${RING_CIRCUMFERENCE}" stroke-dashoffset="${-offset}"></circle>`;
+            offset += length;
+            return circle;
+          })
+          .join("");
+
+        container.innerHTML = `
+          <svg viewBox="0 0 160 160" role="img" aria-label="${centerLabel}">
+            <circle class="donut-track" cx="80" cy="80" r="${RING_RADIUS}"></circle>
+            ${circles}
+          </svg>
+          <div class="donut-center">
+            <strong>${formatNumber(total)}</strong>
+            <span class="muted">${centerLabel}</span>
+          </div>`;
+      }
+
+      function renderLegend(container, segments) {
+        const total = segments.reduce((sum, seg) => sum + seg.value, 0);
+        container.innerHTML = segments
+          .map(
+            (seg) => `
+            <div class="legend-item">
+              <i class="dot" style="background:${seg.color}"></i>
+              <span>${seg.label}</span>
+              <span>${formatNumber(seg.value)} (${formatPercent(percent(seg.value, total))})</span>
+            </div>`
+          )
+          .join("");
+      }
+
+      function renderBars(container, rows, total) {
+        container.innerHTML = rows
+          .map(
+            (row) => `
+            <div>
+              <div class="bar-row-head">
+                <span>${row.label}</span>
+                <span>${formatNumber(row.value)} · ${formatPercent(percent(row.value, total))}</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" data-width="${percent(row.value, total)}" style="background:${row.color}"></div>
+              </div>
+            </div>`
+          )
+          .join("");
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            container.querySelectorAll(".bar-fill").forEach((bar) => {
+              bar.style.width = `${bar.dataset.width}%`;
+            });
+          });
+        });
+      }
+
+      function renderAdmins(admins) {
+        const body = $("adminsBody");
+        if (admins.length === 0) {
+          body.innerHTML = `<tr><td colspan="3" class="muted">لا يوجد مشرفين</td></tr>`;
+          return;
+        }
+        body.innerHTML = admins
+          .map((admin) => {
+            const name = escapeHtml(admin.name ?? "-");
+            const email = escapeHtml(admin.email ?? "-");
+            const phone = escapeHtml(admin.phone ?? "-");
+            return `<tr><td>${name}</td><td class="ltr">${email}</td><td class="ltr">${phone}</td></tr>`;
+          })
+          .join("");
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function renderDashboard(data) {
+        const total = toNumber(data.numberOfUsers);
+        const approved = toNumber(data.approvedUsers);
+        const pending = toNumber(data.pendingUsers);
+        const rejected = toNumber(data.rejectedUsers);
+        const males = toNumber(data.Males);
+        const females = toNumber(data.Females);
+        const unspecified = Math.max(total - males - females, 0);
+        const admins = Array.isArray(data.admins) ? data.admins : [];
+
+        $("kpiTotal").textContent = formatNumber(total);
+        $("kpiApproved").textContent = formatNumber(approved);
+        $("kpiPending").textContent = formatNumber(pending);
+        $("kpiRejected").textContent = formatNumber(rejected);
+        $("kpiRequests").textContent = formatNumber(toNumber(data.requests));
+        $("kpiAdmins").textContent = formatNumber(toNumber(data.numberOfAdmins));
+        $("adminCountBadge").textContent = formatNumber(admins.length);
+
+        const statusSegments = [
+          { label: "مقبولين", value: approved, color: "var(--success-500)" },
+          { label: "في الانتظار", value: pending, color: "var(--warning-500)" },
+          { label: "مرفوضين", value: rejected, color: "var(--error-500)" },
+        ];
+        const genderSegments = [
+          { label: "إناث", value: females, color: "var(--pink-500)" },
+          { label: "ذكور", value: males, color: "var(--primary-500)" },
+          { label: "غير محدد", value: unspecified, color: "#64748b" },
+        ];
+
+        $("statusTotalLabel").textContent = `الإجمالي ${formatNumber(total)}`;
+        $("genderTotalLabel").textContent = `الإجمالي ${formatNumber(total)}`;
+        renderDonut($("statusDonut"), statusSegments, "مستخدم");
+        renderLegend($("statusLegend"), statusSegments);
+        renderDonut($("genderDonut"), genderSegments, "مستخدم");
+        renderLegend($("genderLegend"), genderSegments);
+
+        renderBars($("statusBars"), statusSegments, total);
+        renderBars(
+          $("genderBars"),
+          [
+            { label: "إناث", value: females, color: "var(--pink-500)" },
+            { label: "ذكور", value: males, color: "var(--primary-500)" },
+          ],
+          females + males
+        );
+
+        renderAdmins(admins);
+      }
+
+      function showState(state) {
+        $("loading").classList.toggle("hidden", state !== "loading");
+        $("error").classList.toggle("hidden", state !== "error");
+        $("dashboard").classList.toggle("hidden", state !== "ready");
+      }
+
+      async function loadStats() {
+        showState("loading");
+        try {
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const json = await response.json();
+          if (!json.success || !json.data || typeof json.data !== "object") {
+            throw new Error("Unexpected response shape");
+          }
+          renderDashboard(json.data);
+          showState("ready");
+        } catch (error) {
+          console.error(error);
+          showState("error");
+        }
+      }
+
+      initTheme();
+      $("retryBtn").addEventListener("click", loadStats);
+      loadStats();
+    </script>
+  </body>
+</html>

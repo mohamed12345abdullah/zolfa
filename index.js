@@ -33,6 +33,7 @@ app.use((req, res, next) => {
 // Import route handlers
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const statisticsRouter=require("./routes/statRouter");
     
 // Static files
 app.use("/", express.static(path.join(__dirname, "public")));
@@ -44,6 +45,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/maleForms", require("./routes/male"));
 app.use("/api/femaleForms", require("./routes/female"));
 app.use("/api/requests", require("./routes/requestRouter"));
+app.use("/api/stat",statisticsRouter);
  
  
 // 404 Handler
